@@ -8,7 +8,7 @@ class FieldGenerator:
         '''
         param : range [[xmin xmax], [ymin ymax], ...]
                 density: [x_dense, y_dense, ...]
-        内部に実態を持つと配列が大きすぎるため、generatorとなっている
+        内部に実態を持つと余分なメモリを取るため、generatorとなっている
         '''
         self._param = param
         self._range_np = np.array(param["range"])
@@ -25,7 +25,6 @@ class FieldGenerator:
             linspaces.append(linspace)
         self._grid_shape = grid_shape
         self._linspaces = linspaces
-        self.generate_grid()
     
     def generate_phi(self):
         ### shape はx,y,zの順にする. 過去のプログラム(task switch)とは逆なので注意
