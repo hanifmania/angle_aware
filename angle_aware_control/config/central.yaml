@@ -1,0 +1,21 @@
+pose_collector:
+  clock: 100
+virtual_drone_clock: 100
+field_cbf: [[-1.25, 1.25], [-1.25, 1.25]]
+central_clock: 20
+angle_aware:
+  sigma: 0.1
+  delta_decrease: 10
+  gamma: 300
+  alpha: 1
+  psi:
+    range: [[-1, 1],[0, 1]]
+    density: [0.01, 0.01]
+agents:
+  agent_manager_clock: 20
+  u_max: 0.3
+  collision_distance: 0.8
+  kp_z: 1
+  ref_z: 1
+  kp_yaw: 1
+  ref_yaw: 0
