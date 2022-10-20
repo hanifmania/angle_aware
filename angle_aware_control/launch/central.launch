@@ -16,5 +16,8 @@
     </include>
 
     <node pkg="angle_aware_control" type="central.py" name="central" output="screen"/>
-    <node pkg="angle_aware_control" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen"/>
+    <node pkg="angle_aware_control" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
+        <param name="input_field_topic" value="psi"/>
+        <param name="field_param_name" value="angle_aware/psi"/>
+    </node>
 </launch>

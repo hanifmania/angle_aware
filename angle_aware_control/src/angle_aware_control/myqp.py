@@ -20,7 +20,7 @@ class MyQP:
 
         self._u_dim = 2
         self._slack_dim = 1
-        costs = [1, 1,  1.0e+6] ### [ux, uy, uz, field_slack, angle_aware_slack]
+        costs = [1, 1,  1.0e+6] ### [ux, uy, angle_aware_slack]
         alpha_default = 1
         self._cbf2qp.set_dim(self._u_dim, self._slack_dim, costs)
         self._field_cbf.set_params(field, alpha_default)

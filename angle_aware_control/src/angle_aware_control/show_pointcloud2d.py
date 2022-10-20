@@ -10,8 +10,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ShowPointCloud2d:
-    def __init__(self, field_param):
-        input_psi_topic = rospy.get_param("~input_psi_topic", "psi")
+    def __init__(self):
+        field_param_name = rospy.get_param("~field_param_name")
+        field_param = rospy.get_param(field_param_name)
+        input_field_topic = rospy.get_param("~input_field_topic")
         output_point_cloud_topic = rospy.get_param("~output_point_cloud_topic", "psi_pointcloud")
         self.WORLD_TF = rospy.get_param("~world", default="world")
 
@@ -37,7 +39,7 @@ class ShowPointCloud2d:
         self._point_cloud_msg_base = msg
 
         self._pub_pointcloud = rospy.Publisher(output_point_cloud_topic, PointCloud2, queue_size=1)
-        rospy.Subscriber(input_psi_topic, Float32MultiArray, self.callback)
+        rospy.Subscriber(input_field_topic, Float32MultiArray, self.callback)
 
     #############################################################
     # callback
@@ -76,6 +78,5 @@ class ShowPointCloud2d:
 
 if __name__ == "__main__":
     rospy.init_node("PointCloud2d", anonymous=True)
-    field_param = rospy.get_param("angle_aware/psi")
-    node = ShowPointCloud2d(field_param)
+    node = ShowPointCloud2d()
     rospy.spin()
