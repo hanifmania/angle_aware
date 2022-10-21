@@ -37,6 +37,7 @@ class ShowPointCloud2d:
         msg.point_step = 24
         msg.is_dense = True
         self._point_cloud_msg_base = msg
+        self._phi_max = None
 
         self._pub_pointcloud = rospy.Publisher(output_point_cloud_topic, PointCloud2, queue_size=1)
         rospy.Subscriber(input_field_topic, Float32MultiArray, self.callback)
@@ -64,8 +65,11 @@ class ShowPointCloud2d:
          ]
         """        
         phi = np.array(float32.data).reshape([-1,1])
-        rgba_phi = plt.get_cmap('jet')(phi).squeeze()
-        z = phi
+        if self._phi_max is None:
+            self._phi_max = np.max(phi)
+        normalized_phi = phi/self._phi_max
+        rgba_phi = plt.get_cmap('jet')(normalized_phi).squeeze()
+        z = normalized_phi
         points = np.hstack([self._x_row, self._y_row , z, rgba_phi[:, 0:3]])
         
         points = points.astype('float32')

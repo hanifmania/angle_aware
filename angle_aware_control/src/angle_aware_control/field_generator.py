@@ -53,15 +53,20 @@ class FieldGenerator:
     #         ret = self._grid * region
     #     return ret
 
-    def getGridSpan(self):
+    def get_grid_span(self):
         return self._density_np
 
-    def getLimit(self, axes):
+    def get_limit(self, axes):
         return self._range_np[axes]
 
-    def getPointDense(self):
+    def get_point_dense(self):
         return self._density_np.prod()
 
+    def get_linspace(self):
+        return self._linspaces
+    
+    def get_shape(self):
+        return self._grid_shape
     # def getZeroIndex(self):
     #     #[TODO] not work now
     #     return self._zero_index
