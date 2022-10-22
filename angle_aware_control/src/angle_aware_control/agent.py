@@ -65,12 +65,13 @@ class Agent:
         world_uz = self._kp_z * (self._ref_z - my_position[2])
 
         ## 姿勢を一定に保つ
-        diff_rad = self._ref_yaw - yaw
-        if diff_rad > np.pi:
-            diff_rad -= 2 * np.pi
-        elif diff_rad < -np.pi:
-            diff_rad += 2 * np.pi
-        omega_z = self._kp_yaw * diff_rad
+        # diff_rad = self._ref_yaw - yaw
+        # if diff_rad > np.pi:
+        #     diff_rad -= 2 * np.pi
+        # elif diff_rad < -np.pi:
+        #     diff_rad += 2 * np.pi
+        # omega_z = self._kp_yaw * diff_rad
+        omega_z = self._ref_yaw
         ##########################################
 
         ### x y z field limitation and collision avoidance with CBF

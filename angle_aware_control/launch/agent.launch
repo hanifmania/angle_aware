@@ -2,8 +2,10 @@
 <launch>
     <arg name="number" default=""/>
     <arg name="sim" default="true"/>
+    <arg name="yaml_pkg" default="$(find angle_aware_control)/config"/>
+
     <group ns="bebop10$(arg number)">
-        <rosparam file="$(find angle_aware_control)/config/agent10$(arg number).yaml" command="load" ns="" />
+        <rosparam file="$(arg yaml_pkg)/agent10$(arg number).yaml" command="load" ns="" />
         <include file="$(find bebop_hatanaka_base)/launch/agent_base.launch">
             <arg name="number" value="$(arg number)"/>
             <arg name="sim" value="$(arg sim)"/>

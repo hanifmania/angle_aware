@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="number" default=""/>
+  
+  <group ns="bebop10$(arg number)">
+    <node pkg="bebop_unity" type="bridge.py" name="bridge" output="log">
+        <param name="input_topic" value="posestamped"/>
+        <param name="output_topic" value="unity_posestamped"/>
+    </node>
+    <node pkg="bebop_unity" type="bridge.py" name="camera_bridge" output="log">
+      <param name="input_topic" value="camera_posestamped"/>
+      <param name="output_topic" value="unity_camera_posestamped"/>
+  </node>
+</group>
+</launch>
