@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+
 class CoverageUtil:
     def calc_voronoi(self, pos, neighbors, grid2d):
         """_summary_
@@ -13,7 +14,7 @@ class CoverageUtil:
 
         Returns:
             ndarray: Voronoi = 1, neighbor = 0 map
-        """        
+        """
         my_dist = self.calc_dist(pos, grid2d)
         region = np.ones_like(my_dist)
         for neighbor in neighbors:
@@ -30,6 +31,6 @@ class CoverageUtil:
 
         Returns:
             ndarray: dist map
-        """        
+        """
         dist = np.sqrt((pos[0] - grid2d[0]) ** 2 + (pos[1] - grid2d[1]) ** 2)
         return dist
