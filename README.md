@@ -15,8 +15,12 @@ This program uses https://github.com/htnk-lab/bebop_hatanaka_lab.git
 
 # Dependency
 ## Environment
+### Simulation and Experiment
 - ubuntu16.04
 - ros kinetic
+### Generate Psi and Simulation
+- ubuntu20.04
+- ros noetic
 
 ## Install
 - git clone https://github.com/htnk-lab/bebop_hatanaka_lab.git
@@ -36,4 +40,13 @@ roslaunch angle_aware_control bringup_sim.launch
 1. Push X button -> main control start
 1. Push START button -> take off and field reset
 
+## Generate Psi
+- Change numpy to jax.numpy in angle_aware_control/src/field_generator.py Line.3
+```
+import numpy as np -> import jax.numpy as np
+```
+- launch
+```
+roslaunch angle_aware_control generate_psi.launch
+```
 

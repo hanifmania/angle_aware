@@ -9,9 +9,10 @@ import numpy as np
 import rospy
 from std_msgs.msg import Float32MultiArray
 
+
 class Agent:
     def __init__(self):
-        self.agentID = rospy.get_param("agentID",default=-1)
+        self.agentID = rospy.get_param("agentID", default=-1)
         self._camera_deg = rospy.get_param("initial_pose/camera_deg")
         field_cbf = rospy.get_param("/field_cbf")
         agents_param = rospy.get_param("/agents")
@@ -27,15 +28,16 @@ class Agent:
         psi_param = angle_aware_params["psi"]
 
         psi_generator = FieldGenerator(psi_param)
-        self._psi = psi_generator.generate_phi()
+        self._psi = None  # psi_generator.generate_phi()
         self._psi_grid = psi_generator.generate_grid()
 
         self._agent_base = AgentBase(self.agentID)
-        self._qp = MyQP(field_cbf, collision_distance,angle_aware_params)
-        
-        rospy.Subscriber(input_psi_topic,Float32MultiArray,self.psi_callback)
+        self._qp = MyQP(field_cbf, collision_distance, angle_aware_params)
+
+        rospy.Subscriber(input_psi_topic, Float32MultiArray, self.psi_callback)
         self._agent_base.wait_pose_stamped()
         self._agent_base.publish_camera_control(self._camera_deg)
+
     #############################################################
     # callback
     #############################################################
@@ -56,27 +58,34 @@ class Agent:
         #  generate ux,uy,uz. You can write any code here
         ##########################################
         ## u_nom = [0,0]
-        world_ux = 0#uh_x
-        world_uy = 0#uh_y
+        world_ux = 0  # uh_x
+        world_uy = 0  # uh_y
 
         ## 高度を一定に保つ
-        world_uz = self._kp_z * (self._ref_z-my_position[2])
+        world_uz = self._kp_z * (self._ref_z - my_position[2])
 
         ## 姿勢を一定に保つ
         diff_rad = self._ref_yaw - yaw
         if diff_rad > np.pi:
             diff_rad -= 2 * np.pi
-        elif diff_rad < - np.pi:
+        elif diff_rad < -np.pi:
             diff_rad += 2 * np.pi
         omega_z = self._kp_yaw * diff_rad
         ##########################################
 
         ### x y z field limitation and collision avoidance with CBF
         u_nom = np.array([world_ux, world_uy])
-        u_opt, w =self._qp.solve(u_nom, my_position[:2], neighbor_positions[:, :2], self._psi_grid, self._psi)
+        u_opt, w = self._qp.solve(
+            u_nom, my_position[:2], neighbor_positions[:, :2], self._psi_grid, self._psi
+        )
         world_ux, world_uy = u_opt
         world_ux, world_uy = self.velocity_limitation(world_ux, world_uy)
-        self._agent_base.publish_command_from_world_vel(world_ux, world_uy, world_uz, omega_z)
+        self._agent_base.publish_command_from_world_vel(
+            world_ux, world_uy, world_uz, omega_z
+        )
+        rospy.loginfo(
+            "agent {}, u: {:.3f}, {:.3f}".format(self.agentID, world_ux, world_uy)
+        )
 
     ###################################################################
     ### spin
@@ -85,7 +94,7 @@ class Agent:
         # self._clock=1
         rate = rospy.Rate(self._clock)
         while not rospy.is_shutdown():
-            if self._agent_base.is_main_ok():
+            if self._agent_base.is_main_ok() and self._psi is not None:
                 self.main_control()
             rate.sleep()
 
@@ -96,7 +105,6 @@ class Agent:
         world_ux = np.clip(world_ux, -self._umax, self._umax)
         world_uy = np.clip(world_uy, -self._umax, self._umax)
         return world_ux, world_uy
-
 
 
 if __name__ == "__main__":
