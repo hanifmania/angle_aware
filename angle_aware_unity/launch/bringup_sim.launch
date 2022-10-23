@@ -2,10 +2,12 @@
 <launch>
     <include file="$(find angle_aware_control)/launch/central.launch">
         <arg name="agentNum" value="1"/>
-        <arg name="use_rosbag" value="false"/>
+        <arg name="use_rosbag" value="true"/>
         <arg name="yaml" default="$(find angle_aware_unity)/config/central.yaml"/>
         <arg name="psi_path" default="$(find angle_aware_unity)/data/input/psi.npy"/>
         <arg name="rviz_file" default="$(find angle_aware_unity)/config/sim_true.rviz"/>
+        <arg name="rosbag_output" default="$(find angle_aware_unity)/rosbag/rosbag"/>
+
     </include>
     <include file="$(find angle_aware_control)/launch/agent.launch">
         <arg name="number" value="1"/>
