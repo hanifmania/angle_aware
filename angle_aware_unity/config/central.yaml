@@ -35,4 +35,4 @@ agents:
   kp_z: 1
   ref_z: 2
   kp_yaw: 1
-  ref_yaw: 1 #rad/s
+  ref_yaw: 0 #rad/s

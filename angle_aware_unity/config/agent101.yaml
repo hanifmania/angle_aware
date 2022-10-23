@@ -5,4 +5,4 @@ initial_pose:
   R_deg: 0
   P_deg: 0
   Y_deg: 0
-  camera_deg: -45
+  camera_deg: -90

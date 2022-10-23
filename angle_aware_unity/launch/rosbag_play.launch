@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     <include file="$(find bebop_bag)/launch/rosbag_play.launch">
         <arg name="rosbag_path" value="$(find angle_aware_unity)/rosbag/rosbag.bag"/>
         <arg name="rviz_file" value="$(find angle_aware_unity)/config/sim_true.rviz"/>
