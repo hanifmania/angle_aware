@@ -136,6 +136,7 @@ class PsiGenerator:
     def __init__(self):
         angle_aware_params = rospy.get_param("angle_aware")
         ref_z = rospy.get_param("agents/ref_z")
+        file_path = rospy.get_param("psi_path")
         rospack = rospkg.RosPack()
         pkg_path = rospack.get_path("angle_aware_control")
         data_dir = pkg_path + "/data/input/"
@@ -205,8 +206,7 @@ class PsiGenerator:
         rospy.loginfo("calc time: {}".format(dt.to_sec()))
 
         psi = psi.reshape(psi_shape)
-        save_name = data_dir + "psi"
-        np.save(save_name, psi)
+        np.save(file_path, psi)
         plt.imshow(psi)
         plt.show()
 
