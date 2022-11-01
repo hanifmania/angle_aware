@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 from bebop_hatanaka_base.agent_base import AgentBase
 from angle_aware_control.myqp import MyQP
-from angle_aware_control.field_generator import FieldGenerator
-from angle_aware_control.numpy2multiarray import multiarray2numpy
+from coverage_util.field_generator import FieldGenerator
+from coverage_util.numpy2multiarray import multiarray2numpy
 
 import numpy as np
 import rospy

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from angle_aware_control.coverage_util import CoverageUtil
+from coverage_util.voronoi import CoverageUtil
 
 import numpy as np
 from scipy.stats import norm

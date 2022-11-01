@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from angle_aware_control.field_generator import FieldGenerator
+from coverage_util.field_generator import FieldGenerator
 
 import rospy
 import rospkg

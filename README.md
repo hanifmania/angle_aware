@@ -24,6 +24,7 @@ This program uses https://github.com/htnk-lab/bebop_hatanaka_lab.git
 
 ## Install
 - git clone https://github.com/htnk-lab/bebop_hatanaka_lab.git
+- git clone https://github.com/htnk-lab/persistent_coverage_control.git
 - Follow the README of https://github.com/htnk-lab/bebop_hatanaka_lab.git
 
 # Build
