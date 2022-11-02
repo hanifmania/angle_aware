@@ -41,6 +41,12 @@ roslaunch angle_aware_control bringup_sim.launch
 1. Push X button -> main control start
 1. Push START button -> take off and field reset
 
+## Experiment
+```
+roslaunch angle_aware_control central.launch agentNum:="3"
+roslaunch angle_aware_control agent.launch number:=""
+```
+
 ## Generate Psi
 - Change numpy to jax.numpy in angle_aware_control/src/field_generator.py Line.3
 ```

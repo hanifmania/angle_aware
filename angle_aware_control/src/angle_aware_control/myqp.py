@@ -4,6 +4,7 @@ from bebop_hatanaka_base.qp import QPUtil, CBF2QP, ULimit
 from bebop_hatanaka_base.cbf import FieldCBF, CollisionAvoidanceCBF
 from angle_aware_control.angle_aware_cbf import AngleAwareCBF
 
+import numpy as np
 
 class MyQP:
     def __init__(self, field, collision_distance, angle_aware_params):
@@ -57,6 +58,9 @@ class MyQP:
 
         ### collision avoidance
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)
+        if np.sum(np.array(alpha_hs) < 0):
+            print("collision")
+            print(alpha_hs)
         for dhdp, alpha_h in zip(dhdps, alpha_hs):
             G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
 

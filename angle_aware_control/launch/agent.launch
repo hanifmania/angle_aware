@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="number" default=""/>
-    <arg name="sim" default="true"/>
+    <arg name="sim" default="false"/>
     <arg name="yaml_pkg" default="$(find angle_aware_control)/config"/>
 
     <group ns="bebop10$(arg number)">

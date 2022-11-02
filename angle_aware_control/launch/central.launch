@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="agentNum" default="1"/>
-    <arg name="sim" default="true"/>
+    <arg name="sim" default="false"/>
     <arg name="use_rosbag" default="true"/>
     <arg name="yaml" default="$(find angle_aware_control)/config/central.yaml"/>
     <arg name="psi_path" default="$(find angle_aware_control)/data/input/psi.npy"/>
@@ -25,5 +25,6 @@
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
         <param name="input_field_topic" value="psi"/>
         <param name="field_param_name" value="angle_aware/psi"/>
+        <param name="rviz_z_max" value="0.5"/>
     </node>
 </launch>

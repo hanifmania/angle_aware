@@ -84,9 +84,9 @@ class Agent:
         self._agent_base.publish_command_from_world_vel(
             world_ux, world_uy, world_uz, omega_z
         )
-        rospy.loginfo(
-            "agent {}, u: {:.3f}, {:.3f}".format(self.agentID, world_ux, world_uy)
-        )
+        # rospy.loginfo(
+        #     "agent {}, u: {:.3f}, {:.3f}".format(self.agentID, world_ux, world_uy)
+        # )
 
     ###################################################################
     ### spin
