@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find bebop_aruco)/launch/debug_central_pc.launch">
+        <arg name="agentNum" value="1"/>
+        <arg name="use_rosbag" value="false"/>
+        <arg name="sim" default="true"/>
+    </include>
+    <include file="$(find bebop_aruco)/launch/debug_agent_pc.launch">
+        <arg name="number" value="1"/>
+        <arg name="sim" default="false"/>
+    </include>
+    <!-- <include file="$(find bebop_aruco)/launch/agent.launch">
+        <arg name="number" value="2"/>
+    </include>
+    <include file="$(find bebop_aruco)/launch/agent.launch">
+        <arg name="number" value="3"/>
+    </include> -->
+
+
+</launch>

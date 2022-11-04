@@ -1,0 +1,8 @@
+initial_pose: 
+  x: 1
+  y: 0
+  z: 1
+  R_deg: 0
+  P_deg: 0
+  Y_deg: 60
+  camera_deg: -90

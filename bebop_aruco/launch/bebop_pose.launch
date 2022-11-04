@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- bebopの座標生成 sim:virtual drone, real:vrpn_client -->
+
+    <arg name="number" default="1"/>
+    <arg name="sim" default="true"/>
+    <group if="$(arg sim)">
+        <node pkg="bebop_hatanaka_base" name="virtualdrone" type="virtual_drone.py" output="log"/>
+    </group>
+    <group unless="$(arg sim)">
+        <node pkg="bebop_aruco" type="camera_from_ar.py" name="camera_from_ar" output="screen">
+            <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
+        </node>
+        <node pkg="bebop_aruco" type="camera2drone.py" name="camera2drone" output="screen">
+            <!-- <param name="input_posestamped_topic" value="posestamped"/> -->
+        </node>
+    </group>    
+    <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="posestamped2tf" output="log" respawn="false" respawn_delay="0">
+        <param name="posestamped" value="posestamped"/> 
+        <param name="tfname" value="/bebop10$(arg number)/base_link"/>
+    </node>
+</launch>

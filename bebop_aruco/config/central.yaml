@@ -1,0 +1,8 @@
+pose_collector:
+  clock: 100
+virtual_drone_clock: 100
+agents:
+  agent_manager_clock: 20
+  u_max: 0.3
+  collision_distance: 0.8
+field_cbf: [[-1.25, 1.25], [-1.25, 1.25], [0.3, 3.0]]
