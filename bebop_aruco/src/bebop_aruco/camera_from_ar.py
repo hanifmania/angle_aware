@@ -16,29 +16,35 @@ from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from geometry_msgs.msg import PoseStamped, Pose
 
 import numpy as np
+
 # from bebop_aruco.ar_detect import ARDetect
+
 
 class CameraFromAR:
     def __init__(self):
         # input_img_topic = rospy.get_param("~input_img_topic", "image_raw")
-        input_img_compressed_topic = rospy.get_param("~input_img_compressed_topic", "image_raw/compressed")
+        input_img_compressed_topic = rospy.get_param(
+            "~input_img_compressed_topic", "image_raw/compressed"
+        )
         camera_matrix_param = rospy.get_param("~camera_matrix")
         D_param = rospy.get_param("~distortion_coefficients")
-        pose_stamped_feedback = rospy.get_param("~pose_stamped_feedback", "posestamped")
-        output_pose_topic = rospy.get_param("~output_pose_topic", "fromAR/camera_posestamped")
+        # pose_stamped_feedback = rospy.get_param("~pose_stamped_feedback", "posestamped")
+        output_pose_topic = rospy.get_param(
+            "~output_pose_topic", "fromAR/camera_posestamped"
+        )
         self._frame_id = rospy.get_param("~frame_id", "world")
         ar_params = rospy.get_param("/AR")
-        self._ar_marker_size = ar_params["ar_marker_size"]  #ARマーカー一辺. 黒い外枠含む[m]
-        self._ar_type = ar_params["ar_type"] #AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
-        ar_field_param = ar_params["map"] # IDは連番で、左下のID=0となるよう配置する
+        self._ar_marker_size = ar_params["ar_marker_size"]  # ARマーカー一辺. 黒い外枠含む[m]
+        self._ar_type = ar_params[
+            "ar_type"
+        ]  # AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
+        ar_field_param = ar_params["map"]  # IDは連番で、左下のID=0となるよう配置する
         # self._time_threshold = ar_params["time_threshold"]
         # self._norm_threshold = ar_params["norm_threshold"]
         self._id_offset = ar_params["id_offset"]
-        
-
 
         self._map_generator = FieldGenerator(ar_field_param)
-        self._grid_x, self._grid_y  = self._map_generator.generate_grid(sparse=False)
+        self._grid_x, self._grid_y = self._map_generator.generate_grid(sparse=False)
         field_shape = self._map_generator.get_shape()
         self._max_marker_id = field_shape.prod() - 1 + self._id_offset
         self._cv_bridge = CvBridge()
@@ -54,18 +60,22 @@ class CameraFromAR:
         D = D_param["data"]
         self._camera_matrix = np.array(K).reshape(3, -1)
         self._dist_coeffs = np.array(D)
-        self._ar.set_params(self._ar_marker_size, self._ar_type, self._camera_matrix, self._dist_coeffs)
+        self._ar.set_params(
+            self._ar_marker_size, self._ar_type, self._camera_matrix, self._dist_coeffs
+        )
 
-        
-        self._pub_posestamped = rospy.Publisher(output_pose_topic, PoseStamped, queue_size=1)
+        self._pub_posestamped = rospy.Publisher(
+            output_pose_topic, PoseStamped, queue_size=1
+        )
         # rospy.Subscriber(camera_info_topic, CameraInfo, self.camera_info_callback)
         rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback)
         # rospy.Subscriber(input_img_topic, Image, self.img_callback)
-        rospy.Subscriber(pose_stamped_feedback, PoseStamped, self.pose_stamped_feedback)
-        
+        # rospy.Subscriber(pose_stamped_feedback, PoseStamped, self.pose_stamped_feedback)
+
         # density = ar_field_param["density"]
 
         # self._ar.set_borad(field_shape[0], field_shape[1], density[0])
+
     #############################################################
     # callback
     #############################################################
@@ -74,7 +84,7 @@ class CameraFromAR:
 
         Args:
             img_msg (sensor_msgs.msg.Image): _description_
-        """    
+        """
         # if self._has_camera_info_received is False:
         #     ### camera info がなければearly return
         #     return
@@ -96,7 +106,6 @@ class CameraFromAR:
         ### cv2の座標系からbebopの座標系に変換
         bebop_R = self.change_axis(R)
 
-
         ### 結果のpublish
         posestamped = self.np2posestamped(xyz, bebop_R, img_msg)
         self._pub_posestamped.publish(posestamped)
@@ -106,7 +115,7 @@ class CameraFromAR:
 
     #     Args:
     #         msg (sensor_msgs.msg.CameraInfo): _description_
-    #     """        
+    #     """
     #     # if self._has_camera_info_received:
     #     #     return
     #     self._camera_matrix = np.array(msg.K).reshape(3, -1)
@@ -121,7 +130,7 @@ class CameraFromAR:
     #############################################################
     # functions
     #############################################################
-        
+
     def find_marker(self, img_msg):
         """ARマーカーの検出
 
@@ -130,7 +139,7 @@ class CameraFromAR:
 
         Returns:
             list: 検出されたマーカーIDのlist
-        """        
+        """
         # cv_array = self._cv_bridge.imgmsg_to_cv2(img_msg)
         cv_array = self._cv_bridge.compressed_imgmsg_to_cv2(img_msg)
         self._ar.set_img(cv_array)
@@ -146,7 +155,7 @@ class CameraFromAR:
         Returns:
             ndarray: カメラ位置のlist
             ndarray: カメラ姿勢のlist
-        """    
+        """
         xyzs = []
         Rs = []
         ids = ids.reshape(-1)
@@ -165,7 +174,7 @@ class CameraFromAR:
             xyz = np.array([x, y, z])
             xyzs.append(xyz)
             Rs.append(R)
-            
+
         return np.array(xyzs), np.array(Rs)
 
     def estimate_pose(self, xyzs, Rs):
@@ -178,7 +187,7 @@ class CameraFromAR:
         Returns:
             ndarray: xyzの平均を
             ndarray: 回転行列の平均
-        """        
+        """
         ### xyzはsimpleに平均を取る
         average_xyz = np.mean(xyzs, axis=0)
         ### 角度は定義域があるため単純な平均が出来ない(例：0度と360度の平均が180度になってしまう)
@@ -193,7 +202,7 @@ class CameraFromAR:
         # self._old_R = average_R
 
         return average_xyz, average_R
-    
+
     def average_R(self, Rs):
         """固有値を用いて平均を求める。参考： https://qiita.com/qoopen0815/items/d05e49dd4ce7c1f0c524
 
@@ -202,8 +211,8 @@ class CameraFromAR:
 
         Returns:
             ndarray: 平均回転行列
-        """        
-        ### 
+        """
+        ###
         # rospy.loginfo("quaternion")
         q_row = np.empty((len(Rs), 4))
         for i, R in enumerate(Rs):
@@ -220,7 +229,6 @@ class CameraFromAR:
         R = g[:3, :3]
         return R
 
-
     def change_axis(self, R):
         """cvのカメラ座標をbebop2droneの座標系に変換
 
@@ -229,14 +237,18 @@ class CameraFromAR:
 
         Returns:
             ndarray: bebop2が想定するカメラの回転行列
-        """        
+        """
         # z軸周りに回転
-        z = np.pi/2
-        z_rotate  = np.array([[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0,0,1]])
+        z = np.pi / 2
+        z_rotate = np.array(
+            [[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0, 0, 1]]
+        )
         R2 = R.dot(z_rotate)
         # y軸周りに回転
-        y = -np.pi/2
-        y_rotate = np.array([[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y),0, np.cos(y)]])
+        y = -np.pi / 2
+        y_rotate = np.array(
+            [[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y), 0, np.cos(y)]]
+        )
         bebop_R = R2.dot(y_rotate)
         return bebop_R
 
@@ -250,7 +262,7 @@ class CameraFromAR:
 
         Returns:
             geometry_msgs/PoseStamped: カメラ姿勢
-        """        
+        """
         # quaternion = tf.transformations.quaternion_from_euler(*rpy)
 
         quaternion = ros_utility.R_to_quaternion(R)
@@ -264,14 +276,13 @@ class CameraFromAR:
         posestamped.pose.orientation.y = quaternion[1]
         posestamped.pose.orientation.z = quaternion[2]
         posestamped.pose.orientation.w = quaternion[3]
-        
+
         return posestamped
 
     ####################
 
     # def outlier_filter(self, xyzs, Rs):
     #     """feedbackを用いて外れ値を除去する. 位置が大きく前回とずれていたら外れ値と判断する.
-        
 
     #     Args:
     #         xyzs (ndarray): xyz list
@@ -280,14 +291,14 @@ class CameraFromAR:
     #     Returns:
     #         ndarray: 外れ値を削除したxyz list
     #         ndarray: 外れ値を削除した回転行列 list
-    #     """        
+    #     """
     #     now = rospy.Time.now()
     #     diff = now - self._pose_stamped_feedback.header.stamp
     #     if diff.to_sec() > self._time_threshold:
     #         ### feedbackがかなり前のものなら外れ値検知として使えない
     #         return xyzs, Rs
 
-    #     feedback_xyz = np.array([self._pose_stamped_feedback.pose.position.x, 
+    #     feedback_xyz = np.array([self._pose_stamped_feedback.pose.position.x,
     #                             self._pose_stamped_feedback.pose.position.y,
     #                             self._pose_stamped_feedback.pose.position.z])
 
@@ -297,11 +308,9 @@ class CameraFromAR:
     #     rospy.loginfo(norms)
     #     rospy.loginfo(ok)
     #     removed_xyzs = xyzs[ok]
-    #     removed_Rs = Rs[ok]    
+    #     removed_Rs = Rs[ok]
 
     #     return removed_xyzs, removed_Rs
-
-
 
 
 if __name__ == "__main__":

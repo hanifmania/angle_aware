@@ -9,14 +9,9 @@ import rospkg
 import numpy as np
 from matplotlib import pyplot as plt
 
-# import numpy as jnp
-
-import jax.numpy as jnp
-from jax import jit, device_put, vmap
-import jax
+import numpy as jnp
 
 
-@jit
 def zeta_func(phi_grid, ref_z):
     """zeta
 
@@ -35,28 +30,6 @@ def zeta_func(phi_grid, ref_z):
     return x, y
 
 
-# @jit
-# def extract(x, y, zeta, psi_grid_span, phi):
-#     """_summary_
-
-#     Args:
-#         x (float): psi_x
-#         y (float): psi_y
-#         zeta (ndarray): [x_array, y_array]
-#         psi_grid_span (list): [dx, dy]
-#         phi (ndarray): importance map
-
-#     Returns:
-#         float: compressed importance of (x,y)
-#     """
-#     return jnp.sum(
-#         (jnp.abs(x - zeta[0]) < psi_grid_span[0] * 0.5)
-#         * (jnp.abs(y - zeta[1]) < psi_grid_span[1] * 0.5)
-#         * phi
-#     )
-
-
-@jit
 def extract(x, y, zeta, psi_grid_span, phi, A):
     """_summary_
 
@@ -81,14 +54,12 @@ def extract(x, y, zeta, psi_grid_span, phi, A):
     )
 
 
-@jit
 def project(zeta, psi_grid_span, psi_min):
     x_ids = jnp.round((zeta[0] - psi_min[0]) / psi_grid_span[0])
     y_ids = jnp.round((zeta[1] - psi_min[1]) / psi_grid_span[1])
     return x_ids, y_ids
 
 
-@jit
 def pick(phi, ids, x_id, y_id):
     return jnp.sum((ids[0] == x_id) * (ids[1] == y_id) * phi)
 
@@ -98,57 +69,6 @@ def compress2(phi, ids, psi_shape):
     for x_id in range(psi_shape[0]):
         for y_id in range(psi_shape[1]):
             psi[x_id, y_id] = pick(phi, ids, x_id, y_id)
-    return psi
-
-
-# def compress(phi, zeta, psi, psi_linspace, psi_grid_span, A):
-#     """_summary_
-
-#     Args:
-#         phi (ndarray): _description_
-#         zeta (ndarray): [x_array, y_array]
-#         psi_shape (_type_): _description_
-#         psi_linspace (_type_): _description_
-#         psi_grid_span (_type_): _description_
-#         A (_type_): _description_
-
-#     Returns:
-#         _type_: _description_
-#     """
-
-#     for i, x in enumerate(psi_linspace[0]):
-#         for j, y in enumerate(psi_linspace[1]):
-#             val = extract(x, y, zeta, psi_grid_span, phi) * A
-#             psi = psi.at[i, j].set(val)
-#             # psi_jnp[i, j] = val
-#     return psi
-
-
-@jit
-def compress(psi, psi_grid_x, psi_grid_y, zeta, psi_grid_span, phi, A):
-    """_summary_
-
-    Args:
-        phi (ndarray): _description_
-        zeta (ndarray): [x_array, y_array]
-        psi_shape (_type_): _description_
-        psi_linspace (_type_): _description_
-        psi_grid_span (_type_): _description_
-        A (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    extract_for = lambda i, val: val.at[i].set(
-        extract(psi_grid_x[i], psi_grid_y[i], zeta, psi_grid_span, phi, A)
-    )
-
-    psi = jax.lax.fori_loop(0, psi.shape[0], extract_for, psi)
-    # for i, x in enumerate(psi_linspace[0]):
-    #     for j, y in enumerate(psi_linspace[1]):
-    #         val = extract(x, y, zeta, psi_grid_span, phi) * A
-    #         psi = psi.at[i, j].set(val)
-    # psi_jnp[i, j] = val
     return psi
 
 
@@ -187,21 +107,7 @@ class PsiGenerator:
         rospy.loginfo("phi : {}".format(phi.shape))
         rospy.loginfo("psi : {}".format(psi_shape))
 
-        ### vmapを使うためにvectorにする
-        psi_grid_x_jnp = psi_grid_x.reshape(-1)
-        psi_grid_y_jnp = psi_grid_y.reshape(-1)
-
-        phi_grid_jnp = device_put(phi_grid)
-        ref_z = device_put(ref_z)
-        phi = device_put(phi)
-        psi_grid_span = device_put(psi_grid_span)
-        psi_grid_x_jnp = device_put(psi_grid_x_jnp)
-        psi_grid_y_jnp = device_put(psi_grid_y_jnp)
-        A = device_put(A)
-        psi_min = device_put(psi_min)
-        psi = jnp.zeros(psi_shape[0] * psi_shape[1])
-
-        zeta = zeta_func(phi_grid_jnp, ref_z)
+        zeta = zeta_func(phi_grid, ref_z)
         ids = project(zeta, psi_grid_span, psi_min)
         rospy.loginfo("compress start")
         start = rospy.Time.now()

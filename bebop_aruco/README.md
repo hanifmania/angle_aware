@@ -2,6 +2,9 @@
 AR markerを用いた自己位置推定
 
 # Contents
+- scripts:
+    - ar_map_generator.py : AR marker印刷用pdfを生成
+    - calibration.py : カメラキャリブレーション
 - src
     - ar_detect.py : cv2 lapper
     - camera_from_ar.py : カメラ位置推定

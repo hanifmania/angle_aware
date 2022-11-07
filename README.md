@@ -6,12 +6,10 @@ This program uses https://github.com/htnk-lab/bebop_hatanaka_lab.git
 # Contents
 - angle_aware_control :
     - agent.py :  圧縮した重要度psiを受け取ってangle aware CBFに従いドローンを操作する
-        - angle_aware_cbf.py : Angle Aware CBFのアルゴリズム
-        - myqp.py : collision avoidance 等も踏まえた最終的なQP
-        - coverage_util.py : Voronoi
+    - angle_aware_cbf.py : Angle Aware CBFのアルゴリズム
+    - myqp.py : collision avoidance 等も踏まえた最終的なQP
     - central.py : 圧縮した重要度psiを更新し、publish
-    - field_generator.py : 重要度mapのgrid生成
-    - show_pointcloud2d.py : psiをrvizに描写
+    - psi_generator.py : phi -> psiの圧縮. JAXを利用
 
 # Dependency
 ## Environment
@@ -48,12 +46,9 @@ roslaunch angle_aware_control agent.launch number:=""
 ```
 
 ## Generate Psi
-- Change numpy to jax.numpy in angle_aware_control/src/field_generator.py Line.3
-```
-import numpy as np -> import jax.numpy as np
-```
-- launch
+If you can use JAX, then launch the following file. This is twice faster than generate_psi_no_jax.launch.
 ```
 roslaunch angle_aware_control generate_psi.launch
 ```
+
 

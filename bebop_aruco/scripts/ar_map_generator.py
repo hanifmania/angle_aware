@@ -1,310 +1,80 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import numpy as np
 import cv2
+import os
+from PIL import Image
 import img2pdf
 
-class ARmapGenerator:
-    def __init__(self):
-        # input_img_topic = rospy.get_param("~input_img_topic", "image_raw")
-        dpi = 72
-        marker_mm = 150 
-        ar_type = "DICT_4X4_250" #AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
-        id_start = 0
-        id_end = 2
-        side_buffer_mm = 40
-        str_start_mm = 5
-        str_font_scale = 1
-        str_thickness = 1
-        output_file = "ar_map.pdf"
 
-        dictionary = cv2.aruco.getPredefinedDictionary(ar_type)
+def generate_ar_markers():
+    dpi = 72
+    marker_mm = 150
+    ar_type = (
+        cv2.aruco.DICT_4X4_250
+    )  # AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
+    id_start = 0
+    id_end = 50 + 1
+    side_buffer_mm = 40
+    str_start_mm = 5
+    str_font_scale = 0.5
+    str_thickness = 1
+    pdf_name = "ar_map.pdf"
+    output_file = os.path.dirname(__file__) + "/../data/ar_markers/"
 
-        mm_per_inch = 25.4
-        pixel_per_mm = dpi / 25.4
-        ar_size_pixel = marker_mm * pixel_per_mm
-        side_buffer_pixel = side_buffer_mm * pixel_per_mm
-        str_start_pixel = str_start_mm * pixel_per_mm + ar_size_pixel + side_buffer_pixel
+    inch_per_mm = 1.0 / 25.4 * 1.05  ## [WARN] なぜが1.05倍すると上手く行く
 
-        white = [255, 255, 255]
-        black = [0, 0, 0]
+    dictionary = cv2.aruco.getPredefinedDictionary(ar_type)
+    pixel_per_mm = dpi * inch_per_mm
+    print("error_max_mm: {}".format(1.0 / pixel_per_mm))
+    ar_size_pixel = marker_mm * pixel_per_mm
+    side_buffer_pixel = side_buffer_mm * pixel_per_mm
+    str_buffer_pixel = str_start_mm * pixel_per_mm
+    str_start_pixel = str_buffer_pixel + ar_size_pixel + side_buffer_pixel
+    ar_size_pixel = int(ar_size_pixel)
+    side_buffer_pixel = int(side_buffer_pixel)
+    str_start_pixel = int(str_start_pixel)
+    str_buffer_pixel = int(str_buffer_pixel)
 
-        images = []
-        for id in range(self._id_offset, self._max_marker_id):
-            ar_marker = cv2.aruco.drawMarker(dictionary, id, ar_size_pixel)
-            img_pad = cv2.copyMakeBorder(ar_marker, 0, 0, side_buffer_pixel, side_buffer_pixel, cv2.BORDER_CONSTANT, white)
-            id_str = "ID : {}".format(id)
-            img = cv2.putText(img_pad, id_str, (ar_size_pixel, str_start_pixel), cv2.FONT_HERSHEY_SIMPLEX, str_font_scale, black, str_thickness, cv2.LINE_AA)
-            images.append(img)
-        
-        pdf_bytes = img2pdf.convert(images)
-        with open(output_file, "wb") as f:
-            f.write(pdf_bytes)
+    white = [255, 255, 255]
+    black = [0, 0, 255]
 
+    img_paths = []
+    for id in range(id_start, id_end):
 
-        self._cv_bridge = CvBridge()
-        # self._ar.set_params(marker_mm, self._ar_type,None, None)
+        ar_marker = cv2.aruco.drawMarker(dictionary, id, int(ar_size_pixel))
+        print(ar_marker.shape)
+        # rgb_img = cv2.cvtColor(ar_marker, cv2.COLOR_GRAY2RGB)
+        img_pad = cv2.copyMakeBorder(
+            ar_marker,
+            0,
+            0,
+            int(side_buffer_pixel),
+            int(side_buffer_pixel),
+            cv2.BORDER_CONSTANT,
+            value=white,
+        )
+        id_str = "ID : {:04d}".format(id)
+        img = cv2.putText(
+            img_pad,
+            id_str,
+            (str_start_pixel, ar_size_pixel - str_buffer_pixel),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            str_font_scale,
+            black,
+            str_thickness,
+            cv2.LINE_AA,
+        )
+        output_path = output_file + "/{:04d}.jpg".format(id)
+        PILimage = Image.fromarray(img)
+        ### add dpi information
+        PILimage.save(output_path, dpi=(dpi, dpi))
+        img_paths.append(output_path)
 
-        # self._has_camera_info_received = False
-        self._pose_stamped_feedback = PoseStamped()
-        self._old_xyz = None
-        self._old_quaternion = None
-
-        K = camera_matrix_param["data"]
-        D = D_param["data"]
-        self._camera_matrix = np.array(K).reshape(3, -1)
-        self._dist_coeffs = np.array(D)
-        self._ar.set_params(marker_mm, self._ar_type, self._camera_matrix, self._dist_coeffs)
-
-        
-        self._pub_posestamped = rospy.Publisher(output_pose_topic, PoseStamped, queue_size=1)
-        # rospy.Subscriber(camera_info_topic, CameraInfo, self.camera_info_callback)
-        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback)
-        # rospy.Subscriber(input_img_topic, Image, self.img_callback)
-        rospy.Subscriber(pose_stamped_feedback, PoseStamped, self.pose_stamped_feedback)
-        
-        # density = ar_field_param["density"]
-
-        # self._ar.set_borad(field_shape[0], field_shape[1], density[0])
-    #############################################################
-    # callback
-    #############################################################
-    def img_callback(self, img_msg):
-        """image_rawからカメラ位置を推定する
-
-        Args:
-            img_msg (sensor_msgs.msg.Image): _description_
-        """    
-        # if self._has_camera_info_received is False:
-        #     ### camera info がなければearly return
-        #     return
-        ids = self.find_marker(img_msg)
-        # rospy.loginfo("AR marker")
-        # rospy.loginfo(ids)
-        if ids is None or min(ids) > self._max_marker_id:
-            ### AR markerが見つからなければearly return
-            return
-
-        ### 画像から読み取った camera位置の候補
-        xyzs, Rs = self.sampling_pose(ids)
-        ### 外れ値の除去
-        # filterd_xyzs, filtered_Rs =  self.outlier_filter(xyzs, Rs)
-        # if len(filterd_xyzs) == 0:
-        #     return
-        ### camera位置の推定
-        xyz, R = self.estimate_pose(xyzs, Rs)
-        ### cv2の座標系からbebopの座標系に変換
-        bebop_R = self.change_axis(R)
-
-
-        ### 結果のpublish
-        posestamped = self.np2posestamped(xyz, bebop_R, img_msg)
-        self._pub_posestamped.publish(posestamped)
-
-    # def camera_info_callback(self, msg):
-    #     """camera行列等の取得. main_function実行前に実施する必要がある
-
-    #     Args:
-    #         msg (sensor_msgs.msg.CameraInfo): _description_
-    #     """        
-    #     # if self._has_camera_info_received:
-    #     #     return
-    #     self._camera_matrix = np.array(msg.K).reshape(3, -1)
-    #     self._dist_coeffs = np.array(msg.D)
-    #     self._ar.set_params(marker_mm, self._ar_type, self._camera_matrix, self._dist_coeffs)
-
-    #     self._has_camera_info_received =True
-
-    def pose_stamped_feedback(self, msg):
-        self._pose_stamped_feedback = msg
-
-    #############################################################
-    # functions
-    #############################################################
-        
-    def find_marker(self, img_msg):
-        """ARマーカーの検出
-
-        Args:
-            img_msg (sensor_msgs/CompressedImage): 入力画像
-
-        Returns:
-            list: 検出されたマーカーIDのlist
-        """        
-        # cv_array = self._cv_bridge.imgmsg_to_cv2(img_msg)
-        cv_array = self._cv_bridge.compressed_imgmsg_to_cv2(img_msg)
-        self._ar.set_img(cv_array)
-        within_eyesight_marker_ids = self._ar.find_marker()
-        return within_eyesight_marker_ids
-
-    def sampling_pose(self, ids):
-        """画像からカメラ姿勢の検出
-
-        Args:
-            ids (list): 検出されたマーカーのid list
-
-        Returns:
-            ndarray: カメラ位置のlist
-            ndarray: カメラ姿勢のlist
-        """    
-        xyzs = []
-        Rs = []
-        ids = ids.reshape(-1)
-        for id in ids:
-            ### 用意していないMarkerをご検知したらskip
-            if id > self._max_marker_id:
-                continue
-            ### ARマーカーを原点としたカメラの位置を取得
-            xyz_from_ar, R = self._ar.get_camera_pose(id)
-
-            ### AR mapを用いて、world座標系に変換
-            map_index = self._map_generator.sequence2index(id - self._id_offset)
-            x = xyz_from_ar[0] + self._grid_x[map_index[0], map_index[1]]
-            y = xyz_from_ar[1] + self._grid_y[map_index[0], map_index[1]]
-            z = xyz_from_ar[2]
-            xyz = np.array([x, y, z])
-            xyzs.append(xyz)
-            Rs.append(R)
-            
-        return np.array(xyzs), np.array(Rs)
-
-    def estimate_pose(self, xyzs, Rs):
-        """samplingした結果から代表点を生成
-
-        Args:
-            xyzs (ndarray): xyzのlist
-            Rs (ndarray): 回転行列のlist
-
-        Returns:
-            ndarray: xyzの平均を
-            ndarray: 回転行列の平均
-        """        
-        ### xyzはsimpleに平均を取る
-        average_xyz = np.mean(xyzs, axis=0)
-        ### 角度は定義域があるため単純な平均が出来ない(例：0度と360度の平均が180度になってしまう)
-        ### [TODO] quaternionを使って平均を取る
-        average_R = self.average_R(Rs)
-
-        ### low pass filter
-        # if self._old_xyz is not None:
-        #     average_xyz = np.mean([average_xyz, self._old_xyz],axis=0)
-        #     average_R = self.average_R([self._old_R, average_R])
-        # self._old_xyz = average_xyz
-        # self._old_R = average_R
-
-        return average_xyz, average_R
-    
-    def average_R(self, Rs):
-        """固有値を用いて平均を求める。参考： https://qiita.com/qoopen0815/items/d05e49dd4ce7c1f0c524
-
-        Args:
-            Rs (list): 回転行列のlist
-
-        Returns:
-            ndarray: 平均回転行列
-        """        
-        ### 
-        # rospy.loginfo("quaternion")
-        q_row = np.empty((len(Rs), 4))
-        for i, R in enumerate(Rs):
-            quaternion = ros_utility.R_to_quaternion(R)
-            q_row[i] = quaternion
-            # rospy.loginfo(quaternion)
-        M = q_row.T.dot(q_row)
-        values, vectors = np.linalg.eig(M)
-        max_eigen_index = np.argmax(values)
-        # rospy.loginfo("average")
-        average_quaternion = vectors[:, max_eigen_index].reshape(-1)
-        # rospy.loginfo(average_quaternion)
-        g = tf.transformations.quaternion_matrix(average_quaternion)
-        R = g[:3, :3]
-        return R
-
-
-    def change_axis(self, R):
-        """cvのカメラ座標をbebop2droneの座標系に変換
-
-        Args:
-            R (ndarray): cvが想定するカメラの回転行列
-
-        Returns:
-            ndarray: bebop2が想定するカメラの回転行列
-        """        
-        # z軸周りに回転
-        z = np.pi/2
-        z_rotate  = np.array([[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0,0,1]])
-        R2 = R.dot(z_rotate)
-        # y軸周りに回転
-        y = -np.pi/2
-        y_rotate = np.array([[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y),0, np.cos(y)]])
-        bebop_R = R2.dot(y_rotate)
-        return bebop_R
-
-    def np2posestamped(self, xyz, R, img_msg):
-        """ndarrayからposestampedを生成
-
-        Args:
-            xyz (ndarray): カメラ位置
-            R (ndarray): 回転行列
-            img_msg (sensor_msgs/Image): header取得用
-
-        Returns:
-            geometry_msgs/PoseStamped: カメラ姿勢
-        """        
-        # quaternion = tf.transformations.quaternion_from_euler(*rpy)
-
-        quaternion = ros_utility.R_to_quaternion(R)
-        posestamped = PoseStamped()
-        posestamped.header = img_msg.header
-        posestamped.header.frame_id = self._frame_id
-        posestamped.pose.position.x = xyz[0]
-        posestamped.pose.position.y = xyz[1]
-        posestamped.pose.position.z = xyz[2]
-        posestamped.pose.orientation.x = quaternion[0]
-        posestamped.pose.orientation.y = quaternion[1]
-        posestamped.pose.orientation.z = quaternion[2]
-        posestamped.pose.orientation.w = quaternion[3]
-        
-        return posestamped
-
-    ####################
-
-    # def outlier_filter(self, xyzs, Rs):
-    #     """feedbackを用いて外れ値を除去する. 位置が大きく前回とずれていたら外れ値と判断する.
-        
-
-    #     Args:
-    #         xyzs (ndarray): xyz list
-    #         Rs (ndarray): 回転行列 list
-
-    #     Returns:
-    #         ndarray: 外れ値を削除したxyz list
-    #         ndarray: 外れ値を削除した回転行列 list
-    #     """        
-    #     now = rospy.Time.now()
-    #     diff = now - self._pose_stamped_feedback.header.stamp
-    #     if diff.to_sec() > self._time_threshold:
-    #         ### feedbackがかなり前のものなら外れ値検知として使えない
-    #         return xyzs, Rs
-
-    #     feedback_xyz = np.array([self._pose_stamped_feedback.pose.position.x, 
-    #                             self._pose_stamped_feedback.pose.position.y,
-    #                             self._pose_stamped_feedback.pose.position.z])
-
-    #     diff_xyzs = xyzs - feedback_xyz
-    #     norms =  np.linalg.norm(diff_xyzs, axis=1)
-    #     ok = norms < self._norm_threshold
-    #     rospy.loginfo(norms)
-    #     rospy.loginfo(ok)
-    #     removed_xyzs = xyzs[ok]
-    #     removed_Rs = Rs[ok]    
-
-    #     return removed_xyzs, removed_Rs
-
-
+    pdf_bytes = img2pdf.convert(img_paths)
+    pdf_path = output_file + pdf_name
+    with open(pdf_path, "wb") as f:
+        f.write(pdf_bytes)
 
 
 if __name__ == "__main__":
-    rospy.init_node("camera_from_ar", anonymous=True)
-    node = ARmapGenerator()
-    rospy.spin()
+    generate_ar_markers()

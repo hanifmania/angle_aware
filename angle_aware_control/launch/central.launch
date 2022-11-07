@@ -1,30 +1,32 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="agentNum" default="1"/>
-    <arg name="sim" default="false"/>
-    <arg name="use_rosbag" default="true"/>
-    <arg name="yaml" default="$(find angle_aware_control)/config/central.yaml"/>
-    <arg name="psi_path" default="$(find angle_aware_control)/data/input/psi.npy"/>
-    <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz"/>
-    <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag"/>
-    
-    <param name="psi_path" value="$(arg psi_path)"/>
-    <rosparam file="$(arg yaml)" command="load" ns="" />
+    <arg name="agentNum" default="1" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+    <arg name="psi_path" default="$(find angle_aware_control)/data/input/psi.npy" />
+    <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz" />
+    <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag" />
 
-    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log"/>
-    
+    <param name="psi_path" value="$(arg psi_path)" />
+    <rosparam file="$(find angle_aware_control)/config/central.yaml" command="load" ns="" />
+
+    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
+
     <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
-        <arg name="agentNum" value="$(arg agentNum)"/>
-        <arg name="sim" value="$(arg sim)"/>
-        <arg name="rviz_file" value="$(arg rviz_file)"/>
-        <arg name="use_rosbag" value="$(arg use_rosbag)"/>
-        <arg name="rosbag_output" default="$(arg rosbag_output)"/>
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg sim)" />
+        <arg name="rviz_file" value="$(arg rviz_file)" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rosbag_output" default="$(arg rosbag_output)" />
     </include>
 
-    <node pkg="angle_aware_control" type="central.py" name="central" output="screen"/>
+    <node pkg="angle_aware_control" type="central.py" name="central" output="screen" />
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
-        <param name="input_field_topic" value="psi"/>
-        <param name="field_param_name" value="angle_aware/psi"/>
-        <param name="rviz_z_max" value="0.5"/>
+        <param name="input_field_topic" value="psi" />
+        <param name="field_param_name" value="angle_aware/psi" />
+        <param name="rviz_z_max" value="0.5" />
     </node>
+
+    <rosparam file="$(find angle_aware_control)/config/AR.yaml" command="load" ns="" />
+
 </launch>

@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="number" default="1"/>
-    <arg name="sim" default="true"/>
-    
+    <arg name="number" default="1" />
+    <arg name="sim" default="true" />
+
     <param name="agentID" value="$(arg number)" />
-    
+
     <!-- bebopの座標生成 sim:virtual drone, real:aruco -->
     <include file="$(find bebop_aruco)/launch/bebop_pose.launch">
-        <arg name="number" value="$(arg number)"/>
-        <arg name="sim" value="$(arg sim)"/>
-    </include> 
-    
+        <arg name="number" value="$(arg number)" />
+        <arg name="sim" value="$(arg sim)" />
+    </include>
+
     <!-- camera のpose, tfを発行 -->
-    <include file="$(find bebop_aruco)/launch/camera_pose.launch">
-        <arg name="number" value="$(arg number)"/>
-    </include> 
+    <include file="$(find bebop_hatanaka_base)/launch/camera_pose.launch">
+        <arg name="number" value="$(arg number)" />
+    </include>
 
     <group unless="$(arg sim)">
         <include file="$(find bebop_hatanaka_base)/launch/bebop_driver.launch" />
