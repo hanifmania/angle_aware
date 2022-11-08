@@ -24,7 +24,7 @@ This program uses https://github.com/htnk-lab/bebop_hatanaka_lab.git
 ```
 git clone https://github.com/htnk-lab/bebop_hatanaka_lab.git
 git clone https://github.com/htnk-lab/persistent_coverage_control.git
-sudo apt install ros-kinetic-usb-cam
+git clone https://github.com/htnk-lab/sky_camera
 ```
 - Follow the README of https://github.com/htnk-lab/bebop_hatanaka_lab.git
 
