@@ -14,6 +14,13 @@ class ARDetect():
             ar_dictionary = self.str2ar_type(ar_dictionary)
         return aruco.getPredefinedDictionary(ar_dictionary)
 
+    def set_dictionary(self, ar_dictionary):
+        """_summary_
+
+        Args:
+            ar_dictionary (str or int): ARの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
+        """        
+        self._dictionary = self.get_dictionary(ar_dictionary)
 
     def set_params(self, marker_length, ar_dictionary, _camera_matrix, distort_coeff):
         """_summary_
@@ -24,8 +31,8 @@ class ARDetect():
             _camera_matrix (ndarray): カメラ行列
             distort_coeff (ndarray): 歪行列
         """        
+        self.set_dictionary(ar_dictionary)
         self._marker_length = marker_length
-        self._dictionary = self.get_dictionary(ar_dictionary)
         self._camera_matrix = _camera_matrix
         self._distort_coeff = distort_coeff
 
