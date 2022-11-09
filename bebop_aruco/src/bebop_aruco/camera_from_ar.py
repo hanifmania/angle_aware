@@ -195,11 +195,11 @@ class CameraFromAR:
         average_R = self.average_R(Rs)
 
         ### low pass filter
-        # if self._old_xyz is not None:
-        #     average_xyz = np.mean([average_xyz, self._old_xyz],axis=0)
-        #     average_R = self.average_R([self._old_R, average_R])
-        # self._old_xyz = average_xyz
-        # self._old_R = average_R
+        if self._old_xyz is not None:
+            average_xyz = np.mean([average_xyz, self._old_xyz],axis=0)
+            average_R = self.average_R([self._old_R, average_R])
+        self._old_xyz = average_xyz
+        self._old_R = average_R
 
         return average_xyz, average_R
 

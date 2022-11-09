@@ -1,9 +1,9 @@
 AR:
-  ar_marker_size: 0.22 #ARマーカー一辺. 黒い外枠含む[m]
-  ar_type: DICT_4X4_250 #AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
+  ar_marker_size: 0.15 #ARマーカー一辺. 黒い外枠含む[m]
+  ar_type: DICT_4X4_50 #AR markerの種類(https://docs.opencv.org/3.4/d9/d6a/group__aruco.html#gac84398a9ed9dd01306592dd616c2c975)
   map: # IDは連番で、左下のID=0となるよう配置する. gridは最大1000点まで
-    range: [[0, 0.65],[0, 0.325]]
-    density: [0.325, 0.325]
+    range: [[-1.5, 0],[-1.5, -0.5]]
+    density: [0.3, 0.2]
   time_threshold: 0.3 # 信用するfeedback値との誤差
   norm_threshold: 0.05 #feedbackとの誤差のL2 norm の最大値
-  id_offset: 156
+  id_offset: 0

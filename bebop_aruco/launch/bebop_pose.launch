@@ -19,7 +19,7 @@
         </node>
         <node pkg="bebop_aruco" type="show_detected_ar.py" name="show_detected_ar" output="screen">
             <param name="input_img_compressed_topic" value="image_raw/compressed" />
-            <param name="output_topic" value="detected_AR/compressed" />
+            <param name="output_topic" value="fromAR/image_raw" />
         </node>
     </group>
     <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="posestamped2tf" output="log" respawn="false" respawn_delay="0">

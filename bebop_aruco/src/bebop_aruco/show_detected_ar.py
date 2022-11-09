@@ -6,7 +6,7 @@ from bebop_aruco.ar_detect import ARDetect
 
 import rospy
 from cv_bridge import CvBridge
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CompressedImage, Image
 
 
 class ShowDetectedAR:
@@ -17,7 +17,7 @@ class ShowDetectedAR:
         )
         # pose_stamped_feedback = rospy.get_param("~pose_stamped_feedback", "posestamped")
         output_topic = rospy.get_param(
-            "~output_topic", "detected_AR/compressed"
+            "~output_topic"
         )
         ar_params = rospy.get_param("/AR")
         self._ar_type = ar_params[
@@ -26,8 +26,11 @@ class ShowDetectedAR:
         self._cv_bridge = CvBridge()
         self._ar = ARDetect()
         self._ar.set_dictionary( self._ar_type)
+        # self._pub_img = rospy.Publisher(
+        #     output_topic, CompressedImage, queue_size=1
+        # )
         self._pub_img = rospy.Publisher(
-            output_topic, CompressedImage, queue_size=1
+            output_topic, Image, queue_size=1
         )
         rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback)
     #############################################################
@@ -43,7 +46,7 @@ class ShowDetectedAR:
         self._ar.set_img(cv_array)
         self._ar.find_marker()
         img = self._ar.get_ar_detect_img()
-        compressed_img = self._cv_bridge.cv2_to_compressed_imgmsg(img)
+        compressed_img = self._cv_bridge.cv2_to_imgmsg(img)
         self._pub_img.publish(compressed_img)
 
 if __name__ == "__main__":
