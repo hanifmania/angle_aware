@@ -46,16 +46,16 @@ class AngleAwareCBF:
         performance_function = self.performance_function(pos, psi_grid)
         I_i_map = region * self._delta_decrease * performance_function * psi
         b_i = np.sum(I_i_map) - self._gamma
-        # print(b_i)
+        print(b_i)
         temp = -1.0 / (self._sigma**2) * I_i_map
         db_dp_x = np.sum(temp * (pos[0] - psi_grid[0]))
         db_dp_y = np.sum(temp * (pos[1] - psi_grid[1]))
 
-        db_dpsi = np.sum(-self._delta_decrease * performance_function * I_i_map)
+        dbdt = np.sum(-self._delta_decrease * performance_function * I_i_map)
         alpha_bi = self._alpha * b_i
 
         dhdp = np.array([[db_dp_x], [db_dp_y]])
-        alpha_h = db_dpsi + alpha_bi
+        alpha_h = dbdt + alpha_bi
 
         ### debug用. 数値解と解析解が一致するか確認
         # J_new = np.sum(psi)

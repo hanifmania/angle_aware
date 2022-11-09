@@ -52,9 +52,9 @@ class MyQP:
 
         ###### generate G, h from CBF
         ### field CBF
-        field_dhdp, field_h = self._field_cbf.cbf(pos)
-        # print(field_dhdp.shape, field_h.shape)
-        G_np, h_np = self._cbf2qp.cbf2Gh(field_dhdp, field_h, G_np, h_np, slack_id=None)
+        # field_dhdp, field_h = self._field_cbf.cbf(pos)
+        # # print(field_dhdp.shape, field_h.shape)
+        # G_np, h_np = self._cbf2qp.cbf2Gh(field_dhdp, field_h, G_np, h_np, slack_id=None)
 
         ### collision avoidance
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)

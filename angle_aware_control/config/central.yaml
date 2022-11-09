@@ -1,12 +1,12 @@
 pose_collector:
   clock: 100
 virtual_drone_clock: 100
-field_cbf: [[-1.2, 1.2], [-1.2, 1.2]] # 衝突回避で避けられるよう、psiよりも一回り大きくとる
+field_cbf: [[-1.4, 1.4], [-1.4, 1.4]] # 衝突回避で避けられるよう、psiよりも一回り大きくとる
 central_clock: 20
 angle_aware:
   sigma: 0.1
   delta_decrease: 5
-  gamma: 0.02
+  gamma: 0.07
   alpha: 1
   # phi:
   #   range: [[-1, 1],[0, 1], [0,0.5], [0.78, 1.5707963], [-3.14159265358979,3.14159265358979]] #xyzvh, v:[pi/4, pi/2]
