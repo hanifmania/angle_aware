@@ -93,12 +93,12 @@ def pick(phi, ids, x_id, y_id):
     return jnp.sum((ids[0] == x_id) * (ids[1] == y_id) * phi)
 
 
-def compress2(phi, ids, psi_shape):
+def compress2(phi, ids, psi_shape, A):
     psi = np.zeros(psi_shape)
     for x_id in range(psi_shape[0]):
         for y_id in range(psi_shape[1]):
             psi[x_id, y_id] = pick(phi, ids, x_id, y_id)
-    return psi
+    return psi * A
 
 
 # def compress(phi, zeta, psi, psi_linspace, psi_grid_span, A):
@@ -175,6 +175,7 @@ class PsiGenerator:
         phi_grid = phi_generator.generate_grid(sparse=True)
         phi = phi_generator.generate_phi()
         A = phi_generator.get_point_dense()
+        rospy.loginfo("A : {}".format(A))
         # psi_linspace = psi_generator.get_linspace()
         psi_grid_x, psi_grid_y = psi_generator.generate_grid(sparse=False)
         psi_shape = psi_generator.get_shape()
@@ -207,7 +208,7 @@ class PsiGenerator:
         start = rospy.Time.now()
         ###################################### compression
 
-        psi = compress2(phi, ids, psi_shape)
+        psi = compress2(phi, ids, psi_shape, A)
         #### vmapを使うにはメモリが足りない
         # v_extract = vmap(
         #     extract,

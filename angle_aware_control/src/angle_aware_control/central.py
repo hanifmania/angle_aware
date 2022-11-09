@@ -13,20 +13,26 @@ from scipy.stats import norm
 class Central:
     def __init__(self):
         self._clock = rospy.get_param("central_clock")
-        ns = "angle_aware/"
         angle_aware_params = rospy.get_param("angle_aware")
         self._sigma = angle_aware_params["sigma"]
         self._delta_decrease = angle_aware_params["delta_decrease"]
         psi_param = angle_aware_params["psi"]
         output_psi_topic = rospy.get_param("~output_psi_topic", default="psi")
         output_J_topic = rospy.get_param("~output_J_topic", default="J")
-        psi_path = rospy.get_param("psi_path")
+        psi_path = rospy.get_param("~psi_path")
         self._psi_path = psi_path
 
         self._dt = 1.0 / self._clock
         psi_generator = FieldGenerator(psi_param)
         self._psi_grid = psi_generator.generate_grid()
         self._psi_generator = psi_generator
+
+
+        phi_param = angle_aware_params["phi"]
+        phi_generator = FieldGenerator(phi_param)
+        phi_shape = phi_generator.get_shape()
+        rospy.loginfo(phi_shape)
+
         self._pub_psi = rospy.Publisher(
             output_psi_topic, Float32MultiArray, queue_size=1
         )
@@ -75,10 +81,10 @@ class Central:
     def spin(self):
         rate = rospy.Rate(self._clock)
         while not rospy.is_shutdown():
+            self.publish_psi()
+            self.publish_J()
             if self._agent_base.is_main_ok():
                 self.update_psi()
-                self.publish_psi()
-                self.publish_J()
             rate.sleep()
 
 

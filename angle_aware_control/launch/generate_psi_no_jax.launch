@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-
-    <arg name="psi_path" default="$(find angle_aware_control)/data/input/psi.npy" />
-    <param name="psi_path" value="$(arg psi_path)" />
-    <rosparam file="$(find angle_aware_control)/config/central.yaml" command="load" ns="" />
-    <node pkg="angle_aware_control" type="psi_generator_no_jax.py" name="psi_generator" output="screen" required="true" />
-</launch>
