@@ -19,9 +19,12 @@ def generate_ar_markers():
     str_font_scale = 0.5
     str_thickness = 1
     pdf_name = "ar_map.pdf"
-    output_file = os.path.dirname(__file__) + "/../data/ar_markers/"
-
-    inch_per_mm = 1.0 / 25.4 * 1.05  ## [WARN] なぜが1.05倍すると上手く行く
+    # [TODO] 上手くpathを取得できていない
+    output_file = os.path.dirname(__file__) + "/../data/ar_markers/{}mm/".format(
+        marker_mm
+    )
+    print(output_file)
+    inch_per_mm = 1.0 / 25.4
 
     dictionary = cv2.aruco.getPredefinedDictionary(ar_type)
     pixel_per_mm = dpi * inch_per_mm
@@ -64,7 +67,7 @@ def generate_ar_markers():
             str_thickness,
             cv2.LINE_AA,
         )
-        output_path = output_file + "/{:04d}.jpg".format(id)
+        output_path = output_file + "{:04d}.jpg".format(id)
         PILimage = Image.fromarray(img)
         ### add dpi information
         PILimage.save(output_path, dpi=(dpi, dpi))
