@@ -3,7 +3,6 @@
     <arg name="agentNum" default="1" />
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
-    <arg name="psi_path" default="$(find angle_aware_control)/data/input/psi.npy" />
     <arg name="central_yaml" default="$(find angle_aware_control)/config/central.yaml" />
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
@@ -18,9 +17,7 @@
         <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
     </include>
 
-    <node pkg="angle_aware_control" type="central.py" name="central" output="screen">
-        <param name="psi_path" value="$(arg psi_path)" />
-     </node>
+    <node pkg="angle_aware_control" type="central.py" name="central" output="screen" />
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
         <param name="input_field_topic" value="psi" />
         <param name="field_param_name" value="angle_aware/psi" />

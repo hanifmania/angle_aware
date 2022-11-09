@@ -5,6 +5,7 @@ from bebop_hatanaka_base.agent_base import AgentBase
 from coverage_util.field_generator import FieldGenerator
 from coverage_util.numpy2multiarray import numpy2multiarray
 import rospy
+import rospkg
 from std_msgs.msg import Float32MultiArray, Bool, Float32
 import numpy as np
 from scipy.stats import norm
@@ -19,14 +20,16 @@ class Central:
         psi_param = angle_aware_params["psi"]
         output_psi_topic = rospy.get_param("~output_psi_topic", default="psi")
         output_J_topic = rospy.get_param("~output_J_topic", default="J")
-        psi_path = rospy.get_param("~psi_path")
-        self._psi_path = psi_path
+
+        rospack = rospkg.RosPack()
+        pkg_path = rospack.get_path("angle_aware_control")
+        data_dir = pkg_path + "/data/input/"
+        self._psi_path = data_dir + psi_param["npy_name"]
 
         self._dt = 1.0 / self._clock
         psi_generator = FieldGenerator(psi_param)
         self._psi_grid = psi_generator.generate_grid()
         self._psi_generator = psi_generator
-
 
         phi_param = angle_aware_params["phi"]
         phi_generator = FieldGenerator(phi_param)
