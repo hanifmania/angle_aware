@@ -7,7 +7,7 @@ angle_aware:
   sigma: 0.1
   delta_decrease: 5
   gamma: 0.07
-  alpha: 1
+  alpha: 5
   # phi:
   #   range: [[-1, 1],[0, 1], [0,0.5], [0.78, 1.5707963], [-3.14159265358979,3.14159265358979]] #xyzvh, v:[pi/4, pi/2]
   #   density: [1, 1,0.5, 0.78, 6.28]  #v: pi/12, h: pi/12

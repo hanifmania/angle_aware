@@ -52,9 +52,9 @@ class MyQP:
 
         ###### generate G, h from CBF
         ### field CBF
-        # field_dhdp, field_h = self._field_cbf.cbf(pos)
-        # # print(field_dhdp.shape, field_h.shape)
-        # G_np, h_np = self._cbf2qp.cbf2Gh(field_dhdp, field_h, G_np, h_np, slack_id=None)
+        field_dhdp, field_h = self._field_cbf.cbf(pos)
+        # print(field_dhdp, field_h)
+        G_np, h_np = self._cbf2qp.cbf2Gh(field_dhdp, field_h, G_np, h_np, slack_id=None)
 
         ### collision avoidance
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)
@@ -70,10 +70,9 @@ class MyQP:
         ############ angle aware
         dhdp, alpha_h = self._angle_aware_cbf.cbf(pos, neighbor_pos, psi_grid, psi)
         G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=0)
-
         ### solve
         u_optimal, solver_status = self._qp_solver.solve(P_np, Q_np, G_np, h_np)
+        # print(G_np, h_np,u_optimal)
 
         # print(dhdp, alpha_h, u_optimal)
         return u_optimal[: self._u_dim], u_optimal[self._u_dim :]
-        return None, None
