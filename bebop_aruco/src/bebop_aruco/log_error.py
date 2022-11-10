@@ -15,7 +15,6 @@ class LogError:
         self._log_path = rospy.get_param("~log_path")
 
         self._vrpn = PoseStamped()
-        self._start_t = rospy.Time.now()
         self._log = []
         rospy.Subscriber(input_ar_topic, PoseStamped, self.ar_callback)
         rospy.Subscriber(input_vrpn_topic, PoseStamped, self.vrpn_callback)
@@ -28,6 +27,8 @@ class LogError:
         ar_xyz = self.pose_to_xyz(msg.pose)
         vrpn_xyz = self.pose_to_xyz(self._vrpn.pose)
         norm = np.linalg.norm([ar_xyz - vrpn_xyz])
+        if len(self._log) == 0:
+           self._start_t = msg.header.stamp 
         t = msg.header.stamp - self._start_t
         t_sec = t.to_sec()
         data = np.hstack([t_sec, norm, ar_xyz, vrpn_xyz])
