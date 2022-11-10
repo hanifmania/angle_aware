@@ -24,7 +24,7 @@ class MyQP:
         self._u_dim = 2
         self._slack_dim = 1
         costs = [1, 1, 1.0e6]  ### [ux, uy, angle_aware_slack]
-        alpha_default = 1
+        alpha_default = 5
         self._cbf2qp.set_dim(self._u_dim, self._slack_dim, costs)
         self._field_cbf.set_params(field, alpha_default)
         self._collision_avoidance_cbf.set_params(collision_distance, alpha_default)
@@ -60,9 +60,18 @@ class MyQP:
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)
         if np.sum(np.array(alpha_hs) < 0):
             print("collision")
-            print(alpha_hs)
+            # for pj in neighbor_pos:
+            #     print(np.linalg.norm([pos[0]-pj[0], pos[1]-pj[1]]))
+            print("dhdps", dhdps)
+            print("alpha_hs", alpha_hs)
         for dhdp, alpha_h in zip(dhdps, alpha_hs):
             G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
+        # dhdp, alpha_h = self._collision_avoidance_cbf.nearest_cbf(pos, neighbor_pos)
+        # if alpha_h < 0:
+        #     print("collision")
+        # print(dhdp, alpha_h)
+        
+        # G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
 
         ### ulimit
         # G_np, h_np = self._ulimit_qp.Gh(G_np, h_np)

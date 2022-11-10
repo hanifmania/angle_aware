@@ -62,23 +62,63 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        base_link:
+          Value: false
+        bebop101:
+          Value: true
         bebop101/base_link:
-          Value: true
+          Value: false
         bebop101/camera_optical:
+          Value: false
+        bebop102:
           Value: true
+        bebop102/base_link:
+          Value: false
+        bebop102/camera_optical:
+          Value: false
+        bebop103:
+          Value: true
+        bebop103/base_link:
+          Value: false
+        bebop103/camera_optical:
+          Value: false
+        camera_base_link:
+          Value: false
+        camera_optical:
+          Value: false
+        camera_pan_link:
+          Value: false
+        camera_tilt_link:
+          Value: false
+        odom:
+          Value: false
         world:
-          Value: true
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: false
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
         world:
+          bebop101:
+            {}
           bebop101/base_link:
             {}
           bebop101/camera_optical:
+            {}
+          bebop102:
+            {}
+          bebop102/base_link:
+            {}
+          bebop102/camera_optical:
+            {}
+          bebop103:
+            {}
+          bebop103/base_link:
+            {}
+          bebop103/camera_optical:
             {}
       Update Interval: 0
       Value: true

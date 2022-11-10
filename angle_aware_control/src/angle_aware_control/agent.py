@@ -84,9 +84,9 @@ class Agent:
         self._agent_base.publish_command_from_world_vel(
             world_ux, world_uy, world_uz, omega_z
         )
-        vel = np.sqrt(np.linalg.norm([world_ux, world_uy]))
+        vel = np.linalg.norm([world_ux, world_uy])
         rospy.loginfo(
-            "agent {}, |u|: {:.3f}".format(self.agentID,vel)
+            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f})".format(self.agentID,vel, world_ux, world_uy)
         )
 
     ###################################################################
@@ -104,6 +104,12 @@ class Agent:
     ### functions
     ###################################################################
     def velocity_limitation(self, world_ux, world_uy):
+        vec = np.array([world_ux, world_uy])
+        vel_norm = np.linalg.norm(vec)
+        if vel_norm > self._umax:
+            vec = vec / vel_norm * self._umax
+        return vec
+
         world_ux = np.clip(world_ux, -self._umax, self._umax)
         world_uy = np.clip(world_uy, -self._umax, self._umax)
         return world_ux, world_uy
