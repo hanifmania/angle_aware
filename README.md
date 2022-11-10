@@ -54,4 +54,14 @@ If you can use JAX, then launch the following file. This is twice faster than ge
 roslaunch angle_aware_control generate_psi.launch
 ```
 
+## Make a file
+Preparing
+- Monitor
+- Usb camera
+- Smart phone
+1. Launch (see [Experiment])
+1. Make the rviz fullscreen
+1. Launch the SimpleScreenRecorder and select the rviz window
+1. Start recording
+1. Run
 

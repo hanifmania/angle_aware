@@ -11,7 +11,6 @@ Panels:
         - /TF1/Frames1
         - /RobotModel1
         - /RobotModel2
-        - /RobotModel2/Links1/base_link1
         - /RobotModel3
         - /Image1
         - /PointCloud21
@@ -45,7 +44,7 @@ Visualization Manager:
       Cell Size: 0.5
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.0299999993
         Value: Lines
@@ -58,30 +57,28 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
         base_link:
-          Value: true
-        bebop101:
-          Value: true
-        bebop101/vrpn/base_link:
-          Value: true
-        bebop102:
-          Value: true
+          Value: false
+        bebop101/base_link:
+          Value: false
+        bebop101/camera_optical:
+          Value: false
         camera_base_link:
-          Value: true
+          Value: false
         camera_optical:
-          Value: true
+          Value: false
         camera_pan_link:
-          Value: true
+          Value: false
         camera_tilt_link:
-          Value: true
+          Value: false
         odom:
-          Value: true
+          Value: false
         world:
           Value: true
       Marker Scale: 1
@@ -91,11 +88,9 @@ Visualization Manager:
       Show Names: false
       Tree:
         world:
-          bebop101:
+          bebop101/base_link:
             {}
-          bebop101/vrpn/base_link:
-            {}
-          bebop102:
+          bebop101/camera_optical:
             {}
       Update Interval: 0
       Value: true
@@ -173,44 +168,34 @@ Visualization Manager:
     - Alpha: 0.300000012
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: bebop101/vrpn
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: bebop103
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Class: rviz/Image
       Enabled: true
@@ -294,10 +279,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.569797099
+      Pitch: 0.58979708
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.69853354
+      Yaw: 4.71853495
     Saved: ~
 Window Geometry:
   Displays:
