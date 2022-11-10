@@ -21,9 +21,10 @@ class Central:
         output_psi_topic = rospy.get_param("~output_psi_topic", default="psi")
         output_J_topic = rospy.get_param("~output_J_topic", default="J")
 
-        rospack = rospkg.RosPack()
-        pkg_path = rospack.get_path("angle_aware_control")
-        data_dir = pkg_path + "/data/input/"
+        # rospack = rospkg.RosPack()
+        # pkg_path = rospack.get_path("angle_aware_control")
+        # data_dir = pkg_path + "/data/input/"
+        data_dir = rospy.get_param("~npy_data_dir")
         self._psi_path = data_dir + psi_param["npy_name"]
 
         self._dt = 1.0 / self._clock

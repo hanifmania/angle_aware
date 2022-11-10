@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="agentNum" default="1" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+    <include file="$(find angle_aware_control)/launch/central_base.launch">
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg sim)" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rviz_file" value="$(find angle_aware_aruco)/config/aruco.rviz"/>
+        <arg name="central_yaml" value="$(find angle_aware_aruco)/config/central.yaml"/>
+        <arg name="npy_data_dir" value="$(find angle_aware_aruco)/data/input/"/>
+        <arg name="rosbag_output" value="$(find angle_aware_aruco)/rosbag/rosbag.bag" />
+
+    </include>
+    <rosparam file="$(find angle_aware_aruco)/config/AR.yaml" command="load" ns="" />
+
+    
+</launch>
