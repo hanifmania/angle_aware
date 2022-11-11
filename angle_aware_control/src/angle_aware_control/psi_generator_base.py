@@ -39,10 +39,10 @@ class PsiGeneratorBase:
         plt.show()
 
     def load_param(self):
-        rospack = rospkg.RosPack()
-        pkg_path = rospack.get_path("angle_aware_control")
-        data_dir = pkg_path + "/data/input/"
-
+        # rospack = rospkg.RosPack()
+        # pkg_path = rospack.get_path("angle_aware_control")
+        # data_dir = pkg_path + "/data/input/"
+        data_dir = rospy.get_param("~npy_data_dir")
         angle_aware_params = rospy.get_param("angle_aware")
         ref_z = rospy.get_param("agents/ref_z")
         psi_param = angle_aware_params["psi"]

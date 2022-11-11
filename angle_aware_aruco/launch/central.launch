@@ -11,9 +11,7 @@
         <arg name="central_yaml" value="$(find angle_aware_aruco)/config/central.yaml"/>
         <arg name="npy_data_dir" value="$(find angle_aware_aruco)/data/input/"/>
         <arg name="rosbag_output" value="$(find angle_aware_aruco)/rosbag/rosbag.bag" />
-
+        <arg name="log_path" default="$(find angle_aware_aruco)/data/rosbag/log.csv" />
     </include>
-    <rosparam file="$(find angle_aware_aruco)/config/AR.yaml" command="load" ns="" />
-
-    
+    <rosparam file="$(find angle_aware_aruco)/config/AR.yaml" command="load" ns="" />    
 </launch>

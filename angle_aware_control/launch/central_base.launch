@@ -7,6 +7,7 @@
     <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz"/>
     <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/"/>
     <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
+    <arg name="log_path" default="$(find angle_aware_control)/data/log/log.csv" />
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
 
@@ -30,5 +31,12 @@
     </node>
 
     <rosparam file="$(find angle_aware_control)/config/AR.yaml" command="load" ns="" />
+
+    <node pkg="angle_aware_control" type="log.py" name="log" output="log">
+        <param name="log_path" value="$(arg log_path)"/>
+    </node> 
+
+
+
 
 </launch>

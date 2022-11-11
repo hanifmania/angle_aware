@@ -14,6 +14,7 @@ Panels:
         - /RobotModel3
         - /Image1
         - /PointCloud21
+        - /PieChart1
       Splitter Ratio: 0.461095095
     Tree Height: 298
   - Class: rviz/Selection
@@ -34,7 +35,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Image
+    SyncSource: PointCloud2
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -65,33 +66,19 @@ Visualization Manager:
         All Enabled: false
         base_link:
           Value: false
-        bebop101/base_link:
-          Value: false
-        bebop101/camera_optical:
-          Value: false
         camera_base_link:
           Value: false
         camera_optical:
           Value: false
-        camera_pan_link:
-          Value: false
         camera_tilt_link:
           Value: false
-        odom:
-          Value: false
-        world:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: false
       Show Axes: true
       Show Names: false
       Tree:
-        world:
-          bebop101/base_link:
-            {}
-          bebop101/camera_optical:
-            {}
+        {}
       Update Interval: 0
       Value: true
     - Alpha: 0.300000012
@@ -239,6 +226,26 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: jsk_rviz_plugin/PieChart
+      Enabled: false
+      Name: PieChart
+      Topic: /J
+      Value: false
+      auto color change: true
+      background color: 0; 0; 0
+      backround alpha: 0
+      clockwise rotate direction: false
+      foreground alpha: 0.699999988
+      foreground alpha 2: 0.400000006
+      foreground color: 25; 255; 240
+      left: 128
+      max color: 255; 0; 0
+      max value: 100
+      min value: 0
+      show caption: true
+      size: 128
+      text size: 14
+      top: 128
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
@@ -271,18 +278,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.202848867
-        Y: 0.180125549
-        Z: -0.100315042
+        X: 0.0356123038
+        Y: 0.114098385
+        Z: -0.172806412
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.58979708
+      Pitch: 0.749797821
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.71853495
+      Yaw: 4.7035346
     Saved: ~
 Window Geometry:
   Displays:
