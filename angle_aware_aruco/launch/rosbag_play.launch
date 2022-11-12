@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="rate" default="1"/>
+    <include file="$(find bebop_bag)/launch/rosbag_play.launch">
+        <arg name="rosbag_path" default="$(find angle_aware_aruco)/rosbag/rosbag.bag"/>
+        <arg name="rviz_file" default="$(find angle_aware_aruco)/config/aruco.rviz"/>
+        <arg name="rate" value="$(arg rate)"/>
+    </include>
+</launch>
