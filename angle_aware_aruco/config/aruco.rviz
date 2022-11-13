@@ -15,6 +15,7 @@ Panels:
         - /Image1
         - /PointCloud21
         - /PieChart1
+        - /Plotter2D1
       Splitter Ratio: 0.461095095
     Tree Height: 298
   - Class: rviz/Selection
@@ -64,21 +65,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_link:
-          Value: false
-        camera_base_link:
-          Value: false
-        camera_optical:
-          Value: false
-        camera_tilt_link:
-          Value: false
+        bebop101/base_link:
+          Value: true
+        bebop101/camera_optical:
+          Value: true
+        world:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: false
       Show Axes: true
       Show Names: false
       Tree:
-        {}
+        world:
+          bebop101/base_link:
+            {}
+          bebop101/camera_optical:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 0.300000012
@@ -246,6 +249,31 @@ Visualization Manager:
       size: 128
       text size: 14
       top: 128
+    - Buffer length: 100
+      Class: jsk_rviz_plugin/Plotter2D
+      Enabled: true
+      Name: Plotter2D
+      Show Value: true
+      Topic: /J
+      Value: true
+      auto color change: false
+      auto scale: true
+      background color: 0; 0; 0
+      backround alpha: 0
+      border: true
+      foreground alpha: 0.699999988
+      foreground color: 25; 255; 240
+      height: 128
+      left: 128
+      linewidth: 1
+      max color: 255; 0; 0
+      max value: 1
+      min value: -1
+      show caption: true
+      text size: 12
+      top: 128
+      update interval: 0.0399999991
+      width: 128
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
@@ -271,7 +299,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.60092592
+      Distance: 9.37123775
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
