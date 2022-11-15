@@ -20,7 +20,7 @@ class Agent:
         input_psi_topic = rospy.get_param("~input_psi_topic", default="/psi")
         self._clock = agents_param["agent_manager_clock"]
         self._umax = agents_param["u_max"]
-        collision_distance = agents_param["collision_distance"]
+        collision_distance = rospy.get_param("collision_distance")
         self._kp_z = agents_param["kp_z"]
         self._ref_z = agents_param["ref_z"]
         self._kp_yaw = agents_param["kp_yaw"]
@@ -86,7 +86,9 @@ class Agent:
         )
         vel = np.linalg.norm([world_ux, world_uy])
         rospy.loginfo(
-            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f})".format(self.agentID,vel, world_ux, world_uy)
+            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f})".format(
+                self.agentID, vel, world_ux, world_uy
+            )
         )
 
     ###################################################################

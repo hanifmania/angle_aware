@@ -4,8 +4,8 @@
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
     <arg name="central_yaml" default="$(find angle_aware_control)/config/central.yaml" />
-    <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz"/>
-    <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/"/>
+    <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz" />
+    <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/" />
     <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
     <arg name="log_path" default="$(find angle_aware_control)/rosbag/log.csv" />
 
@@ -22,8 +22,8 @@
     </include>
 
     <node pkg="angle_aware_control" type="central.py" name="central" output="screen">
-    <param name="npy_data_dir" value="$(arg npy_data_dir)"/>
-     </node>
+        <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+    </node>
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
         <param name="input_field_topic" value="psi" />
         <param name="field_param_name" value="angle_aware/psi" />
@@ -33,10 +33,8 @@
     <rosparam file="$(find angle_aware_control)/config/AR.yaml" command="load" ns="" />
 
     <node pkg="angle_aware_control" type="log.py" name="log" output="log">
-        <param name="log_path" value="$(arg log_path)"/>
-    </node> 
+        <param name="log_path" value="$(arg log_path)" />
+    </node>
 
-
-    <include file="$(find angle_aware_control)/launch/show_theta.launch" />
 
 </launch>
