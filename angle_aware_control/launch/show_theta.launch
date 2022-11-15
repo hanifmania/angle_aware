@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="angle_aware_control" type="central_theta_field.py" name="central_theta_field" output="log" respawn="false" respawn_delay="0">
+        <param name="output_phi_topic" value="phi"/>
+    </node> 
+    <node pkg="angle_aware_control" type="show_theta_field.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
+        <param name="input_field_topic" value="phi" />
+        <param name="field_param_name" value="angle_aware/rviz_phi" />
+        <param name="output_topic" value="phi_point_cloud"/>
+    </node>
+    <!-- <node pkg="angle_aware_control" type="show_theta_markers.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
+        <param name="input_field_topic" value="phi" />
+        <param name="field_param_name" value="angle_aware/rviz_phi" />
+        <param name="output_topic" value="phi_markers"/>
+    </node> -->
+</launch>

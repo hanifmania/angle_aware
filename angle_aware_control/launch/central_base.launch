@@ -7,7 +7,7 @@
     <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz"/>
     <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/"/>
     <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
-    <arg name="log_path" default="$(find angle_aware_control)/data/log/log.csv" />
+    <arg name="log_path" default="$(find angle_aware_control)/rosbag/log.csv" />
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
 
@@ -37,6 +37,6 @@
     </node> 
 
 
-
+    <include file="$(find angle_aware_control)/launch/show_theta.launch" />
 
 </launch>

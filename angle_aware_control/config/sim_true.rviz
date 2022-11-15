@@ -14,6 +14,8 @@ Panels:
         - /RobotModel3
         - /PointCloud21
         - /Plotter2D1
+        - /PointCloud22
+        - /MarkerArray1
       Splitter Ratio: 0.461095095
     Tree Height: 747
   - Class: rviz/Selection
@@ -44,7 +46,7 @@ Visualization Manager:
       Cell Size: 0.5
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.0299999993
         Value: Lines
@@ -57,7 +59,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
@@ -66,14 +68,6 @@ Visualization Manager:
         bebop101/base_link:
           Value: true
         bebop101/camera_optical:
-          Value: false
-        bebop102/base_link:
-          Value: true
-        bebop102/camera_optical:
-          Value: false
-        bebop103/base_link:
-          Value: true
-        bebop103/camera_optical:
           Value: false
         world:
           Value: false
@@ -87,14 +81,6 @@ Visualization Manager:
           bebop101/base_link:
             {}
           bebop101/camera_optical:
-            {}
-          bebop102/base_link:
-            {}
-          bebop102/camera_optical:
-            {}
-          bebop103/base_link:
-            {}
-          bebop103/camera_optical:
             {}
       Update Interval: 0
       Value: true
@@ -236,7 +222,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00999999978
       Style: Points
-      Topic: /psi_pointcloud
+      Topic: /phi_point_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -266,6 +252,44 @@ Visualization Manager:
       top: 128
       update interval: 0.0399999991
       width: 128
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGBF32
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.00999999978
+      Style: Points
+      Topic: /psi_pointcloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /phi_markers
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
@@ -291,25 +315,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.37933159
+      Distance: 3.689713
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.237684801
-        Y: 0.415381521
-        Z: 0.316600621
+        X: -0.0227507502
+        Y: 0.388310522
+        Z: 0.266773939
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.634799004
+      Pitch: 0.484799504
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.76854515
+      Yaw: 4.70854712
     Saved: ~
 Window Geometry:
   Displays:
