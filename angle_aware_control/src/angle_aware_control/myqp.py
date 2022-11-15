@@ -6,6 +6,7 @@ from angle_aware_control.angle_aware_cbf import AngleAwareCBF
 
 import numpy as np
 
+
 class MyQP:
     def __init__(self, field, collision_distance, angle_aware_params):
         """_summary_
@@ -37,17 +38,7 @@ class MyQP:
         alpha = angle_aware_params["alpha"]
         self._angle_aware_cbf.set_params(sigma, delta_decrease, gamma, alpha)
 
-    def solve(self, u_nom, pos, neighbor_pos, psi_grid, psi):
-        """
-        Args:
-            u_nom (ndarray):
-            pos (ndarray):
-            neighbor_pos (ndarray):
-
-        Returns:
-            ndarray: u_optimal
-            ndarray: slack
-        """
+    def calc_PQGh(self, u_nom, pos, neighbor_pos, psi_grid, psi):
         P_np, Q_np, G_np, h_np = self._cbf2qp.initPQGH(u_nom)
 
         ###### generate G, h from CBF
@@ -70,7 +61,7 @@ class MyQP:
         # if alpha_h < 0:
         #     print("collision")
         # print(dhdp, alpha_h)
-        
+
         # G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
 
         ### ulimit
@@ -79,9 +70,9 @@ class MyQP:
         ############ angle aware
         dhdp, alpha_h = self._angle_aware_cbf.cbf(pos, neighbor_pos, psi_grid, psi)
         G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=0)
-        ### solve
-        u_optimal, solver_status = self._qp_solver.solve(P_np, Q_np, G_np, h_np)
-        # print(G_np, h_np,u_optimal)
+        return P_np, Q_np, G_np, h_np
 
-        # print(dhdp, alpha_h, u_optimal)
+    def solve(self, u_nom, pos, neighbor_pos, psi_grid, psi):
+        P_np, Q_np, G_np, h_np = self.calc_PQGh(u_nom, pos, neighbor_pos, psi_grid, psi)
+        u_optimal, solver_status = self._qp_solver.solve(P_np, Q_np, G_np, h_np)
         return u_optimal[: self._u_dim], u_optimal[self._u_dim :]
