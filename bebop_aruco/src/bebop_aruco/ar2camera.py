@@ -17,6 +17,8 @@ from geometry_msgs.msg import PoseStamped, Pose
 
 import numpy as np
 
+import pandas as pd
+
 # from bebop_aruco.ar_detect import ARDetect
 
 
@@ -75,6 +77,10 @@ class CameraFromAR:
         # density = ar_field_param["density"]
 
         # self._ar.set_borad(field_shape[0], field_shape[1], density[0])
+        self._log_path = rospy.get_param("~log_path")
+        self._log = []
+        self._start_t = None
+        rospy.on_shutdown(self.savelog)
 
     #############################################################
     # callback
@@ -194,9 +200,10 @@ class CameraFromAR:
         ### [TODO] quaternionを使って平均を取る
         average_R = self.average_R(Rs)
 
+        self.add_log(xyzs, self._old_xyz)
         ### low pass filter
         if self._old_xyz is not None:
-            average_xyz = np.mean([average_xyz, self._old_xyz],axis=0)
+            average_xyz = np.mean([average_xyz, self._old_xyz], axis=0)
             average_R = self.average_R([self._old_R, average_R])
         self._old_xyz = average_xyz
         self._old_R = average_R
@@ -280,6 +287,52 @@ class CameraFromAR:
         return posestamped
 
     ####################
+    def add_log(self, xyzs, old_xyz):
+        if old_xyz is None:
+            return
+        t = self.calc_t()
+        for xyz in xyzs:
+            temp = [
+                t,
+                xyz[0],
+                xyz[1],
+                xyz[2],
+                old_xyz[0],
+                old_xyz[1],
+                old_xyz[2],
+            ]
+            self._log.append(temp)
+
+    def calc_t(self):
+        """最初のlog移項の時刻をカウントする.
+
+        Returns:
+            float: time [s]
+        """
+        t = rospy.Time.now()
+        if self._start_t is None:
+            self._start_t = t
+        t2 = t - self._start_t
+        return t2.to_sec()
+
+    def savelog(self, other_str=""):
+        # now = datetime.datetime.now()
+        # filename = self._log_path+"/" + now.strftime("%Y%m%d_%H%M%S") + other_str + ".csv"
+        filename = self._log_path
+        df = pd.DataFrame(
+            data=self._log,
+            columns=[
+                "time [s]",
+                "x",
+                "y",
+                "z",
+                "old_x",
+                "old_y",
+                "old_z",
+            ],
+        )
+        df.to_csv(filename, index=False)
+        rospy.loginfo("save " + filename)
 
     # def outlier_filter(self, xyzs, Rs):
     #     """feedbackを用いて外れ値を除去する. 位置が大きく前回とずれていたら外れ値と判断する.
@@ -314,6 +367,6 @@ class CameraFromAR:
 
 
 if __name__ == "__main__":
-    rospy.init_node("camera_from_ar", anonymous=True)
+    rospy.init_node("ar2camera", anonymous=True)
     node = CameraFromAR()
     rospy.spin()

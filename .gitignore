@@ -133,5 +133,4 @@ dmypy.json
 *.bag
 .catkin_tools/
 *.pyc
-bebop_aruco/data/log/*.csv
-angle_aware_control/rosbag/*.csv
+*/rosbag/*.csv

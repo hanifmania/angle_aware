@@ -8,10 +8,11 @@
         <node pkg="bebop_hatanaka_base" name="virtualdrone" type="virtual_drone.py" output="log" />
     </group>
     <group unless="$(arg sim)">
-        <node pkg="bebop_aruco" type="camera_from_ar.py" name="camera_from_ar" output="screen">
+        <node pkg="bebop_aruco" type="ar2camera.py" name="ar2camera" output="screen">
             <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
             <param name="input_img_compressed_topic" value="image_raw/compressed" />
             <param name="output_pose_topic" value="fromAR/camera_posestamped" />
+            <param name="log_path" value="$(find bebop_aruco)/rosbag/log.csv" />
         </node>
         <node pkg="bebop_aruco" type="camera2drone.py" name="camera2drone" output="screen">
             <param name="input_posestamped_topic" value="fromAR/camera_posestamped" />

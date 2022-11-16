@@ -7,7 +7,7 @@ AR markerを用いた自己位置推定
     - calibration.py : カメラキャリブレーション
 - src
     - ar_detect.py : cv2 lapper
-    - camera_from_ar.py : カメラ位置推定
+    - ar2camera.py : カメラ位置推定
     - camera2drone.py : カメラ位置からdrone位置への変換
 # Dependency
 ## Environment
