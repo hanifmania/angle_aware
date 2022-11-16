@@ -30,8 +30,6 @@
         <param name="rviz_z_max" value="0.5" />
     </node>
 
-    <rosparam file="$(find angle_aware_control)/config/AR.yaml" command="load" ns="" />
-
     <node pkg="angle_aware_control" type="log.py" name="log" output="log">
         <param name="log_path" value="$(arg log_path)" />
     </node>

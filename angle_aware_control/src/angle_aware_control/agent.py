@@ -11,7 +11,7 @@ from std_msgs.msg import Float32MultiArray
 
 
 class Agent:
-    def __init__(self):
+    def __init__(self, myqp):
         self.agentID = rospy.get_param("agentID", default=-1)
         self._camera_deg = rospy.get_param("initial_pose/camera_deg")
         field_cbf = rospy.get_param("/field_cbf")
@@ -32,7 +32,7 @@ class Agent:
         self._psi_grid = psi_generator.generate_grid()
 
         self._agent_base = AgentBase(self.agentID)
-        self._qp = MyQP(field_cbf, collision_distance, angle_aware_params)
+        self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
 
         rospy.Subscriber(input_psi_topic, Float32MultiArray, self.psi_callback)
         self._agent_base.wait_pose_stamped()
@@ -119,5 +119,5 @@ class Agent:
 
 if __name__ == "__main__":
     rospy.init_node("agent", anonymous=True)
-    agent = Agent()
+    agent = Agent(MyQP)
     agent.spin()
