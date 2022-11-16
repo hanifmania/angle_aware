@@ -3,7 +3,7 @@
 from angle_aware_control.myqp import MyQP
 
 
-class AvoidObjectQP:
+class QPAvoidTree:
     def __init__(self, field, collision_distance, angle_aware_params, avoid_objects):
         self._myqp = MyQP(field, collision_distance, angle_aware_params)
         self._avoid_objects = avoid_objects

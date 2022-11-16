@@ -11,7 +11,7 @@ import numpy as np
 from scipy.stats import norm
 
 
-class Central:
+class Central(object):
     def __init__(self):
         self._clock = rospy.get_param("central_clock")
         angle_aware_params = rospy.get_param("angle_aware")
