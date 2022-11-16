@@ -18,8 +18,8 @@
 
     <group unless="$(arg sim)">
         <include file="$(find bebop_hatanaka_base)/launch/bebop_driver.launch" />
+        <node pkg="bebop_hatanaka_base" name="battery_republisher" type="battery_republisher.py" output="log" />
     </group>
-
 
 
 </launch>

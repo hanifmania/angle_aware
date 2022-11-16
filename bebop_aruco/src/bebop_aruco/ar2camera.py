@@ -44,6 +44,8 @@ class CameraFromAR:
         # self._time_threshold = ar_params["time_threshold"]
         # self._norm_threshold = ar_params["norm_threshold"]
         self._id_offset = ar_params["id_offset"]
+        self._outer_velocity = ar_params["outer_velocity"]
+        self._stop_skip_t = ar_params["stop_skip_t"]
 
         self._map_generator = FieldGenerator(ar_field_param)
         self._grid_x, self._grid_y = self._map_generator.generate_grid(sparse=False)
@@ -57,6 +59,8 @@ class CameraFromAR:
         self._pose_stamped_feedback = PoseStamped()
         self._old_xyz = None
         self._old_quaternion = None
+        self._old_t = None
+        self._last_skip_t = rospy.Time.now()
 
         K = camera_matrix_param["data"]
         D = D_param["data"]
@@ -77,10 +81,11 @@ class CameraFromAR:
         # density = ar_field_param["density"]
 
         # self._ar.set_borad(field_shape[0], field_shape[1], density[0])
-        self._log_path = rospy.get_param("~log_path")
+        self._log_path = rospy.get_param("~log_path", default="")
         self._log = []
         self._start_t = None
-        rospy.on_shutdown(self.savelog)
+
+        # rospy.on_shutdown(self.savelog)
 
     #############################################################
     # callback
@@ -108,7 +113,12 @@ class CameraFromAR:
         # if len(filterd_xyzs) == 0:
         #     return
         ### camera位置の推定
-        xyz, R = self.estimate_pose(xyzs, Rs)
+
+        filtered_xyzs, filtered_Rs = self.outer_filter(xyzs, Rs)
+        if len(filtered_xyzs) == 0:
+            rospy.loginfo("skip all")
+            return
+        xyz, R = self.estimate_pose(filtered_xyzs, filtered_Rs)
         ### cv2の座標系からbebopの座標系に変換
         bebop_R = self.change_axis(R)
 
@@ -194,13 +204,13 @@ class CameraFromAR:
             ndarray: xyzの平均を
             ndarray: 回転行列の平均
         """
+
         ### xyzはsimpleに平均を取る
         average_xyz = np.mean(xyzs, axis=0)
         ### 角度は定義域があるため単純な平均が出来ない(例：0度と360度の平均が180度になってしまう)
         ### [TODO] quaternionを使って平均を取る
         average_R = self.average_R(Rs)
 
-        self.add_log(xyzs, self._old_xyz)
         ### low pass filter
         if self._old_xyz is not None:
             average_xyz = np.mean([average_xyz, self._old_xyz], axis=0)
@@ -235,6 +245,36 @@ class CameraFromAR:
         g = tf.transformations.quaternion_matrix(average_quaternion)
         R = g[:3, :3]
         return R
+
+    def outer_filter(self, xyzs, Rs):
+        now = rospy.Time.now()
+        if self._old_t is None:
+            self._old_t = now
+            return xyzs, Rs
+
+        dt = now - self._old_t
+        self._old_t = now
+
+        safe_index = []
+        for i, xyz in enumerate(xyzs):
+            vel = np.linalg.norm(xyz - self._old_xyz) / dt.to_sec()
+            if vel < self._outer_velocity:
+                safe_index.append(i)
+            else:
+                rospy.loginfo("outlier : {}".format(vel))
+        filtered_xyzs, filtered_Rs = xyzs[safe_index], Rs[safe_index]
+
+        if len(filtered_xyzs) == 0:
+            ### dataが全部外れ値だった場合、それが長時間起こると現在地が更新されず危険。
+            skip_t = now - self._last_skip_t
+            if skip_t.to_sec() > self._stop_skip_t:
+                ### 一定時間以上更新しなければ外れ値除去を一度やめる
+                filtered_xyzs, filtered_Rs = xyzs, Rs
+                self._last_skip_t = now
+        else:
+            ### skipしなれけば、last skip timeを更新
+            self._last_skip_t = now
+        return filtered_xyzs, filtered_Rs
 
     def change_axis(self, R):
         """cvのカメラ座標をbebop2droneの座標系に変換

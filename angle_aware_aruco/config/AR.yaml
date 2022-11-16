@@ -7,3 +7,5 @@ AR:
   time_threshold: 0.3 # 信用するfeedback値との誤差
   norm_threshold: 0.05 #feedbackとの誤差のL2 norm の最大値
   id_offset: 0
+  outer_velocity : 5 #外れ値と思われる速度変化
+  stop_skip_t : 0.1 #最大で外れ値除去により現在地が更新されない時間[s]
