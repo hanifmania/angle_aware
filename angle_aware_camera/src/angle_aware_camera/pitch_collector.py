@@ -11,9 +11,8 @@ import numpy as np
 
 
 class Pitch:
-    def __init__(self, agentName):
-        input_topic = rospy.get_param("~input_topic")
-        topic_name = agentName + input_topic
+    def __init__(self, topic_name):
+
         rospy.Subscriber(topic_name, Twist, self.callback)
         self._msg = Twist()
 
@@ -33,11 +32,13 @@ class Pitch:
 
 class PitchCollector:
     def __init__(self):
-        self._lock = rospy.get_param("~clock")
+        self._clock = rospy.get_param("~clock")
         self._agent_num = rospy.get_param("agentNum")
+        input_topic = rospy.get_param("~input_topic")
         output_topic = rospy.get_param("~output_topic")
         self._pitch_holders = [
-            Pitch("bebop10{}/".format(i + 1)) for i in range(self._agent_num)
+            Pitch("bebop10{}/{}".format(i + 1, input_topic))
+            for i in range(self._agent_num)
         ]
 
         self._pub = rospy.Publisher(output_topic, Float32MultiArray, queue_size=1)
@@ -47,12 +48,12 @@ class PitchCollector:
     #############################################################
 
     def publish(self):
-        pitches = np.zeros(self._gent_num)
+        pitches = np.zeros(self._agent_num)
         for i, pitch_holder in enumerate(self._pitch_holders):
             val = pitch_holder.get_pitch()
             pitches[i] = val
 
-        msg = numpy2multiarray(pitches)
+        msg = numpy2multiarray(Float32MultiArray, pitches)
         self._pub.publish(msg)
 
     #############################################################
@@ -69,4 +70,4 @@ class PitchCollector:
 if __name__ == "__main__":
     rospy.init_node("PitchCollector", anonymous=True)
     node = PitchCollector()
-    rospy.spin()
+    node.spin()

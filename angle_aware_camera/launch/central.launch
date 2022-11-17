@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="agentNum" default="1" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+    <arg name="central_yaml" default="$(find angle_aware_camera)/config/central.yaml" />
+    <arg name="rviz_file" default="$(find angle_aware_camera)/config/sim_$(arg sim).rviz" />
+    <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/" />
+    <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
+    <arg name="log_path" default="$(find angle_aware_control)/rosbag/log.csv" />
+
+    <rosparam file="$(arg central_yaml)" command="load" ns="" />
+
+    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
+
+    <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg sim)" />
+        <arg name="rviz_file" value="$(arg rviz_file)" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rosbag_output" value="$(arg rosbag_output)" />
+    </include>
+
+    <node pkg="angle_aware_camera" type="central.py" name="central" output="screen">
+        <!-- <param name="npy_data_dir" value="$(arg npy_data_dir)" /> -->
+    </node>
+    <!-- <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
+        <param name="input_field_topic" value="psi" />
+        <param name="field_param_name" value="angle_aware/psi" />
+        <param name="rviz_z_max" value="0.5" />
+    </node> -->
+
+    <!-- <node pkg="angle_aware_control" type="log.py" name="log" output="log">
+        <param name="log_path" value="$(arg log_path)" />
+    </node> -->
+
+
+    <node pkg="angle_aware_camera" type="pitch_collector.py" name="pitch_collector">
+        <param name="clock" value="100" />
+        <param name="input_topic" value="camera_control" />
+        <param name="output_topic" value="allCamera" />
+    </node>
+
+    <node pkg="angle_aware_control" type="show_theta_field.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
+        <param name="input_field_topic" value="phi" />
+        <param name="field_param_name" value="angle_aware/phi" />
+        <param name="output_topic" value="phi_point_cloud" />
+    </node>
+
+</launch>

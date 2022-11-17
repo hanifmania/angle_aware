@@ -14,6 +14,9 @@ from angle_aware_camera.jax_func import (
 import rospy
 from std_msgs.msg import Float32MultiArray, Bool, Float32
 
+from jax import device_put
+import jax.numpy as np
+
 
 class Central:
     def __init__(self):
@@ -30,7 +33,8 @@ class Central:
         self._phi_generator = FieldGenerator(phi_param)
 
         phi_grid = self._phi_generator.generate_grid()
-        self._zeta_grid = zeta4d(phi_grid, ref_z)
+        rospy.loginfo(phi_grid)
+        zeta = zeta4d(phi_grid, ref_z)
 
         self._dt = 1.0 / self._clock
         self._pub_phi = rospy.Publisher(
@@ -42,14 +46,14 @@ class Central:
         rospy.Subscriber("takeoffstatus", Bool, self.take_off_callback)
         self._agent_base = AgentBase()
 
-        input_pitch_topic = rospy.get_param("~input_pitch_topic")
-        rospy.Subscriber(input_pitch_topic, Float32MultiArray, self.pitch_callback)
+        self._zeta = device_put(zeta)
+        self._sigma = device_put(self._sigma)
+        self._delta_decrease = device_put(self._delta_decrease)
+        self._dt = device_put(self._dt)
 
     #############################################################
     # callback
     #############################################################
-    def pitch_callback(self, msg):
-        self._pitches = msg.data.reshape(-1)
 
     def take_off_callback(self, msg):
         ### phiのreset
@@ -63,25 +67,32 @@ class Central:
         self._pub_phi.publish(phi_multiarray)
 
     def publish_J(self):
-        J = calc_J(self._phi)
+        J = calc_J(self._phi) * self._phi_generator.get_point_dense()
         self._pub_J.publish(J)
 
     def update_phi(self):
         all_positions = self._agent_base.get_all_positions()
         yaws = self._agent_base.get_all_yaw()
+        cameras = self._agent_base.get_all_camera()
+
+        all_positions = device_put(all_positions)
+        cameras = device_put(cameras)
+        yaws = device_put(yaws)
+
         self._phi = calc_phi(
             all_positions,
-            self._pitches,
+            np.deg2rad(cameras),
             yaws,
-            self._zeta_grid,
+            self._zeta,
             self._sigma,
             self._phi,
             self._delta_decrease,
             self._dt,
-        )
+        ).block_until_ready()
 
     def load_phi(self):
         self._phi = self._phi_generator.generate_phi()
+        self._phi = device_put(self._phi)
 
     #############################################################
     # spin
