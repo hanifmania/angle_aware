@@ -27,9 +27,8 @@ def dist2(pos, pitch, yaw, zeta):
 
 
 @jit
-def nearest_dist(all_positions, pitches, yaws, zeta, init_min_dist):
-
-    min_dist = init_min_dist
+def nearest_dist(all_positions, pitches, yaws, zeta):
+    min_dist = dist2(all_positions[0], pitches[0], yaws[0], zeta)
     for pos, pitch, yaw in zip(all_positions, pitches, yaws):
         dist = dist2(pos, pitch, yaw, zeta)
         new = min_dist > dist
@@ -50,3 +49,23 @@ def performance_function(sigma, dist_power):
         ndarray: h(p, q)
     """
     return np.exp(-dist_power / (2 * sigma))
+
+
+@jit
+def calc_J(phi):
+    return np.sum(phi)
+
+
+@jit
+def phi_equation(phi, delta_decrease, h, dt):
+    phi -= delta_decrease * h * phi * dt
+    # print(np.sum(self._delta_decrease * h_max * self._phi * self._dt))
+    phi = (0 < phi) * phi  ## the minimum value is 0
+
+
+@jit
+def calc_phi(all_positions, pitches, yaws, zeta, sigma, phi, delta_decrease, dt):
+    min_dist = nearest_dist(all_positions, pitches, yaws, zeta)
+    h = performance_function(sigma, min_dist)
+    ret = phi_equation(phi, delta_decrease, h, dt)
+    return ret
