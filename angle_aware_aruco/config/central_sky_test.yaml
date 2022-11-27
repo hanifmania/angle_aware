@@ -32,7 +32,7 @@ angle_aware:
   psi:
     range: [[-1.1, 1.1], [-1.1, 0.1]]
     density: [0.05, 0.05]
-    npy_name: psi_agli_test.npy
+    npy_name: psi_sky_test.npy
 agents:
   agent_manager_clock: 20
   u_max: 0.3

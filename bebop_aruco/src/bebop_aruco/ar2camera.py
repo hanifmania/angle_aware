@@ -74,7 +74,7 @@ class CameraFromAR:
             output_pose_topic, PoseStamped, queue_size=1
         )
         # rospy.Subscriber(camera_info_topic, CameraInfo, self.camera_info_callback)
-        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback)
+        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback, queue_size=1, buff_size=2**24)
         # rospy.Subscriber(input_img_topic, Image, self.img_callback)
         # rospy.Subscriber(pose_stamped_feedback, PoseStamped, self.pose_stamped_feedback)
 

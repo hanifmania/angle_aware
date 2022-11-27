@@ -5,5 +5,5 @@ initial_pose:
   R_deg: 0
   P_deg: 0
   Y_deg: 0
-  camera_deg: -90
+  camera_deg: -82
 collision_distance: 0.85
