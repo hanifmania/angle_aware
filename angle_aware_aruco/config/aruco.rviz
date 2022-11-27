@@ -12,6 +12,7 @@ Panels:
         - /RobotModel1
         - /RobotModel2
         - /RobotModel3
+        - /MarkerArray1
       Splitter Ratio: 0.46109509468078613
     Tree Height: 149
   - Class: rviz/Selection
@@ -321,6 +322,14 @@ Visualization Manager:
       size: 128
       text size: 14
       top: 128
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /tree_markers
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95

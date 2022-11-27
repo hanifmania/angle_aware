@@ -34,4 +34,7 @@
         <param name="log_path" value="$(arg log_path)" />
     </node>
 
+    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker" output="log">
+        <param name="model_url" value="package://angle_aware_avoid_tree/model/maple.STL" />
+    </node>
 </launch>
