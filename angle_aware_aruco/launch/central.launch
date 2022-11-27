@@ -3,7 +3,7 @@
     <arg name="agentNum" default="1" />
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
-    <include file="$(find angle_aware_control)/launch/central_base.launch">
+    <include file="$(find angle_aware_avoid_tree)/launch/central.launch">
         <arg name="agentNum" value="$(arg agentNum)" />
         <arg name="sim" value="true" /> <!-- VRPNを起動しないようsim trueにしておく-->
         <arg name="use_rosbag" value="$(arg use_rosbag)" />

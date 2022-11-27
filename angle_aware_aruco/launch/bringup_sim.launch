@@ -1,10 +1,15 @@
 <?xml version="1.0"?>
 <launch>
     <include file="$(find angle_aware_aruco)/launch/central.launch">
-        <arg name="sim" value="true"/>
+        <arg name="sim" value="true" />
+        <arg name="agentNum" value="2" />
     </include>
     <include file="$(find angle_aware_aruco)/launch/agent.launch">
-        <arg name="sim" value="true"/>
-        <arg name="number" value="1"/>
+        <arg name="sim" value="true" />
+        <arg name="number" value="1" />
+    </include>
+    <include file="$(find angle_aware_aruco)/launch/agent.launch">
+        <arg name="sim" value="true" />
+        <arg name="number" value="2" />
     </include>
 </launch>
