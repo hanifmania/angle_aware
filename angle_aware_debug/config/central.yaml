@@ -32,7 +32,7 @@ angle_aware:
   psi:
     range: [[0.1, 1.4], [0.1, 4.9]]
     density: [0.05, 0.05]
-    npy_name: psi_hijikata.npy
+    npy_name: psi_temp.npy
 agents:
   agent_manager_clock: 20
   u_max: 0.2

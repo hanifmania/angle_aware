@@ -4,6 +4,7 @@ from bebop_hatanaka_base.agent_base import AgentBase
 from angle_aware_control.myqp import MyQP
 from coverage_util.field_generator import FieldGenerator
 from coverage_util.numpy2multiarray import multiarray2numpy
+from coverage_util.voronoi import CoverageUtil
 
 import numpy as np
 import rospy
@@ -19,11 +20,11 @@ class Agent:
         agents_param = rospy.get_param("/agents")
         angle_aware_params = rospy.get_param("/angle_aware", default=None)
         angle_aware_params2 = rospy.get_param("~angle_aware", default=None)
+        collision_distance = rospy.get_param("collision_distance")
         if angle_aware_params2 is not None:
             angle_aware_params = angle_aware_params2
         self._clock = agents_param["agent_manager_clock"]
         self._umax = agents_param["u_max"]
-        collision_distance = rospy.get_param("collision_distance")
         self._kp_z = agents_param["kp_z"]
         self._ref_z = agents_param["ref_z"]
         self._kp_yaw = agents_param["kp_yaw"]
@@ -36,6 +37,9 @@ class Agent:
 
         self._agent_base = AgentBase(self.agentID)
         self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
+
+        self._unom_max = agents_param["unom_max"]
+        self._coverage_util = CoverageUtil()
 
         rospy.Subscriber(input_psi_topic, Float32MultiArray, self.psi_callback)
         self._agent_base.wait_pose_stamped()
@@ -65,8 +69,23 @@ class Agent:
         #  generate ux,uy,uz. You can write any code here
         ##########################################
         ## u_nom = [0,0]
-        world_ux = 0  # uh_x
-        world_uy = 0  # uh_y
+        # world_ux = 0  # uh_x
+        # world_uy = 0  # uh_y
+        voronoi = self._coverage_util.calc_voronoi(
+            my_position[:2], neighbor_positions[:, :2], self._psi_grid
+        )
+
+        temp = voronoi * self._psi
+        mass = np.sum(temp)
+
+        cent_x = 1.0 / mass * np.sum(temp * self._psi_grid[0])
+        cent_y = 1.0 / mass * np.sum(temp * self._psi_grid[1])
+
+        world_ux = cent_x - my_position[0]  # uh_x
+        world_uy = cent_y - my_position[1]  # uh_y
+        world_ux, world_uy = self.velocity_limitation(
+            world_ux, world_uy, self._unom_max
+        )
 
         ## 高度を一定に保つ
         world_uz = self._kp_z * (self._ref_z - my_position[2])

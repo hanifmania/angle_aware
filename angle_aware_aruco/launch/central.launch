@@ -3,13 +3,15 @@
     <arg name="agentNum" default="1" />
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
+    <arg name="central_yaml" default="$(find angle_aware_aruco)/config/central.yaml" />
+    <arg name="npy_data_dir" default="$(find angle_aware_aruco)/data/input/" />
     <include file="$(find angle_aware_avoid_tree)/launch/central.launch">
         <arg name="agentNum" value="$(arg agentNum)" />
         <arg name="sim" value="true" /> <!-- VRPNを起動しないようsim trueにしておく-->
         <arg name="use_rosbag" value="$(arg use_rosbag)" />
         <arg name="rviz_file" value="$(find angle_aware_aruco)/config/aruco.rviz" />
-        <arg name="central_yaml" value="$(find angle_aware_aruco)/config/central.yaml" />
-        <arg name="npy_data_dir" value="$(find angle_aware_aruco)/data/input/" />
+        <arg name="central_yaml" value="$(arg central_yaml)" />
+        <arg name="npy_data_dir" value="$(arg npy_data_dir)" />
         <arg name="rosbag_output" value="$(find angle_aware_aruco)/rosbag/rosbag.bag" />
         <arg name="log_path" default="$(find angle_aware_aruco)/rosbag/log.csv" />
     </include>

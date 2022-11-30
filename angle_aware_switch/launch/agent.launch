@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="number" default="" />
+    <arg name="sim" default="false" />
+
+    <group ns="bebop10$(arg number)">
+        <rosparam file="$(find angle_aware_switch)/config/agent10$(arg number).yaml" command="load" ns="" />
+        <include file="$(find bebop_aruco)/launch/agent_base.launch">
+            <arg name="number" value="$(arg number)" />
+            <arg name="sim" value="$(arg sim)" />
+        </include>
+        <node pkg="angle_aware_switch" type="patrol_agent.py" name="patrol_agent" output="screen">
+            <rosparam file="$(find angle_aware_switch)/config/patrol.yaml" command="load" ns="" />
+            <param name="input_psi_topic" value="/patrol_psi" />
+        </node>
+        <node pkg="angle_aware_switch" type="angle_aware_agent.py" name="angle_aware_agent" output="screen">
+            <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
+            <!-- <param name="input_psi_topic" value="/angle_aware_psi" /> -->
+        </node>
+        <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node>
+    </group>
+</launch>
