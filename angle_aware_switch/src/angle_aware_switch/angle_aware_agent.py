@@ -7,13 +7,13 @@ from coverage_util.field_generator import FieldGenerator
 
 import rospy
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Float32
 
 import copy
 import numpy as np
 
-from jsk_rviz_plugins.msg import Pictogram
-import matplotlib.pyplot as plt
+# from jsk_rviz_plugins.msg import Pictogram
+# import matplotlib.pyplot as plt
 
 
 class Agent:
@@ -22,15 +22,17 @@ class Agent:
         input_detect_topic = rospy.get_param(
             "~input_detect_topic", default="grape_posestamped"
         )
-        output_pictogram = rospy.get_param("~output_pictogram", default="grape")
+        # output_pictogram = rospy.get_param("~output_pictogram", default="grape")
+        output_J_topic = rospy.get_param("~output_J_topic", default="angle_aware_J")
 
-        self._world_tf = rospy.get_param("~world", default="world")
+        # self._world_tf = rospy.get_param("~world", default="world")
         self._grape_size = rospy.get_param("/grape_detector/size", default=None)
         self.agentID = rospy.get_param("agentID", default=-1)
         field_cbf = rospy.get_param("/field_cbf")
         agents_param = rospy.get_param("/agents")
         angle_aware_params = rospy.get_param("~angle_aware", default=None)
         collision_distance = rospy.get_param("collision_distance")
+        self._tree_params = rospy.get_param("/trees")
 
         self._clock = agents_param["agent_manager_clock"]
         self._kp_z = agents_param["kp_z"]
@@ -43,7 +45,7 @@ class Agent:
         self._delta_decrease = angle_aware_params["delta_decrease"]
         self._sigma = angle_aware_params["sigma"]
         self._observe_time = angle_aware_params["observe_time"]
-        self._pictogram_param = angle_aware_params["pictogram"]
+        # self._pictogram_param = angle_aware_params["pictogram"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
@@ -55,13 +57,14 @@ class Agent:
 
         self._agent_base = AgentBase(self.agentID)
         self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
-
+        self._qp.set_obstacle_avoidance_param(self._tree_params)
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
-        self._pub_pictogram = rospy.Publisher(
-            output_pictogram,
-            Pictogram,
-            queue_size=1,
-        )
+        self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
+        # self._pub_pictogram = rospy.Publisher(
+        #     output_pictogram,
+        #     Pictogram,
+        #     queue_size=1,
+        # )
 
         rospy.Subscriber(input_detect_topic, PoseStamped, self.grape_callback)
 
@@ -90,6 +93,8 @@ class Agent:
             self._dt,
             self._phi_A,
         )
+
+        self._pub_J.publish(np.sum(self._phi_A))
         #### joy input
         # uh_x, uh_y, uh_z, uh_w, uh_camera = self._agent_base.get_uh()
 
@@ -124,36 +129,11 @@ class Agent:
             world_ux, world_uy, world_uz, omega_z
         )
         vel = np.linalg.norm([world_ux, world_uy])
-        rospy.loginfo(
-            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}, phi:{}".format(
-                self.agentID, vel, world_ux, world_uy, w[0], np.sum(self._phi_A)
-            )
-        )
-
-    ###################################################################
-    ### spin
-    ###################################################################
-    def spin(self):
-        # self._clock=1
-        rate = rospy.Rate(self._clock)
-        while not rospy.is_shutdown():
-            if self._agent_base.is_main_ok():
-                is_angle_aware = self.judge_angle_aware()
-                self._pub_flag.publish(is_angle_aware)
-                if is_angle_aware:
-                    self.main_control()
-                    self.show_pictogram()
-            rate.sleep()
-
-    ###################################################################
-    ### functions
-    ###################################################################
-    def velocity_limitation(self, world_ux, world_uy, umax):
-        vec = np.array([world_ux, world_uy])
-        vel_norm = np.linalg.norm(vec)
-        if vel_norm > umax:
-            vec = vec / vel_norm * umax
-        return vec
+        # rospy.loginfo(
+        #     "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}, phi:{}".format(
+        #         self.agentID, vel, world_ux, world_uy, w[0], np.sum(self._phi_A)
+        #     )
+        # )
 
     def judge_angle_aware(self):
         """angle awareかpatrolかを判断. また target filedの生成も行う
@@ -176,12 +156,37 @@ class Agent:
         self._phi_A, self._zeta = self.generate_q(
             self._grape_posestamped, self._phi_param, self._grape_size, self._ref_z
         )
-
+        self._phi_A = self.delete_tree_phi(self._phi_A, self._zeta, self._tree_params)
         self._phi_0 = np.sum(self._phi_A)
         gamma = self._phi_0 / self._observe_time
         rospy.loginfo("gamma : {}".format(gamma))
         self._qp._angle_aware_cbf.set_gamma(gamma)
         return True
+
+    ###################################################################
+    ### spin
+    ###################################################################
+    def spin(self):
+        # self._clock=1
+        rate = rospy.Rate(self._clock)
+        while not rospy.is_shutdown():
+            if self._agent_base.is_main_ok():
+                is_angle_aware = self.judge_angle_aware()
+                self._pub_flag.publish(is_angle_aware)
+                if is_angle_aware:
+                    self.main_control()
+                    # self.show_pictogram()
+            rate.sleep()
+
+    ###################################################################
+    ### functions
+    ###################################################################
+    def velocity_limitation(self, world_ux, world_uy, umax):
+        vec = np.array([world_ux, world_uy])
+        vel_norm = np.linalg.norm(vec)
+        if vel_norm > umax:
+            vec = vec / vel_norm * umax
+        return vec
 
     def generate_q(self, posestamped, param_base, grape_size, ref_z):
         x = posestamped.pose.position.x
@@ -212,32 +217,23 @@ class Agent:
         # print(np.sum(self._delta_decrease * h_max * self._psi * self._dt))
         return (0 < phi) * phi  ## the minimum value is 0
 
-    def show_pictogram(self):
-        color_seed = np.sum(self._phi_A) / self._phi_0
-        color_rgba = plt.get_cmap("jet")(color_seed)
+    def delete_tree_phi(self, phi, grid, tree_params):
+        """木のあるところの重要度を消去
 
-        msg = Pictogram()
-        msg.action = Pictogram.ROTATE_X
-        msg.header.frame_id = self._world_tf
-        msg.header.stamp = rospy.Time.now()
+        Args:
+            phi (ndarray): _description_
+            grid (ndarray): zeta
+            tree_params (dict): xy, no_phi_radius
 
-        msg.pose.position.x = self._grape_posestamped.pose.position.x
-        msg.pose.position.y = self._grape_posestamped.pose.position.y
-        msg.pose.position.z = self._grape_posestamped.pose.position.z
-        msg.pose.orientation.w = 0.7
-        msg.pose.orientation.x = 0
-        msg.pose.orientation.y = -0.7
-        msg.pose.orientation.z = 0
-        msg.mode = Pictogram.PICTOGRAM_MODE
-        msg.speed = 0.5
-        # msg.ttl = 5.0
-        msg.size = self._pictogram_param["size"]
-        msg.color.r = color_rgba[0]
-        msg.color.g = color_rgba[1]
-        msg.color.b = color_rgba[2]
-        msg.color.a = color_rgba[3]
-        msg.character = self._pictogram_param["character"]
-        self._pub_pictogram.publish(msg)
+        Returns:
+            ndarray: 木があるところを0にした重要度
+        """
+        ok = np.ones_like(phi)
+        for xy, r in zip(tree_params["xy"], tree_params["no_phi_radius"]):
+            dist = (grid[0] - xy[0]) ** 2 + (grid[1] - xy[1]) ** 2
+            ok = ok * (dist > r**2)
+        phi = phi * ok
+        return phi
 
 
 if __name__ == "__main__":

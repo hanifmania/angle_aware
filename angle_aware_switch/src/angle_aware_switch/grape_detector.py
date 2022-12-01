@@ -59,7 +59,7 @@ class GrapeDetector:
         if grape_position is None:
             return
 
-        if self.observed_check(position, self._all_grape, self._grape_span):
+        if self.observed_check(grape_position, self._all_grape, self._grape_span):
             return
 
         msg = PoseStamped()
@@ -100,11 +100,11 @@ class GrapeDetector:
         grape_position = self._grape_positions.pop(detected_grape_id)
         return grape_position
 
-    def observed_check(self, position, all_grape, grape_span):
+    def observed_check(self, grape_position, all_grape, grape_span):
         """既知のものかチェック
 
         Args:
-            position (list): drone position xyz
+            grape_position (list): new grape position xyz
             all_grape (ndarray): 既知のぶどうリスト
             grape_span (float): ぶどう間隔。この間隔以内のぶどうは同一とみなす
 
@@ -113,9 +113,11 @@ class GrapeDetector:
         """
         if len(all_grape) == 0:
             return False
-        position = np.array(position)
-        dist = np.linalg.norm(position - all_grape)
+        position = np.array(grape_position)
+        dist = np.linalg.norm(position - all_grape, axis=1)
         min_dist = np.min(dist, axis=0)
+        rospy.loginfo("observed check")
+        rospy.loginfo(dist)
         return min_dist < grape_span
 
     #############################################################

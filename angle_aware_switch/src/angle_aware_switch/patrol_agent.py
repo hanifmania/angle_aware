@@ -4,6 +4,8 @@ from angle_aware_control.agent_with_unom import Agent
 
 from angle_aware_control.myqp import MyQP
 
+# from angle_aware_avoid_tree.myqp import QPAvoidTree
+
 import rospy
 from std_msgs.msg import Bool
 
@@ -15,7 +17,10 @@ class PatrolAgent:
         input_flag_topic = rospy.get_param(
             "~input_flag_topic", default="angle_aware_mode"
         )
+        trees = rospy.get_param("/trees")
+
         self._agent = Agent(MyQP)
+        self._agent._qp.set_obstacle_avoidance_param(trees)
 
         self._is_patrol = True
         rospy.Subscriber(input_flag_topic, Bool, self.callback)

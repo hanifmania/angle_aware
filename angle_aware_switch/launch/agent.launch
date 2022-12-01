@@ -18,5 +18,8 @@
             <!-- <param name="input_psi_topic" value="/angle_aware_psi" /> -->
         </node>
         <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node>
+        <node pkg="angle_aware_switch" type="pictogram.py" name="pictogram" output="screen"></node>
+        <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>
+
     </group>
 </launch>

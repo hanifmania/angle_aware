@@ -38,6 +38,12 @@ class MyQP:
         alpha = angle_aware_params["alpha"]
         self._angle_aware_cbf.set_params(sigma, delta_decrease, gamma, alpha)
 
+        self._is_obstacle_avoidance = False
+
+    def set_obstacle_avoidance_param(self, obstacle_avoidance_param):
+        self._is_obstacle_avoidance = True
+        self._obstacle_avoidance_param = obstacle_avoidance_param
+
     def calc_PQGh(self, u_nom, pos, neighbor_pos, psi_grid, psi):
         P_np, Q_np, G_np, h_np = self._cbf2qp.initPQGH(u_nom)
 
@@ -70,6 +76,16 @@ class MyQP:
         ############ angle aware
         dhdp, alpha_h = self._angle_aware_cbf.cbf(pos, neighbor_pos, psi_grid, psi)
         G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=0)
+
+        ############ obstacle avoidance
+        if self._is_obstacle_avoidance:
+            dhdp, alpha_h = self._collision_avoidance_cbf.nearest_cbf(
+                pos,
+                self._obstacle_avoidance_param["xy"],
+                self._obstacle_avoidance_param["avoid_radius"],
+            )
+            G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
+
         return P_np, Q_np, G_np, h_np
 
     def solve(self, u_nom, pos, neighbor_pos, psi_grid, psi):

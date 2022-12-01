@@ -1,0 +1,11 @@
+# type: GenericAnalyzer
+# path: ""
+analyzers:
+  bebop101:
+    type: GenericAnalyzer
+    path: ""
+    startswith: bebop101/mode
+  bebop102:
+    type: GenericAnalyzer
+    path: ""
+    startswith: bebop102/mode
