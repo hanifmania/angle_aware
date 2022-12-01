@@ -16,6 +16,7 @@ Panels:
         - /patrol_J1
         - /PointCloud22
         - /MarkerArray1
+        - /Pictogram1
       Splitter Ratio: 0.46109509468078613
     Tree Height: 719
   - Class: rviz/Selection
@@ -288,6 +289,13 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: false
+    - Class: jsk_rviz_plugin/Pictogram
+      Enabled: true
+      Name: Pictogram
+      Queue Size: 10
+      Topic: /bebop101/grape
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
@@ -332,9 +340,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6347976326942444
+      Pitch: 0.5447975993156433
       Target Frame: <Fixed Frame>
-      Yaw: 4.748540878295898
+      Yaw: 4.698540210723877
     Saved: ~
 Window Geometry:
   Displays:

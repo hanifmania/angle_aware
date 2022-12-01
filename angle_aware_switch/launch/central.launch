@@ -32,6 +32,10 @@
         <param name="rviz_z_max" value="0.5" />
         <param name="output_point_cloud_topic" value="patrol_psi_pointcloud" />
     </node>
+    <node name="grape_collector" pkg="angle_aware_switch" type="grape_collector.py" output="log">
+        <param name="posestampedTopic" value="grape_posestamped" />
+        <param name="output_topic" value="/all_grape" />
+    </node>
 
     <!-- <node pkg="angle_aware_control" type="central.py" name="angle_aware_central" output="screen">
         <param name="npy_data_dir" value="$(arg npy_data_dir)" />
