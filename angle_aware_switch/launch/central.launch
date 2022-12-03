@@ -10,6 +10,7 @@
     <arg name="log_path" default="$(find angle_aware_switch)/rosbag/log.csv" />
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
+    <rosparam file="$(find angle_aware_switch)/config/AR.yaml" command="load" ns="" />
 
     <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
 
@@ -21,10 +22,13 @@
         <arg name="rosbag_output" value="$(arg rosbag_output)" />
     </include>
 
+
     <node pkg="angle_aware_avoid_tree" type="central.py" name="patrol_central" output="screen">
         <param name="npy_data_dir" value="$(arg npy_data_dir)" />
         <rosparam file="$(find angle_aware_switch)/config/patrol.yaml" command="load" ns="" />
     </node>
+
+
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="patrol_show_pointcloud2d" output="screen">
         <param name="input_field_topic" value="patrol_psi" />
         <rosparam file="$(find angle_aware_switch)/config/patrol.yaml" command="load" ns="" />
@@ -36,15 +40,12 @@
         <param name="posestampedTopic" value="grape_posestamped" />
         <param name="output_topic" value="/all_grape" />
     </node>
-    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker" output="log">
-        <param name="model_url" value="package://angle_aware_avoid_tree/model/maple.STL" />
-    </node>
-
-
+    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker" output="log"></node>
     <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator">
         <!-- Load the file you made above -->
         <rosparam command="load" file="$(find angle_aware_switch)/config/diagnostic.yaml" />
     </node>
+
     <!-- <node pkg="angle_aware_control" type="central.py" name="angle_aware_central" output="screen">
         <param name="npy_data_dir" value="$(arg npy_data_dir)" />
         <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />

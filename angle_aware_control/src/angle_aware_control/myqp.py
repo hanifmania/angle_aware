@@ -57,10 +57,10 @@ class MyQP:
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)
         if np.sum(np.array(alpha_hs) < 0):
             print("collision")
-            # for pj in neighbor_pos:
-            #     print(np.linalg.norm([pos[0]-pj[0], pos[1]-pj[1]]))
-            print("dhdps", dhdps)
-            print("alpha_hs", alpha_hs)
+            for pj in neighbor_pos:
+                print(np.linalg.norm([pos[0] - pj[0], pos[1] - pj[1]]))
+            # print("dhdps", dhdps)
+            # print("alpha_hs", alpha_hs)
         for dhdp, alpha_h in zip(dhdps, alpha_hs):
             G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
         # dhdp, alpha_h = self._collision_avoidance_cbf.nearest_cbf(pos, neighbor_pos)

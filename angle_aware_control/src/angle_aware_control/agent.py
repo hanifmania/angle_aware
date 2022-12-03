@@ -92,11 +92,11 @@ class Agent:
             world_ux, world_uy, world_uz, omega_z
         )
         vel = np.linalg.norm([world_ux, world_uy])
-        rospy.loginfo(
-            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
-                self.agentID, vel, world_ux, world_uy, w[0]
-            )
-        )
+        # rospy.loginfo(
+        #     "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
+        #         self.agentID, vel, world_ux, world_uy, w[0]
+        #     )
+        # )
 
     ###################################################################
     ### spin

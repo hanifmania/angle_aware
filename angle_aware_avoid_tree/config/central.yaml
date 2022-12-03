@@ -49,3 +49,4 @@ trees:
   xy: [[0.5, -0.5], [0, -0.5]]
   avoid_radius: [0.2, 0.2]
   no_phi_radius: [0.2, 0.2]
+  show_radius: [0.2, 0.2]

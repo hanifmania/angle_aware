@@ -14,7 +14,7 @@ class GenerateTreeMarker:
         height = rospy.get_param("agents/ref_z")
         tree_param = rospy.get_param("trees")
         tree_positions = tree_param["xy"]
-        tree_radius = tree_param["avoid_radius"]
+        tree_radius = tree_param["show_radius"]
 
         self._pub = rospy.Publisher(output_topic, MarkerArray, queue_size=1)
 
@@ -96,8 +96,8 @@ class GenerateTreeMarker:
         marker.pose.position.z = height * 0.5
         marker.pose.orientation.w = 1
 
-        marker.scale.x = r
-        marker.scale.y = r
+        marker.scale.x = r * 2
+        marker.scale.y = r * 2
         marker.scale.z = height
         marker.color.r, marker.color.g, marker.color.b, marker.color.a = color
         return marker

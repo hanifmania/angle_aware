@@ -28,7 +28,7 @@ class Agent:
         # self._world_tf = rospy.get_param("~world", default="world")
         self._grape_size = rospy.get_param("/grape_detector/size", default=None)
         self.agentID = rospy.get_param("agentID", default=-1)
-        field_cbf = rospy.get_param("/field_cbf")
+        self._field_cbf = rospy.get_param("/field_cbf")
         agents_param = rospy.get_param("/agents")
         angle_aware_params = rospy.get_param("~angle_aware", default=None)
         collision_distance = rospy.get_param("collision_distance")
@@ -56,7 +56,7 @@ class Agent:
         self._dt = 1.0 / self._clock
 
         self._agent_base = AgentBase(self.agentID)
-        self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
+        self._qp = myqp(self._field_cbf, collision_distance, angle_aware_params)
         self._qp.set_obstacle_avoidance_param(self._tree_params)
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
         self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
@@ -157,6 +157,7 @@ class Agent:
             self._grape_posestamped, self._phi_param, self._grape_size, self._ref_z
         )
         self._phi_A = self.delete_tree_phi(self._phi_A, self._zeta, self._tree_params)
+        self._phi_A = self.bound_q_in_field(self._phi_A, self._zeta, self._field_cbf)
         self._phi_0 = np.sum(self._phi_A)
         gamma = self._phi_0 / self._observe_time
         rospy.loginfo("gamma : {}".format(gamma))
@@ -232,6 +233,27 @@ class Agent:
         for xy, r in zip(tree_params["xy"], tree_params["no_phi_radius"]):
             dist = (grid[0] - xy[0]) ** 2 + (grid[1] - xy[1]) ** 2
             ok = ok * (dist > r**2)
+        phi = phi * ok
+        return phi
+
+    def bound_q_in_field(self, phi, grid, field_param):
+        """field CBF外の重要度を消去
+
+        Args:
+            phi (ndarray): _description_
+            grid (ndarray): zeta
+            field_param (dict): range=[[min_x, max_x], [min_y, max_y],...]
+
+        Returns:
+            ndarray: field内のみの重要度
+        """
+        range = np.array(field_param)
+        ok = (
+            (range[0][0] < grid[0])
+            * (grid[0] < range[0][1])
+            * (range[1][0] < grid[1])
+            * (grid[1] < range[1][1])
+        )
         phi = phi * ok
         return phi
 

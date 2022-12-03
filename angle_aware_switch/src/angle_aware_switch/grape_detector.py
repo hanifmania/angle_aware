@@ -85,9 +85,10 @@ class GrapeDetector:
 
         detected_grape_id = None
         for i, grape_position in enumerate(self._grape_positions):
-            if (grape_position[0] - position[0]) ** 2 + (
-                grape_position[1] - position[1]
-            ) ** 2 < self._detect_radius:
+            dist = np.linalg.norm(
+                [grape_position[0] - position[0], grape_position[1] - position[1]]
+            )
+            if dist < self._detect_radius:
                 ### ぶどうを発見
                 detected_grape_id = i
                 break
