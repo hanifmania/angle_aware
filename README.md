@@ -24,14 +24,34 @@ This program uses https://github.com/htnk-lab/bebop_hatanaka_lab.git
 ```
 git clone https://github.com/htnk-lab/bebop_hatanaka_lab.git
 git clone https://github.com/htnk-lab/persistent_coverage_control.git
-git clone https://github.com/htnk-lab/sky_camera
+# git clone https://github.com/htnk-lab/sky_camera 
 ```
 - Follow the README of https://github.com/htnk-lab/bebop_hatanaka_lab.git
+
+### angle_aware_switch
+- [pytorch install](https://pytorch.org/get-started/locally/)
+- YOLO v5
+```
+git clone https://github.com/ultralytics/yolov5  # clone
+cd yolov5
+pip install -r requirements.txt  # install
+```
 
 # Build
 ```
 catkin build
 ```
+
+# Contents
+- angle_aware_aruco : 土方さん農場での実験1. ArUcoマーカーとAngleAwareの実験
+- angle_aware_avoid_tree : 木の回避をAngleAwareに追加
+- angle_aware_camera : カメラ角度まで考慮するアルゴリズムの簡略版。論文のものとは少し違うので注意
+- angle_aware_control : AngleAware
+- angle_aware_debug : debug用
+- angle_aware_switch : パトロール＋AngleAware
+- angle_aware_unity : Unityとの連携
+- bebop_aruco : ArUcoマーカーを用いた自己位置推定
+
 
 # Demo
 ## Simulation

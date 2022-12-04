@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <rosparam file="$(find angle_aware_switch)/config/patrol.yaml" command="load" ns="" />
+    <arg name="npy_data_dir" default="$(find angle_aware_switch)/data/input/" />
+
+    <node pkg="angle_aware_switch" type="patrol_psi_generator.py" name="psi_generator" output="screen" required="true">
+        <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+    </node>
+
+</launch>

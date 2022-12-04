@@ -15,7 +15,7 @@ class QPAvoidTree:
             u_nom, pos, neighbor_pos, psi_grid, psi
         )
         dhdp, alpha_h = self._myqp._collision_avoidance_cbf.nearest_cbf(
-            pos, self._avoid_objects["xy"], self._avoid_objects["r"]
+            pos, self._avoid_objects["xy"], self._avoid_objects["avoid_radius"]
         )
         G_np, h_np = self._myqp._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
         return P_np, Q_np, G_np, h_np

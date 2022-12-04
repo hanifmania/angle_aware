@@ -45,3 +45,7 @@ agents:
   ref_z: 1
   kp_yaw: 1
   ref_yaw: 0
+trees:
+  xy: [[2.0, 1.5]]
+  avoid_radius: [0.7]
+  no_phi_radius: [0.75]

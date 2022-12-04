@@ -3,13 +3,13 @@
 
     <arg name="rate" default="1" />
     <include file="$(find bebop_bag)/launch/rosbag_play.launch">
-        <arg name="rosbag_path" default="$(find angle_aware_aruco)/rosbag/rosbag.bag" />
+        <arg name="rosbag_path" default="$(find angle_aware_aruco)/rosbag/rosbag_5.bag" />
         <arg name="rviz_file" default="$(find angle_aware_aruco)/config/aruco.rviz" />
         <arg name="rate" value="$(arg rate)" />
     </include>
 
     <param name="agentNum" value="1" />
-    <arg name="central_yaml" default="$(find angle_aware_aruco)/config/central.yaml" />
-    <rosparam file="$(arg central_yaml)" command="load" ns="" />
+    <!-- <arg name="central_yaml" default="$(find angle_aware_aruco)/config/central.yaml" /> -->
+    <!-- <rosparam file="$(arg central_yaml)" command="load" ns="" /> -->
 
 </launch>

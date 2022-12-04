@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="sim" default="true" />
+    <arg name="rviz_file" default="$(find bebop_aruco)/config/sim_$(arg sim).rviz" />
+
+    <rosparam file="$(find bebop_aruco)/config/AR.yaml" command="load" ns="" />
+    <node pkg="bebop_aruco" type="ar2camera.py" name="ar2camera" output="screen" />
+    <node pkg="bebop_aruco" type="camera2drone.py" name="camera2drone" output="screen" />
+
+    <node pkg="bebop_aruco" type="pc_camera_debug.py" name="debug" output="screen" />
+    <param name="camera_matrix_csv_path" value="$(find bebop_aruco)/data/camera/cameraMatrix.csv" />
+    <param name="dist_coeffs_csv_path" value="$(find bebop_aruco)/data/camera/distCoeffs.csv" />
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(arg rviz_file)" />
+
+    <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="ARposestamped2tf" output="log" respawn="false" respawn_delay="0">
+        <param name="posestamped" value="posestamped" />
+        <param name="tfname" value="base_link" />
+    </node>
+
+    <node pkg="rostopic" type="rostopic" name="camera_control" args="pub -1 camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -90, 0.0]'" />
+
+</launch>

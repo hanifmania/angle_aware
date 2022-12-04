@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="angle_aware_debug" type="save_psi.py" name="save_psi" output="screen" respawn="false" respawn_delay="0">
+        <param name="output_psi_path" value="$(find angle_aware_debug)/data/input/psi_temp" />
+    </node>
+</launch>

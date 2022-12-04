@@ -9,12 +9,16 @@ import rospkg
 from std_msgs.msg import Float32MultiArray, Bool, Float32
 import numpy as np
 from scipy.stats import norm
+import os
 
 
 class Central(object):
     def __init__(self):
         self._clock = rospy.get_param("central_clock")
-        angle_aware_params = rospy.get_param("angle_aware")
+        angle_aware_params = rospy.get_param("angle_aware", default=None)
+        angle_aware_params2 = rospy.get_param("~angle_aware", default=None)
+        if angle_aware_params2 is not None:
+            angle_aware_params = angle_aware_params2
         self._sigma = angle_aware_params["sigma"]
         self._delta_decrease = angle_aware_params["delta_decrease"]
         psi_param = angle_aware_params["psi"]
@@ -24,7 +28,7 @@ class Central(object):
         # rospack = rospkg.RosPack()
         # pkg_path = rospack.get_path("angle_aware_control")
         # data_dir = pkg_path + "/data/input/"
-        data_dir = rospy.get_param("~npy_data_dir")
+        data_dir = rospy.get_param("~npy_data_dir", default=None)
         self._psi_path = data_dir + psi_param["npy_name"]
 
         self._dt = 1.0 / self._clock
@@ -32,10 +36,10 @@ class Central(object):
         self._psi_grid = psi_generator.generate_grid()
         self._psi_generator = psi_generator
 
-        phi_param = angle_aware_params["phi"]
-        phi_generator = FieldGenerator(phi_param)
-        phi_shape = phi_generator.get_shape()
-        rospy.loginfo(phi_shape)
+        # phi_param = angle_aware_params["phi"]
+        # phi_generator = FieldGenerator(phi_param)
+        # phi_shape = phi_generator.get_shape()
+        # rospy.loginfo(phi_shape)
 
         self._pub_psi = rospy.Publisher(
             output_psi_topic, Float32MultiArray, queue_size=1
@@ -77,7 +81,11 @@ class Central(object):
         self.load_psi()
 
     def load_psi(self):
-        self._psi = np.load(self._psi_path).reshape(self._psi_generator.get_shape())
+        is_file = os.path.isfile(self._psi_path)
+        if is_file:
+            self._psi = np.load(self._psi_path).reshape(self._psi_generator.get_shape())
+        else:
+            self._psi = self._psi_generator.generate_phi()
 
     #############################################################
     # spin

@@ -4,12 +4,12 @@
     <arg name="sim" default="false" />
 
     <group ns="bebop10$(arg number)">
-        <rosparam file="$(find angle_aware_control)/config/agent10$(arg number).yaml" command="load" ns="" />
+        <rosparam file="$(find angle_aware_aruco)/config/agent10$(arg number).yaml" command="load" ns="" />
         <include file="$(find bebop_aruco)/launch/agent_base.launch">
             <arg name="number" value="$(arg number)" />
             <arg name="sim" value="$(arg sim)" />
         </include>
-        <node pkg="angle_aware_control" type="agent.py" name="agent" output="screen" />
+        <node pkg="angle_aware_avoid_tree" type="agent.py" name="agent" output="screen" />
 
         <!-- <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="vrpn_posestamped2tf" output="log" respawn="false" respawn_delay="0">
             <param name="posestamped" value="/vrpn_client_node/bebop10$(arg number)/pose"/> 
@@ -20,7 +20,5 @@
             <param name="input_vrpn_topic" value="/vrpn_client_node/bebop10$(arg number)/pose"/> 
             <param name="log_path" value="$(find bebop_aruco)/data/log"/> 
         </node> -->
-        <node pkg="rostopic" type="rostopic" name="camera_control" args="pub camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -90, 0.0]'"/>
-
     </group>
 </launch>

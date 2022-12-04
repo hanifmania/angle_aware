@@ -38,6 +38,12 @@ class MyQP:
         alpha = angle_aware_params["alpha"]
         self._angle_aware_cbf.set_params(sigma, delta_decrease, gamma, alpha)
 
+        self._is_obstacle_avoidance = False
+
+    def set_obstacle_avoidance_param(self, obstacle_avoidance_param):
+        self._is_obstacle_avoidance = True
+        self._obstacle_avoidance_param = obstacle_avoidance_param
+
     def calc_PQGh(self, u_nom, pos, neighbor_pos, psi_grid, psi):
         P_np, Q_np, G_np, h_np = self._cbf2qp.initPQGH(u_nom)
 
@@ -51,10 +57,10 @@ class MyQP:
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbor_pos)
         if np.sum(np.array(alpha_hs) < 0):
             print("collision")
-            # for pj in neighbor_pos:
-            #     print(np.linalg.norm([pos[0]-pj[0], pos[1]-pj[1]]))
-            print("dhdps", dhdps)
-            print("alpha_hs", alpha_hs)
+            for pj in neighbor_pos:
+                print(np.linalg.norm([pos[0] - pj[0], pos[1] - pj[1]]))
+            # print("dhdps", dhdps)
+            # print("alpha_hs", alpha_hs)
         for dhdp, alpha_h in zip(dhdps, alpha_hs):
             G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
         # dhdp, alpha_h = self._collision_avoidance_cbf.nearest_cbf(pos, neighbor_pos)
@@ -70,6 +76,16 @@ class MyQP:
         ############ angle aware
         dhdp, alpha_h = self._angle_aware_cbf.cbf(pos, neighbor_pos, psi_grid, psi)
         G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=0)
+
+        ############ obstacle avoidance
+        if self._is_obstacle_avoidance:
+            dhdp, alpha_h = self._collision_avoidance_cbf.nearest_cbf(
+                pos,
+                self._obstacle_avoidance_param["xy"],
+                self._obstacle_avoidance_param["avoid_radius"],
+            )
+            G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
+
         return P_np, Q_np, G_np, h_np
 
     def solve(self, u_nom, pos, neighbor_pos, psi_grid, psi):

@@ -3,7 +3,7 @@
     <arg name="agentNum" default="1" />
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
-    <arg name="central_yaml" default="$(find angle_aware_control)/config/central.yaml" />
+    <arg name="central_yaml" default="$(find angle_aware_avoid_tree)/config/central.yaml" />
     <arg name="rviz_file" default="$(find angle_aware_control)/config/sim_$(arg sim).rviz" />
     <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/" />
     <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
@@ -34,6 +34,7 @@
         <param name="log_path" value="$(arg log_path)" />
     </node>
 
-    <rosparam file="$(find angle_aware_avoid_tree)/config/tree.yaml" command="load" ns="" />
-
+    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker" output="log">
+        <param name="model_url" value="package://angle_aware_avoid_tree/model/maple.STL" />
+    </node>
 </launch>

@@ -21,9 +21,9 @@ class CentralAvoidTree(Central):
         super(CentralAvoidTree, self).load_psi()
         self._psi = np.load(self._psi_path).reshape(self._psi_generator.get_shape())
         ok = np.ones_like(self._psi)
-        for xy, r in zip(self._trees["xy"], self._trees["r"]):
+        for xy, r in zip(self._trees["xy"], self._trees["no_phi_radius"]):
             dist = (self._psi_grid[0] - xy[0]) ** 2 + (self._psi_grid[1] - xy[1]) ** 2
-            ok = ok * (dist > r**2)
+            ok = ok * (dist > (r**2))
         self._psi = self._psi * ok
 
 

@@ -32,7 +32,7 @@ class ShowDetectedAR:
         self._pub_img = rospy.Publisher(
             output_topic, Image, queue_size=1
         )
-        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback)
+        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback, queue_size=1, buff_size=2**24)
     #############################################################
     # callback
     #############################################################
@@ -42,12 +42,16 @@ class ShowDetectedAR:
         Args:
             img_msg (sensor_msgs.msg.CompressedImage): 入力画像
         """
+        # t1 = rospy.Time.now()
         cv_array = self._cv_bridge.compressed_imgmsg_to_cv2(img_msg)
+        # dt = rospy.Time.now()-t1
+        # rospy.loginfo(dt.to_sec())
         self._ar.set_img(cv_array)
         self._ar.find_marker()
         img = self._ar.get_ar_detect_img()
         compressed_img = self._cv_bridge.cv2_to_imgmsg(img)
         self._pub_img.publish(compressed_img)
+
 
 if __name__ == "__main__":
     rospy.init_node("show_detected_ar", anonymous=True)

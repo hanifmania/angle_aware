@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="ros_package" type="executable" name="executable" output="log" respawn="false" respawn_delay="0"></node>
+</launch>

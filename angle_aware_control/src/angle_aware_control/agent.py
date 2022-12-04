@@ -12,12 +12,15 @@ from std_msgs.msg import Float32MultiArray
 
 class Agent:
     def __init__(self, myqp):
+        input_psi_topic = rospy.get_param("~input_psi_topic", default="/psi")
         self.agentID = rospy.get_param("agentID", default=-1)
         self._camera_deg = rospy.get_param("initial_pose/camera_deg")
         field_cbf = rospy.get_param("/field_cbf")
         agents_param = rospy.get_param("/agents")
-        angle_aware_params = rospy.get_param("/angle_aware")
-        input_psi_topic = rospy.get_param("~input_psi_topic", default="/psi")
+        angle_aware_params = rospy.get_param("/angle_aware", default=None)
+        angle_aware_params2 = rospy.get_param("~angle_aware", default=None)
+        if angle_aware_params2 is not None:
+            angle_aware_params = angle_aware_params2
         self._clock = agents_param["agent_manager_clock"]
         self._umax = agents_param["u_max"]
         collision_distance = rospy.get_param("collision_distance")
@@ -38,6 +41,8 @@ class Agent:
         self._agent_base.wait_pose_stamped()
         self._agent_base.publish_camera_control(self._camera_deg)
 
+        rospy.wait_for_message(input_psi_topic, Float32MultiArray)
+
     #############################################################
     # callback
     #############################################################
@@ -47,7 +52,9 @@ class Agent:
     ###################################################################
     ### main
     ###################################################################
-    def main_control(self):
+    def main_control(self, psi=None):
+        if psi is None:
+            psi = self._psi
         my_position, my_orientation = self._agent_base.get_my_pose()
         neighbor_positions = self._agent_base.get_neighbor_positions()
         yaw = self._agent_base.get_my_yaw()
@@ -77,19 +84,19 @@ class Agent:
         ### x y z field limitation and collision avoidance with CBF
         u_nom = np.array([world_ux, world_uy])
         u_opt, w = self._qp.solve(
-            u_nom, my_position[:2], neighbor_positions[:, :2], self._psi_grid, self._psi
+            u_nom, my_position[:2], neighbor_positions[:, :2], self._psi_grid, psi
         )
         world_ux, world_uy = u_opt
-        world_ux, world_uy = self.velocity_limitation(world_ux, world_uy)
+        world_ux, world_uy = self.velocity_limitation(world_ux, world_uy, self._umax)
         self._agent_base.publish_command_from_world_vel(
             world_ux, world_uy, world_uz, omega_z
         )
         vel = np.linalg.norm([world_ux, world_uy])
-        rospy.loginfo(
-            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f})".format(
-                self.agentID, vel, world_ux, world_uy
-            )
-        )
+        # rospy.loginfo(
+        #     "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
+        #         self.agentID, vel, world_ux, world_uy, w[0]
+        #     )
+        # )
 
     ###################################################################
     ### spin
@@ -98,18 +105,18 @@ class Agent:
         # self._clock=1
         rate = rospy.Rate(self._clock)
         while not rospy.is_shutdown():
-            if self._agent_base.is_main_ok() and self._psi is not None:
+            if self._agent_base.is_main_ok():
                 self.main_control()
             rate.sleep()
 
     ###################################################################
     ### functions
     ###################################################################
-    def velocity_limitation(self, world_ux, world_uy):
+    def velocity_limitation(self, world_ux, world_uy, umax):
         vec = np.array([world_ux, world_uy])
         vel_norm = np.linalg.norm(vec)
-        if vel_norm > self._umax:
-            vec = vec / vel_norm * self._umax
+        if vel_norm > umax:
+            vec = vec / vel_norm * umax
         return vec
 
         world_ux = np.clip(world_ux, -self._umax, self._umax)

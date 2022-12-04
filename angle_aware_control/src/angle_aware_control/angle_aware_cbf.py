@@ -19,6 +19,9 @@ class AngleAwareCBF:
         self._alpha = alpha
         self._gamma = gamma
 
+    def set_gamma(self, gamma):
+        self._gamma = gamma
+
     def setU(self, ux, uy):
         """debug用
 
@@ -46,7 +49,7 @@ class AngleAwareCBF:
         performance_function = self.performance_function(pos, psi_grid)
         I_i_map = region * self._delta_decrease * performance_function * psi
         b_i = np.sum(I_i_map) - self._gamma
-        print(b_i)
+        # print(b_i)
         temp = -1.0 / (self._sigma**2) * I_i_map
         db_dp_x = np.sum(temp * (pos[0] - psi_grid[0]))
         db_dp_y = np.sum(temp * (pos[1] - psi_grid[1]))
