@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from bebop_hatanaka_base import ros_utility
+
+
 import rospy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
@@ -48,6 +51,7 @@ class Template:
 
         self._cv_bridge = CvBridge()
         self._camera_matrix = np.array(K).reshape(3, -1)
+        self._camera_matrix_inv = self._camera_matrix**-1
 
         self._pub_posestamped = rospy.Publisher(
             output_pose_topic, PoseStamped, queue_size=1
@@ -94,6 +98,7 @@ class Template:
         result_img = self.draw(resized_img, results, self._model.names)
         output_img = cv2.resize(result_img, (raw_img_shape[1], raw_img_shape[0]))
         self.publish_img(output_img)
+
         self.publish_posestamped()
 
     #############################################################
@@ -112,7 +117,6 @@ class Template:
     #############################################################
     # functions
     #############################################################
-
     def inverse_dic(dictionary):
         return {v: k for k, v in dictionary.items()}
 
@@ -171,6 +175,22 @@ class Template:
                 cv2.LINE_AA,
             )
         return img
+
+    def calc_pose(self, results, camera_from_world_posestamped):
+        for *box, conf, cls in results.xyxy[0]:  # xyxy, confidence, class
+            center_x = (box[0] + box[2]) * 0.5
+            center_y = (box[1] + box[3]) * 0.5
+
+            screen_point = np.array([center_x, center_y, 1]).T
+            object_point_from_camera = self._ref_z * self._camera_matrix_inv.dot(
+                screen_point
+            )
+            object_point_from_camera_q = np.vstack([object_point_from_camera, [1]])
+            camera_from_world = ros_utility.pose_to_g(
+                camera_from_world_posestamped.pose
+            )
+            camera2world = camera_from_world.dot(object_point_from_camera_q)
+            break  ### 一番信頼度が高いもののみをpublish
 
     #############################################################
     # spin
