@@ -13,10 +13,15 @@ import cv2
 import torch
 
 
-class Template:
+class ObjectDetectorYOLOv5:
     def __init__(self):
         ################## param input
         ###### private pram
+        pytorch_hub_path = rospy.get_param("~pytorch_hub_path")
+        model_path = rospy.get_param("~model_path")
+        camera_matrix_param = rospy.get_param("~camera_matrix")
+
+        ### default ok
         input_img_compressed_topic = rospy.get_param(
             "~input_img_compressed_topic", "image_raw/compressed"
         )
@@ -24,13 +29,9 @@ class Template:
         output_pose_topic = rospy.get_param(
             "~output_pose_topic", "object_detector/posestamped"
         )
-        output_img_topic = rospy.get_param("~output_img_topic")
-        pytorch_hub_path = rospy.get_param("pytorch_hub_path")
-        model_path = rospy.get_param("model_path")
-        camera_matrix_param = rospy.get_param("~camera_matrix")
-
-        K = camera_matrix_param["data"]
-        ### default ok
+        output_img_topic = rospy.get_param(
+            "~output_img_topic", "object_detector/image_raw"
+        )
         self._frame_id = rospy.get_param("~frame_id", "world")
         ###### group yaml
 
@@ -41,6 +42,7 @@ class Template:
         target_class = object_detector_params["target_class"]
         self._input_img_size = object_detector_params["input_img_size"]
         ##################
+        K = camera_matrix_param["data"]
 
         self._model = torch.hub.load(
             pytorch_hub_path, "custom", path=model_path, source="local"
@@ -85,10 +87,10 @@ class Template:
     # main function
     #############################################################
     def object_detect(self, cv_img):
-        """image_rawからカメラ位置を推定する
+        """imageから物体位置を推定し、publish
 
         Args:
-            img_msg (sensor_msgs.msg.Image): _description_
+            cv_img (cv2): _description_
         """
         raw_img_shape = cv_img.shape
         resized_img = cv2.resize(cv_img, (self._input_img_size, self._input_img_size))
@@ -99,15 +101,21 @@ class Template:
         output_img = cv2.resize(result_img, (raw_img_shape[1], raw_img_shape[0]))
         self.publish_img(output_img)
 
-        self.publish_posestamped()
+        position = self.calc_position(results, self._camera_posestamped)
+        if position is not None:
+            self.publish_posestamped(position)
 
     #############################################################
     # publish
     #############################################################
-    def publish_posestamped(self):
+    def publish_posestamped(self, position):
         posestamped = PoseStamped()
         posestamped.header.frame_id = self._frame_id
         posestamped.header.stamp = rospy.Time.now()
+        posestamped.pose.position.x = position[0]
+        posestamped.pose.position.y = position[1]
+        posestamped.pose.position.z = position[2]
+        posestamped.pose.orientation.w = 1
         self._pub_posestamped.publish(posestamped)
 
     def publish_img(self, cv2_img):
@@ -117,11 +125,28 @@ class Template:
     #############################################################
     # functions
     #############################################################
-    def inverse_dic(dictionary):
+    def inverse_dic(self, dictionary):
+        """dictのkeyとvalueを入れ替える
+
+        Args:
+            dictionary (dict): _description_
+
+        Returns:
+            dict: _description_
+        """
         return {v: k for k, v in dictionary.items()}
 
     def set_target_class(self, model, class_name):
-        print(model.names)  # --- （参考）クラスの一覧をコンソールに表示
+        """モデルの検出対象物体を設定
+
+        Args:
+            model (Model): _description_
+            class_name (str): _description_
+
+        Returns:
+            Model: model
+        """
+        print(model.names)
         inversed_name = self.inverse_dic(model.names)
         model.classes = [inversed_name[class_name]]
         return model
@@ -176,33 +201,65 @@ class Template:
             )
         return img
 
-    def calc_pose(self, results, camera_from_world_posestamped):
-        for *box, conf, cls in results.xyxy[0]:  # xyxy, confidence, class
-            center_x = (box[0] + box[2]) * 0.5
-            center_y = (box[1] + box[3]) * 0.5
+    def calc_position(self, results, camera_from_world_posestamped):
+        """検出結果から位置を推定
 
-            screen_point = np.array([center_x, center_y, 1]).T
-            object_point_from_camera = self._ref_z * self._camera_matrix_inv.dot(
-                screen_point
-            )
-            object_point_from_camera_q = np.vstack([object_point_from_camera, [1]])
-            camera_from_world = ros_utility.pose_to_g(
-                camera_from_world_posestamped.pose
-            )
-            camera2world = camera_from_world.dot(object_point_from_camera_q)
-            break  ### 一番信頼度が高いもののみをpublish
+        Args:
+            results (_type_): model output
+            camera_from_world_posestamped (posestamped): bebop camera posestamped
 
-    #############################################################
-    # spin
-    #############################################################
+        Returns:
+            ndarray: [x, y, z]
+        """
+        if len(results.xyxy[0]) == 0:
+            ### 解が無ければNone
+            return None
+        *box, conf, cls = results.xyxy[0][0]  # 一番精度の高いものだけを抽出
+        center_x = (box[0] + box[2]) * 0.5
+        center_y = (box[1] + box[3]) * 0.5
 
-    def spin(self):
-        rate = rospy.Rate(self._clock)
-        while not rospy.is_shutdown():
-            rate.sleep()
+        screen_point = np.array([center_x, center_y, 1]).T
+        object_point_from_camera = self._ref_z * self._camera_matrix_inv.dot(
+            screen_point
+        )
+        object_point_from_camera_q = np.vstack([object_point_from_camera, [1]])
+
+        camera_from_world = ros_utility.pose_to_g(camera_from_world_posestamped.pose)
+
+        bebop_camera_R = camera_from_world[:3, :3]
+        cv_camera_R = self.change_axis(bebop_camera_R)
+
+        cv_camera_g = camera_from_world
+        cv_camera_g[:3, :3] = cv_camera_R
+
+        object_from_world = cv_camera_g.dot(object_point_from_camera_q)
+        return object_from_world.T
+
+    def change_axis(self, R):
+        """bebop2droneの座標系をcvのカメラ座標に変換
+
+        Args:
+            R (ndarray): bebop2が想定するカメラの回転行列
+
+        Returns:
+            ndarray: cvが想定するカメラの回転行列
+        """
+        # y軸周りに回転
+        y = np.pi / 2
+        y_rotate = np.array(
+            [[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y), 0, np.cos(y)]]
+        )
+        # z軸周りに回転
+        z = -np.pi / 2
+        z_rotate = np.array(
+            [[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0, 0, 1]]
+        )
+        R2 = R.dot(y_rotate)
+        bebop_R = R2.dot(z_rotate)
+        return bebop_R
 
 
 if __name__ == "__main__":
-    rospy.init_node("template", anonymous=True)
-    node = Template()
+    rospy.init_node("ObjectDetectorYOLOv5", anonymous=True)
+    node = ObjectDetectorYOLOv5()
     rospy.spin()

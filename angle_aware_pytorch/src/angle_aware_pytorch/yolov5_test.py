@@ -50,6 +50,7 @@ while True:
     # imgs = [img]
     img = cv2.imread(img_path)
     img = cv2.resize(img, (320, 640))
+    # imgs = [img]
     imgs = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB)]
     # --- 推定の検出結果を取得 ---
     #  results = model(imgs) #--- サイズを指定しない場合は640ピクセルの画像にして処理
@@ -63,10 +64,12 @@ while True:
     # --- 出力 ---
     # --- 検出結果を画像に描画して表示 ---
     # --- 各検出について
+    # print(len(results.xyxy[0]))
+
     for *box, conf, cls in results.xyxy[0]:  # xyxy, confidence, class
-        print(box)
-        print(conf)
-        print(cls)
+        # print(box)
+        # print(conf)
+        # print(cls)
 
         # --- クラス名と信頼度を文字列変数に代入
         s = model.names[int(cls)] + ":" + "{:.3f}".format(float(conf))

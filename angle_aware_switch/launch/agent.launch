@@ -24,8 +24,15 @@
             <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
             <!-- <param name="input_psi_topic" value="/angle_aware_psi" /> -->
         </node>
-        <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node>
+        <!-- <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node> -->
+
         <node pkg="angle_aware_switch" type="pictogram.py" name="pictogram" output="screen"></node>
         <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>
+        <!-- <node pkg="angle_aware_pytorch" type="object_detector_yolov5.py" name="object_detector_yolov5" output="screen" respawn="false" respawn_delay="0">
+            <param name="output_pose_topic" value="grape_posestamped" />
+            <param name="pytorch_hub_path" value="$(find angle_aware_pytorch)/yolov5" />
+            <param name="model_path" value="$(find angle_aware_pytorch)/model/test1_yolov5s.pt" />
+            <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
+        </node> -->
     </group>
 </launch>
