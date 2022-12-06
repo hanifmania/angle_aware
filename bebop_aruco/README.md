@@ -29,3 +29,8 @@ roslaunch bebop_aruco debug_pc_bringup.launch
     - ar_detect.py : cv2 lapper
     - ar2camera.py : カメラ位置推定
     - camera2drone.py : カメラ位置からdrone位置への変換
+
+## Author
+
+[Takumi Shimizu](https://github.com/tashiwater)
+
