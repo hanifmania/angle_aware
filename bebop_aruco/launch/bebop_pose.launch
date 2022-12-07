@@ -23,7 +23,7 @@
             <param name="output_topic" value="fromAR/image_raw" />
         </node>
 
-        <node name="image_republish" pkg="image_transport" type="republish_AR" args="raw compressed">
+        <node name="AR_image_republish" pkg="image_transport" type="republish" args="raw compressed">
             <remap from="in" to="fromAR/image_raw" />
             <remap from="out" to="fromAR/image_raw/compressed" />
         </node>

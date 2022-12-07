@@ -36,7 +36,7 @@
             <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
         </node>
 
-        <node name="image_republish" pkg="image_transport" type="republish_AI" args="raw compressed">
+        <node name="AI_image_republish" pkg="image_transport" type="republish" args="raw compressed">
             <remap from="in" to="object_detector/image_raw" />
             <remap from="out" to="object_detector/image_raw/compressed" />
         </node>
@@ -55,5 +55,8 @@
             <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
 
         </node>
+        <include file="$(find bebop_bag)/launch/rosbag_record_img.launch">
+            <arg name="rosbag_output" default="$(find angle_aware_switch)/rosbag/rosbag_img" />
+        </include>
     </group>
 </launch>
