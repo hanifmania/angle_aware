@@ -13,11 +13,11 @@ class ShowPictogram:
     def __init__(self):
         ################## param input
         input_detect_topic = rospy.get_param(
-            "~input_detect_topic", default="grape_posestamped"
+            "~input_detect_topic", default="object_detector/target_posestamped"
         )
-        input_J_topic = rospy.get_param("~input_J_topic", default="angle_aware_J")
+        input_J_topic = rospy.get_param("~input_J_topic", default="angle_aware/J")
         output_pictogram = rospy.get_param("~output_pictogram", default="grape")
-        self._pictogram_param = rospy.get_param("/grape_detector/pictogram")
+        self._pictogram_param = rospy.get_param("/pictogram")
         self._world_tf = rospy.get_param("~world", default="world")
         ###################
 

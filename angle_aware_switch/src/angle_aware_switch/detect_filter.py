@@ -13,7 +13,9 @@ class DetectFilter:
         input_topic = rospy.get_param(
             "~input_topic", default="object_detector/posestamped"
         )
-        output_topic = rospy.get_param("~output_topic", default="target_posestamped")
+        output_topic = rospy.get_param(
+            "~output_topic", default="object_detector/target_posestamped"
+        )
         input_found_object = rospy.get_param(
             "~input_found_object", default="/found_object"
         )
@@ -24,6 +26,7 @@ class DetectFilter:
         self._same_object_error = grape_detector["same_object_error"]
         self._found_object = []
         self._object_candidate = []
+        self._my_found_object = np.empty((1, 3))
         self._pub = rospy.Publisher(output_topic, PoseStamped, queue_size=1)
         rospy.Subscriber(
             input_topic, PoseStamped, self.detect_posestamped_callbeck, queue_size=5
@@ -90,6 +93,11 @@ class DetectFilter:
         )
         if already_detected:
             return
+        already_detected = self.already_detected(
+            position, self._my_found_object, self._object_span
+        )
+        if already_detected:
+            return
         is_publish, self._object_candidate = self.double_check(
             position,
             self._object_candidate,
@@ -97,6 +105,7 @@ class DetectFilter:
             self._decide_count,
         )
         if is_publish:
+            self._my_found_object = np.vstack([self._my_found_object, position])
             self.publish(position)
 
     #############################################################
@@ -138,7 +147,7 @@ class DetectFilter:
         """
         position = np.array(position)
         if len(object_candidates) == 0:
-            object_candidates.append(position)
+            object_candidates = position.reshape(1, -1)
             return False, object_candidates
         dist = np.linalg.norm(position - object_candidates, axis=1)
         same = dist < self._same_object_error
@@ -146,7 +155,7 @@ class DetectFilter:
         if ret:
             object_candidates = object_candidates[same]
         else:
-            object_candidates.append(position)
+            object_candidates = np.vstack([object_candidates, position])
         return ret, object_candidates
 
 

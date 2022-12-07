@@ -19,23 +19,22 @@ import numpy as np
 
 class Agent:
     def __init__(self, myqp):
+        ################## launch input topic name
         flag_topic = rospy.get_param("~flag_topic", default="angle_aware_mode")
         input_detect_topic = rospy.get_param(
-            "~input_detect_topic", default="grape_posestamped"
+            "~input_detect_topic", default="object_detector/target_posestamped"
         )
-        # output_pictogram = rospy.get_param("~output_pictogram", default="grape")
-        output_J_topic = rospy.get_param("~output_J_topic", default="angle_aware_J")
+        output_J_topic = rospy.get_param("~output_J_topic", default="angle_aware/J")
         output_phi_topic = rospy.get_param(
             "~output_phi_topic", default="angle_aware/phi"
         )
-
-        # self._world_tf = rospy.get_param("~world", default="world")
-        self._grape_size = rospy.get_param("/grape_detector/size", default=None)
+        ################## yaml input
+        angle_aware_params = rospy.get_param("~angle_aware", default=None)
         self.agentID = rospy.get_param("agentID", default=-1)
+        collision_distance = rospy.get_param("collision_distance")
+        ################## central input
         self._field_cbf = rospy.get_param("/field_cbf")
         agents_param = rospy.get_param("/agents")
-        angle_aware_params = rospy.get_param("~angle_aware", default=None)
-        collision_distance = rospy.get_param("collision_distance")
         self._tree_params = rospy.get_param("/trees")
 
         self._clock = agents_param["agent_manager_clock"]
@@ -49,14 +48,13 @@ class Agent:
         self._delta_decrease = angle_aware_params["delta_decrease"]
         self._sigma = angle_aware_params["sigma"]
         self._observe_time = angle_aware_params["observe_time"]
-        # self._pictogram_param = angle_aware_params["pictogram"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
 
         self._phi_A = 0
         self._phi_0 = 1.0
-        self._grape_queue = []
+        self._object_queue = []
         self._dt = 1.0 / self._clock
 
         self._agent_base = AgentBase(self.agentID)
@@ -67,22 +65,14 @@ class Agent:
         self._pub_phi = rospy.Publisher(
             output_phi_topic, Float32MultiArray, queue_size=1
         )
-        # self._pub_pictogram = rospy.Publisher(
-        #     output_pictogram,
-        #     Pictogram,
-        #     queue_size=1,
-        # )
-
-        rospy.Subscriber(input_detect_topic, PoseStamped, self.grape_callback)
-
+        rospy.Subscriber(input_detect_topic, PoseStamped, self.object_callback)
         self._agent_base.wait_pose_stamped()
-        # self._agent_base.publish_camera_control(self._camera_deg)
 
     #############################################################
     # callback
     #############################################################
-    def grape_callback(self, msg):
-        self._grape_queue.append(msg)
+    def object_callback(self, msg):
+        self._object_queue.append(msg)
 
     ###################################################################
     ### publish
@@ -165,17 +155,22 @@ class Agent:
         if angle_aware_mode:
             ### まだangle awareすべき
             return True
-        if len(self._grape_queue) == 0:
+        if len(self._object_queue) == 0:
             ### もう見るべきぶどうが無い
             self._phi_A = 0
             return False
 
         ### target fieldを新しく生成
-        self._grape_posestamped = self._grape_queue.pop()
+        self._object_posestamped = self._object_queue.pop()
         self._phi_A, self._zeta = self.generate_q(
-            self._grape_posestamped, self._phi_param, self._grape_size, self._ref_z
+            self._object_posestamped, self._phi_param, self._ref_z
         )
-        self._phi_A = self.delete_tree_phi(self._phi_A, self._zeta, self._tree_params)
+        self._phi_A = self.delete_tree_phi(
+            self._phi_A,
+            self._zeta,
+            self._tree_params["xy"],
+            self._tree_params["no_phi_radius"],
+        )
         self._phi_A = self.bound_q_in_field(self._phi_A, self._zeta, self._field_cbf)
         self._phi_0 = np.sum(self._phi_A)
         gamma = self._phi_0 / self._observe_time
@@ -202,24 +197,44 @@ class Agent:
     ### functions
     ###################################################################
     def velocity_limitation(self, world_ux, world_uy, umax):
+        """最大速度制限. ベクトルの方向は維持して大きさだけ変える
+
+        Args:
+            world_ux (float): _description_
+            world_uy (float): _description_
+            umax (float): _description_
+
+        Returns:
+            ndarray: [x, y]
+        """
         vec = np.array([world_ux, world_uy])
         vel_norm = np.linalg.norm(vec)
         if vel_norm > umax:
             vec = vec / vel_norm * umax
         return vec
 
-    def generate_q(self, posestamped, param_base, grape_size, ref_z):
+    def generate_q(self, posestamped, param_base, ref_z):
+        """Qを生成
+
+        Args:
+            posestamped (Posestamped): 物体位置
+            param_base (dict): phi_param
+            ref_z (float): drone z for zeta
+
+        Returns:
+            ndarray: phi
+            ndarray: zeta
+        """
         x = posestamped.pose.position.x
         y = posestamped.pose.position.y
         z = posestamped.pose.position.z
         param = copy.deepcopy(param_base)
-        range = param["range"]
-        range[0] = [x - grape_size[0] * 0.5, x + grape_size[0] * 0.5]
-        range[1] = [y - grape_size[1] * 0.5, y + grape_size[1] * 0.5]
-        # range[2] = [z - grape_size[2] * 0.5, z + grape_size[2] * 0.5]
-        range[2] = [z, z]
-
+        range = np.array(param["range"])
+        range[0] += x
+        range[1] += y
+        range[2] += z
         param["range"] = range
+
         generator = FieldGenerator(param)
         phi_A = generator.generate_phi() * self._A
         grid = generator.generate_grid()
@@ -227,30 +242,54 @@ class Agent:
         return phi_A, zeta
 
     def performance_function(self, pos, grid, sigma):
+        """性能関数
+
+        Args:
+            pos (ndarray): [x,y]
+            grid (ndarray): zeta
+            sigma (float): _description_
+
+        Returns:
+            ndarray: h
+        """
 
         dist2 = (pos[0] - grid[0]) ** 2 + (pos[1] - grid[1]) ** 2
 
         return np.exp(-dist2 / (2 * sigma**2))
 
     def update_phi(self, pos, grid, sigma, delta_decrease, dt, phi):
+        """重要度更新
+
+        Args:
+            pos (ndarray): [x,y]
+            grid (ndarray): zeta
+            sigma (float): _description_
+            delta_decrease (float): _description_
+            dt (float): _description_
+            phi (ndarray): 重要度
+
+        Returns:
+            ndarray: phi
+        """
         h = self.performance_function(pos, grid, sigma)
         phi -= delta_decrease * h * phi * dt
         # print(np.sum(self._delta_decrease * h_max * self._psi * self._dt))
         return (0 < phi) * phi  ## the minimum value is 0
 
-    def delete_tree_phi(self, phi, grid, tree_params):
+    def delete_tree_phi(self, phi, grid, xy_list, radius_list):
         """木のあるところの重要度を消去
 
         Args:
             phi (ndarray): _description_
             grid (ndarray): zeta
-            tree_params (dict): xy, no_phi_radius
+            xy_list(list): 障害物位置[[x,y], ...]
+            radius_list(list): 障害物半径 [r1, r2,...]
 
         Returns:
             ndarray: 木があるところを0にした重要度
         """
         ok = np.ones_like(phi)
-        for xy, r in zip(tree_params["xy"], tree_params["no_phi_radius"]):
+        for xy, r in zip(xy_list, radius_list):
             dist = (grid[0] - xy[0]) ** 2 + (grid[1] - xy[1]) ** 2
             ok = ok * (dist > r**2)
         phi = phi * ok

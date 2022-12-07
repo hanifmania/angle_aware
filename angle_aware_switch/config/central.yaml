@@ -13,10 +13,6 @@ agents:
   ref_yaw: 0
   unom_max: 0.3
 grape_detector:
-  grape_positions: [[0.5, 0.5, 0], [-0.5, -0.5, 0]]
-  detect_radius: 0.3 ### = height * tan(math.pi/2 - range[3][0])
-  target_field_radius: 0.3 ### = height * tan(math.pi/2 - range[3][0])
-  clock : 1
   size: [0.5, 0.5, 0.05]
   grape_span: 0.5
   pictogram:
@@ -27,3 +23,15 @@ trees:
   avoid_radius: [0.5]
   no_phi_radius: [0.5]
   show_radius: [0.2]
+
+detect_filter:
+  decide_count: 3
+  object_span: 0.5
+  same_object_error: 0.2
+dummy_object_detector:
+  positions: [[0.5, 0.5, 0], [-0.5, -0.5, 0]]
+  detect_radius: 0.3 ### = height * tan(math.pi/2 - range[3][0])
+  clock : 3
+pictogram:
+  size: 0.5
+  character: fa-apple-alt

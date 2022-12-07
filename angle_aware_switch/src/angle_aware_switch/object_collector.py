@@ -5,16 +5,16 @@ import rospy
 from geometry_msgs.msg import PoseArray, PoseStamped
 
 
-class GrapeCollector:
+class ObjectCollector:
     def __init__(self):
         # Number of Agents
         self._agentNum = rospy.get_param("agentNum")
         posestampedTopic = rospy.get_param(
-            "~posestampedTopic", default="grape_posestamped"
+            "~posestampedTopic", default="object_detector/target_posestamped"
         )
-        output_topic = rospy.get_param("~output_topic", default="/all_grape")
+        output_topic = rospy.get_param("~output_topic", default="/found_grape")
 
-        group_ns = rospy.get_param("~group_ns", default="bebop10")
+        group_ns = rospy.get_param("~group_header", default="bebop10")
 
         self._pub_all_pose = rospy.Publisher(output_topic, PoseArray, queue_size=1)
         for i in range(self._agentNum):
@@ -39,6 +39,6 @@ class GrapeCollector:
 
 
 if __name__ == "__main__":
-    rospy.init_node("GrapeCollector", anonymous=True)
-    posecollector = GrapeCollector()
+    rospy.init_node("ObjectCollector", anonymous=True)
+    posecollector = ObjectCollector()
     rospy.spin()
