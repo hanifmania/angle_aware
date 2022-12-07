@@ -39,6 +39,7 @@ class PatrolAgent:
         while not rospy.is_shutdown():
             if self._agent._agent_base.is_main_ok() and self._is_patrol:
                 self._agent.main_control()
+
             rate.sleep()
 
 

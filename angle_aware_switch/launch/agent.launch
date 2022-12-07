@@ -24,15 +24,30 @@
             <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
             <!-- <param name="input_psi_topic" value="/angle_aware_psi" /> -->
         </node>
-        <!-- <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node> -->
+        <node pkg="angle_aware_switch" type="grape_detector.py" name="grape_detector" output="screen"></node>
 
         <node pkg="angle_aware_switch" type="pictogram.py" name="pictogram" output="screen"></node>
         <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>
-        <!-- <node pkg="angle_aware_pytorch" type="object_detector_yolov5.py" name="object_detector_yolov5" output="screen" respawn="false" respawn_delay="0">
-            <param name="output_pose_topic" value="grape_posestamped" />
+        <node pkg="angle_aware_pytorch" type="object_detector_yolov5.py" name="object_detector_yolov5" output="screen" respawn="false" respawn_delay="0">
+            <param name="output_pose_topic" value="object_detector/posestamped" />
             <param name="pytorch_hub_path" value="$(find angle_aware_pytorch)/yolov5" />
             <param name="model_path" value="$(find angle_aware_pytorch)/model/test1_yolov5s.pt" />
             <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
-        </node> -->
+        </node>
+
+        <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="object_detector_posestamped2tf" output="log" respawn="false" respawn_delay="0">
+            <param name="posestamped" value="grape_posestamped" />
+            <param name="tfname" value="bebop10$(arg number)/object_detector/posestamped" />
+        </node>
+
+
+        <node pkg="angle_aware_control" type="show_theta_field.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
+            <param name="frame_id" value="bebop10$(arg number)/object_detector/posestamped" />
+            <param name="input_field_topic" value="angle_aware/phi" />
+            <param name="field_param_name" value="~angle_aware/phi" />
+            <param name="output_topic" value="phi_point_cloud" />
+            <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
+
+        </node>
     </group>
 </launch>

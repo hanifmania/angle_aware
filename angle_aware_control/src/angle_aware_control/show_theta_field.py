@@ -21,10 +21,8 @@ class ShowPointCloud2d:
         field_param_name = rospy.get_param("~field_param_name")
         field_param = rospy.get_param(field_param_name)
         input_field_topic = rospy.get_param("~input_field_topic")
-        output_point_cloud_topic = rospy.get_param(
-            "~output_topic"
-        )
-        self.WORLD_TF = rospy.get_param("~world", default="world")
+        output_point_cloud_topic = rospy.get_param("~output_topic")
+        self._frame_id = rospy.get_param("~frame_id", default="world")
         r = field_param["r"]
 
         ### point cloud 作成共通部分
@@ -35,7 +33,7 @@ class ShowPointCloud2d:
         # self._x_row = field_grid[0].reshape([-1, 1])
         # self._y_row = field_grid[1].reshape([-1, 1])
         msg = PointCloud2()
-        msg.header.frame_id = self.WORLD_TF
+        msg.header.frame_id = self._frame_id
         msg.height = 1
         msg.fields = [
             PointField("x", 0, PointField.FLOAT32, 1),

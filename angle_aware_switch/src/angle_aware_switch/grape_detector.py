@@ -68,6 +68,7 @@ class GrapeDetector:
         msg.pose.position.x = grape_position[0]
         msg.pose.position.y = grape_position[1]
         msg.pose.position.z = grape_position[2]  # [TODO] get in param
+        msg.pose.orientation.w = 1
         self._pub.publish(msg)
 
     def detect_grape(self, position):

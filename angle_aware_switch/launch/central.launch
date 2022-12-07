@@ -11,6 +11,8 @@
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
     <rosparam file="$(find angle_aware_switch)/config/AR.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_pytorch)/config/yolov5.yaml" command="load" ns="" />
+
 
     <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
 

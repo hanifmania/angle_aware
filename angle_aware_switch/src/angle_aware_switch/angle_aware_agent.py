@@ -4,10 +4,11 @@ from bebop_hatanaka_base.agent_base import AgentBase
 from angle_aware_control.myqp import MyQP
 from angle_aware_control.psi_generator_no_jax import zeta_func
 from coverage_util.field_generator import FieldGenerator
+from coverage_util.numpy2multiarray import numpy2multiarray
 
 import rospy
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Bool, Float32
+from std_msgs.msg import Bool, Float32, Float32MultiArray
 
 import copy
 import numpy as np
@@ -24,6 +25,9 @@ class Agent:
         )
         # output_pictogram = rospy.get_param("~output_pictogram", default="grape")
         output_J_topic = rospy.get_param("~output_J_topic", default="angle_aware_J")
+        output_phi_topic = rospy.get_param(
+            "~output_phi_topic", default="angle_aware/phi"
+        )
 
         # self._world_tf = rospy.get_param("~world", default="world")
         self._grape_size = rospy.get_param("/grape_detector/size", default=None)
@@ -60,6 +64,9 @@ class Agent:
         self._qp.set_obstacle_avoidance_param(self._tree_params)
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
         self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
+        self._pub_phi = rospy.Publisher(
+            output_phi_topic, Float32MultiArray, queue_size=1
+        )
         # self._pub_pictogram = rospy.Publisher(
         #     output_pictogram,
         #     Pictogram,
@@ -78,6 +85,18 @@ class Agent:
         self._grape_queue.append(msg)
 
     ###################################################################
+    ### publish
+    ###################################################################
+    def publish_phi(self, phi):
+        """_summary_
+
+        Args:
+            phi (ndarray): 重要度
+        """
+        multiarray = numpy2multiarray(Float32MultiArray, phi)
+        self._pub_phi.publish(multiarray)
+
+    ###################################################################
     ### main
     ###################################################################
     def main_control(self):
@@ -93,7 +112,7 @@ class Agent:
             self._dt,
             self._phi_A,
         )
-
+        self.publish_phi(self._phi_A)
         self._pub_J.publish(np.sum(self._phi_A))
         #### joy input
         # uh_x, uh_y, uh_z, uh_w, uh_camera = self._agent_base.get_uh()
@@ -197,7 +216,8 @@ class Agent:
         range = param["range"]
         range[0] = [x - grape_size[0] * 0.5, x + grape_size[0] * 0.5]
         range[1] = [y - grape_size[1] * 0.5, y + grape_size[1] * 0.5]
-        range[2] = [z - grape_size[2] * 0.5, z + grape_size[2] * 0.5]
+        # range[2] = [z - grape_size[2] * 0.5, z + grape_size[2] * 0.5]
+        range[2] = [z, z]
 
         param["range"] = range
         generator = FieldGenerator(param)

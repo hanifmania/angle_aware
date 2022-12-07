@@ -39,7 +39,6 @@ class Agent:
 
         rospy.Subscriber(input_psi_topic, Float32MultiArray, self.psi_callback)
         self._agent_base.wait_pose_stamped()
-        self._agent_base.publish_camera_control(self._camera_deg)
 
         rospy.wait_for_message(input_psi_topic, Float32MultiArray)
 
@@ -97,6 +96,7 @@ class Agent:
         #         self.agentID, vel, world_ux, world_uy, w[0]
         #     )
         # )
+        self._agent_base.publish_camera_control(self._camera_deg)
 
     ###################################################################
     ### spin
