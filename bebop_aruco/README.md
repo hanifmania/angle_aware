@@ -7,6 +7,8 @@ AR markerを用いた自己位置推定
 ## Install
 ```
 pip3 install img2pdf
+pip uninstall opencv-python
+pip install opencv-contrib-python
 ```
 
 ## Run test

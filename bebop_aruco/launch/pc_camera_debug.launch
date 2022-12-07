@@ -18,5 +18,9 @@
     </node>
 
     <node pkg="rostopic" type="rostopic" name="camera_control" args="pub -1 camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -90, 0.0]'" />
+    <node name="image_republish" pkg="image_transport" type="republish" args="raw compressed">
+        <remap from="in" to="image_raw" />
+        <remap from="out" to="image_raw/compressed" />
+    </node>
 
 </launch>

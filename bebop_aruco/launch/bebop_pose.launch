@@ -22,6 +22,12 @@
             <param name="input_img_compressed_topic" value="image_raw/compressed" />
             <param name="output_topic" value="fromAR/image_raw" />
         </node>
+
+        <node name="image_republish" pkg="image_transport" type="republish_AR" args="raw compressed">
+            <remap from="in" to="fromAR/image_raw" />
+            <remap from="out" to="fromAR/image_raw/compressed" />
+        </node>
+
     </group>
     <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="posestamped2tf" output="log" respawn="false" respawn_delay="0">
         <param name="posestamped" value="posestamped" />
