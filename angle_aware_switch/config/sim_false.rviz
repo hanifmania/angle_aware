@@ -23,6 +23,7 @@ Panels:
         - /MarkerArray2
         - /PieChart1
         - /Image1
+        - /PointCloud23
       Splitter Ratio: 0.46109509468078613
     Tree Height: 513
   - Class: rviz/Selection
@@ -82,6 +83,8 @@ Visualization Manager:
           Value: true
         bebop101/camera_optical:
           Value: false
+        bebop101/object_detector/target_posestamped:
+          Value: true
         camera_base_link:
           Value: true
         camera_optical:
@@ -107,6 +110,8 @@ Visualization Manager:
           bebop101/base_link:
             {}
           bebop101/camera_optical:
+            {}
+          bebop101/object_detector/target_posestamped:
             {}
       Update Interval: 0
       Value: true
@@ -395,15 +400,43 @@ Visualization Manager:
       top: 256
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /bebop101/object_detector/image_raw
+      Image Topic: /bebop101/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
       Name: Image
       Normalize Range: true
       Queue Size: 2
-      Transport Hint: raw
+      Transport Hint: compressed
       Unreliable: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGBF32
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /bebop101/phi_point_cloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
   Enabled: true
   Global Options:
@@ -433,7 +466,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.118460178375244
+      Distance: 4.92978572845459
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -441,17 +474,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.03663790971040726
-        Y: 0.37758156657218933
-        Z: 0.08752013742923737
+        X: -0.030117057263851166
+        Y: 0.6047796607017517
+        Z: 0.33150699734687805
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7447972893714905
+      Pitch: 0.774797260761261
       Target Frame: <Fixed Frame>
-      Yaw: 4.728532314300537
+      Yaw: 4.708531856536865
     Saved:
       - Class: rviz/Orbit
         Distance: 4.560669422149658

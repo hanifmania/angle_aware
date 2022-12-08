@@ -13,7 +13,7 @@ agents:
   ref_yaw: 0
   unom_max: 0.3
 trees:
-  xy: [[50, 50]]
+  xy: [[0, 0]]
   avoid_radius: [0.5]
   no_phi_radius: [0.5]
   show_radius: [0.2]
