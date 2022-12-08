@@ -8,7 +8,7 @@ import numpy as np
 
 
 class MyQP:
-    def __init__(self, field, collision_distance, angle_aware_params):
+    def __init__(self, field, collision_distance, angle_aware_params, slack_cost=1.0e6):
         """_summary_
 
         Args:
@@ -24,7 +24,7 @@ class MyQP:
 
         self._u_dim = 2
         self._slack_dim = 1
-        costs = [1, 1, 1.0e6]  ### [ux, uy, angle_aware_slack]
+        costs = [1, 1, slack_cost]  ### [ux, uy, angle_aware_slack]
         alpha_default = 5
         self._cbf2qp.set_dim(self._u_dim, self._slack_dim, costs)
         self._field_cbf.set_params(field, alpha_default)

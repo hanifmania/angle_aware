@@ -93,7 +93,8 @@ class ShowPictogram:
             Pictogram: _description_
         """
         color_seed = J / J_0
-        color_rgba = plt.get_cmap("jet")(color_seed)
+        # color_rgba = plt.get_cmap("jet")(color_seed)
+        color_rgba = [1, 0, 0, 1]
 
         msg = Pictogram()
         msg.action = Pictogram.ROTATE_X
@@ -106,7 +107,7 @@ class ShowPictogram:
         msg.pose.orientation.y = -0.7
         msg.pose.orientation.z = 0
         msg.mode = Pictogram.PICTOGRAM_MODE
-        msg.speed = 0.5
+        msg.speed = 0.1
         msg.ttl = 60 * 10
         msg.size = size
         msg.color.r = color_rgba[0]

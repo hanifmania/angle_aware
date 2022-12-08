@@ -58,7 +58,12 @@ class Agent:
         self._dt = 1.0 / self._clock
 
         self._agent_base = AgentBase(self.agentID)
-        self._qp = myqp(self._field_cbf, collision_distance, angle_aware_params)
+        self._qp = myqp(
+            self._field_cbf,
+            collision_distance,
+            angle_aware_params,
+            angle_aware_params["slack_cost"],
+        )
         self._qp.set_obstacle_avoidance_param(self._tree_params)
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
         self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
@@ -139,7 +144,7 @@ class Agent:
         )
         vel = np.linalg.norm([world_ux, world_uy])
         rospy.loginfo(
-            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
+            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.6f}".format(
                 self.agentID, vel, world_ux, world_uy, w[0]
             )
         )
