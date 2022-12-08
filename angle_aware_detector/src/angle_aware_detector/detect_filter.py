@@ -17,7 +17,7 @@ class DetectFilter:
             "~output_topic", default="object_detector/target_posestamped"
         )
         input_found_object = rospy.get_param(
-            "~input_found_object", default="/found_object"
+            "~input_found_object", default="/found_objects"
         )
         self._world_tf = rospy.get_param("~world", default="world")
         grape_detector = rospy.get_param("/detect_filter")

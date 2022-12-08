@@ -9,9 +9,9 @@ angle_aware:
     density: [0.25, 0.25, 0.05, 0.09817477042468103, 0.2617993878]  #v: pi/32, h: pi/12
     r: 0.25
   threshold_rate: 0.05
-  observe_time: 30
+  observe_time: 20
   u_max: 0.3
-  ref_z: 1.5
+  ref_z: 1.8
 
   
 #   psi:

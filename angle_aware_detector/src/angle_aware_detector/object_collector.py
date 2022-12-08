@@ -12,7 +12,7 @@ class ObjectCollector:
         posestampedTopic = rospy.get_param(
             "~posestampedTopic", default="object_detector/target_posestamped"
         )
-        output_topic = rospy.get_param("~output_topic", default="/found_grape")
+        output_topic = rospy.get_param("~output_topic", default="/found_objects")
 
         group_ns = rospy.get_param("~group_header", default="bebop10")
 

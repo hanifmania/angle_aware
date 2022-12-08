@@ -13,6 +13,7 @@ import cv2
 import torch
 import matplotlib.pyplot as plt
 
+class YoloResult
 
 class ObjectDetectorYOLOv5:
     def __init__(self):
@@ -95,15 +96,16 @@ class ObjectDetectorYOLOv5:
         Args:
             cv_img (cv2): _description_
         """
-        box, confidence, cls = self.detect(cv_img, self._model, self._model_input_size)
-        if box is None:
+        result_df = self.detect(cv_img, self._model, self._model_input_size)
+        if result_df is None:
             # 未検出なら何の描写もせずに画像のみ送信
             self.publish_img(cv_img)
             return
-        output_img = self.draw(cv_img, box, confidence, cls, self._model.names)
+        output_img = self.draw(cv_img, result_df)
         self.publish_img(output_img)
-        position = self.calc_position(box, self._camera_posestamped)
-        self.publish_posestamped(position)
+        positions = self.calc_position(result_df, self._camera_posestamped)
+        for position in positions:
+            self.publish_posestamped(position)
 
         # raw_img_shape = cv_img.shape
         # resized_img = cv2.resize(
@@ -149,112 +151,127 @@ class ObjectDetectorYOLOv5:
             model_input_size (int): 画像を縦横この数値のpixelにしてAIに入力
 
         Returns:
-            list:  [x1, y1, x2, y2] of the detected boundingbox. 検出されなければNone
-            float: Confidence (0 ~ 1). 検出されなければNone
-            int: Detected class. 検出されなければNone
+            pandas.DataFrame:  [x_min y_min x_max y_max confidence  class    name]
         """
         raw_img_shape = cv_img.shape
         resized_img = cv2.resize(cv_img, (model_input_size, model_input_size))
         rgb_img = cv2.cvtColor(resized_img, cv2.COLOR_BGR2RGB)
         results = model([rgb_img], size=model_input_size)
-        if len(results.xyxy[0]) == 0:
-            ### 解が無ければNone
-            return None, None, None
-        *box, confidence, cls = results.xyxy[0][0]  # 一番精度の高いものだけを抽出
-
+        # if len(results.xyxy[0]) == 0:
+        #     ### 解が無ければNone
+        #     return None
+        
+        result_df = results.pandas().xyxy[0]
+        
         #### rescale box
         height = raw_img_shape[0]
         width = raw_img_shape[1]
 
         model_size_to_raw_x = width / model_input_size
         model_size_to_raw_y = height / model_input_size
-        raw_img_box = np.zeros(4)
-        raw_img_box[0] = box[0] * model_size_to_raw_x
-        raw_img_box[1] = box[1] * model_size_to_raw_y
-        raw_img_box[2] = box[2] * model_size_to_raw_x
-        raw_img_box[3] = box[3] * model_size_to_raw_y
-        return raw_img_box, confidence, cls
+        result_df["x_min"] *=  model_size_to_raw_x
+        result_df["x_max"] *=  model_size_to_raw_x
+        result_df["y_min"] *=  model_size_to_raw_y
+        result_df["y_max"] *=  model_size_to_raw_y
+        return result_df
+        # raw_img_box = np.zeros(4)
+        # raw_img_box[0] = box[0] * model_size_to_raw_x
+        # raw_img_box[1] = box[1] * model_size_to_raw_y
+        # raw_img_box[2] = box[2] * model_size_to_raw_x
+        # raw_img_box[3] = box[3] * model_size_to_raw_y
+        # return raw_img_box, confidence, cls
 
-    def draw(self, img, box, confidence, cls, name_dict):
+    def draw(self, img, box, df):
         """検出結果の画像を生成
 
         Args:
             img (cv2): modelに入れた画像のcv2 version
-            box (list):  [x1, y1, x2, y2] of the detected boundingbox.
-            confidence (float): 信頼度
-            cls(int) : 検出した物体番号
-            name_dict : clsに対応するstrが記されているdict
+            df (pandas.DataFrame):  [x_min y_min x_max y_max confidence  class    name]
 
         Returns:
             cv2: 検出結果を描写した画像
         """
-        name = name_dict[int(cls)]
-        s = name + ":" + "{:.3f}".format(float(confidence))
-
-        # color_rgba = plt.get_cmap("jet")(confidence)
-        # color_bgr = [color_rgba[2], color_rgba[1], color_rgba[0]]
         cc = (0, 255, 255)
         cc2 = (0, 128, 128)
-        cv2.rectangle(
-            img,
-            (int(box[0]), int(box[1])),
-            (int(box[2]), int(box[3])),
-            color=cc,
-            thickness=2,
-        )
+        for index, data in df.iterrows():
+            name = data["name"]
+            confidence = data["confidence"]
+            s = name + ":" + "{:.3f}".format(float(confidence))
+            x_min = int(data["x_min"])
+            x_max = int(data["x_max"])
+            y_min = int(data["y_min"])
+            y_max = int(data["y_max"])
+            
+            # color_rgba = plt.get_cmap("jet")(confidence)
+            # color_bgr = [color_rgba[2], color_rgba[1], color_rgba[0]]
+            cv2.rectangle(
+                img,
+                (x_min,y_min),
+                (x_max, y_max),
+                color=cc,
+                thickness=2,
+            )
 
-        # --- 文字枠と文字列描画
-        cv2.rectangle(
-            img,
-            (int(box[0]), int(box[1]) - 20),
-            (int(box[0]) + len(s) * 10, int(box[1])),
-            cc,
-            -1,
-        )
-        cv2.putText(
-            img,
-            s,
-            (int(box[0]), int(box[1]) - 5),
-            cv2.FONT_HERSHEY_PLAIN,
-            1,
-            cc2,
-            1,
-            cv2.LINE_AA,
-        )
+            # --- 文字枠と文字列描画
+            cv2.rectangle(
+                img,
+                (x_min, y_min - 20),
+                (x_min + len(s) * 10, y_min),
+                cc,
+                -1,
+            )
+            cv2.putText(
+                img,
+                s,
+                (x_min, y_min - 5),
+                cv2.FONT_HERSHEY_PLAIN,
+                1,
+                cc2,
+                1,
+                cv2.LINE_AA,
+            )
         return img
 
-    def calc_position(self, box, camera_posestamped):
+    def calc_position(self, df, camera_posestamped):
         """検出結果から位置を推定
 
         Args:
-            box (list):  [x1, y1, x2, y2] of the detected boundingbox.
+            df (pandas.DataFrame):  [x_min y_min x_max y_max confidence class name]
             camera_posestamped (posestamped): bebop camera posestamped
 
         Returns:
-            ndarray: [x, y, z]
+            list: [[x, y, z], ...]
         """
-        center_x = (box[0] + box[2]) * 0.5
-        center_y = (box[1] + box[3]) * 0.5
+        positions = []
+        for index, data in df.iterrows():
+            x_min = data["x_min"]
+            x_max = data["x_max"]
+            y_min = data["y_min"]
+            y_max = data["y_max"]
+            center_x = (x_min + x_max) * 0.5
+            center_y = (y_min + y_max) * 0.5
 
-        screen_point = np.array([center_x, center_y, 1]).reshape(-1, 1)
-        # rospy.loginfo("screen_point")
-        # rospy.loginfo(screen_point)
-        object_point_from_screen = self._ref_z * self._camera_matrix_inv.dot(
-            screen_point
-        )
-        object_point_from_screen_q = np.vstack([object_point_from_screen, 1])
-        # rospy.loginfo("object_point_from_camera_q")
-        # rospy.loginfo(object_point_from_screen_q)
-        bebopcamera2world = ros_utility.pose_to_g(camera_posestamped.pose)
+            screen_point = np.array([center_x, center_y, 1]).reshape(-1, 1)
+            # rospy.loginfo("screen_point")
+            # rospy.loginfo(screen_point)
+            object_point_from_screen = self._ref_z * self._camera_matrix_inv.dot(
+                screen_point
+            )
+            object_point_from_screen_q = np.vstack([object_point_from_screen, 1])
+            # rospy.loginfo("object_point_from_camera_q")
+            # rospy.loginfo(object_point_from_screen_q)
+            bebopcamera2world = ros_utility.pose_to_g(camera_posestamped.pose)
 
-        bebop_camera_R = bebopcamera2world[:3, :3]
-        screen_R = self.change_axis(bebop_camera_R)
+            bebop_camera_R = bebopcamera2world[:3, :3]
+            screen_R = self.change_axis(bebop_camera_R)
 
-        screen2world = bebopcamera2world
-        screen2world[:3, :3] = screen_R
+            screen2world = bebopcamera2world
+            screen2world[:3, :3] = screen_R
 
-        object_from_world = screen2world.dot(object_point_from_screen_q)
-        return object_from_world.reshape(-1)
+            object_from_world = screen2world.dot(object_point_from_screen_q)
+            position = object_from_world.reshape(-1)
+            positions.append(position)
+        return positions
 
     def inverse_dic(self, dictionary):
         """dictのkeyとvalueを入れ替える
