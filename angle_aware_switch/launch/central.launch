@@ -41,9 +41,7 @@
     </node>
 
     <!-- object detector -->
-    <rosparam file="$(find angle_aware_pytorch)/config/yolov5.yaml" command="load" ns="" />
-    <node name="grape_collector" pkg="angle_aware_switch" type="object_collector.py" output="log"></node>
-
+    <include file="$(find angle_aware_detector)/launch/central.launch"></include>
 
     <!-- <node pkg="angle_aware_control" type="central.py" name="angle_aware_central" output="screen">
         <param name="npy_data_dir" value="$(arg npy_data_dir)" />

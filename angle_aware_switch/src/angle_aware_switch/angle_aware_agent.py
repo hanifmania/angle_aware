@@ -39,7 +39,6 @@ class Agent:
 
         self._clock = agents_param["agent_manager_clock"]
         self._kp_z = agents_param["kp_z"]
-        self._ref_z = agents_param["ref_z"]
         self._kp_yaw = agents_param["kp_yaw"]
         self._ref_yaw = agents_param["ref_yaw"]
         self._umax = angle_aware_params["u_max"]
@@ -48,6 +47,7 @@ class Agent:
         self._delta_decrease = angle_aware_params["delta_decrease"]
         self._sigma = angle_aware_params["sigma"]
         self._observe_time = angle_aware_params["observe_time"]
+        self._ref_z = angle_aware_params["ref_z"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
@@ -138,11 +138,11 @@ class Agent:
             world_ux, world_uy, world_uz, omega_z
         )
         vel = np.linalg.norm([world_ux, world_uy])
-        # rospy.loginfo(
-        #     "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}, phi:{}".format(
-        #         self.agentID, vel, world_ux, world_uy, w[0], np.sum(self._phi_A)
-        #     )
-        # )
+        rospy.loginfo(
+            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
+                self.agentID, vel, world_ux, world_uy, w[0]
+            )
+        )
 
     def judge_angle_aware(self):
         """angle awareかpatrolかを判断. また target filedの生成も行う

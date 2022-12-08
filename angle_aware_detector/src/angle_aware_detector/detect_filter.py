@@ -128,8 +128,6 @@ class DetectFilter:
         position = np.array(grape_position)
         dist = np.linalg.norm(position - all_grape, axis=1)
         min_dist = np.min(dist, axis=0)
-        rospy.loginfo("observed check")
-        rospy.loginfo(dist)
         return min_dist < object_span
 
     def double_check(self, position, object_candidates, same_object_error, count):

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <rosparam file="$(find angle_aware_detector)/config/yolov5.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_detector)/config/object_detector.yaml" command="load" ns="" />
+    <node name="object_collector" pkg="angle_aware_detector" type="object_collector.py" output="log"></node>
+</launch>

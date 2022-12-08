@@ -1,3 +1,3 @@
-[submodule "angle_aware_pytorch/yolov5"]
-	path = angle_aware_pytorch/yolov5
+[submodule "angle_aware_detector/yolov5"]
+	path = angle_aware_detector/yolov5
 	url = https://github.com/ultralytics/yolov5
