@@ -34,7 +34,6 @@
             <arg name="use_dummy" value="true" />
         </include>
         <!-- rviz -->
-        <node pkg="angle_aware_switch" type="pictogram.py" name="pictogram" output="screen"></node>
         <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>
         <node pkg="angle_aware_control" type="show_theta_field.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
             <param name="frame_id" value="bebop10$(arg number)/object_detector/target_posestamped" />
@@ -43,10 +42,5 @@
             <param name="output_topic" value="phi_point_cloud" />
             <rosparam file="$(find angle_aware_switch)/config/angle_aware.yaml" command="load" ns="" />
         </node>
-
-        <!-- rosbag -->
-        <include file="$(find bebop_bag)/launch/rosbag_record_img.launch">
-            <arg name="rosbag_output" default="$(find angle_aware_switch)/rosbag/rosbag_img" />
-        </include>
     </group>
 </launch>

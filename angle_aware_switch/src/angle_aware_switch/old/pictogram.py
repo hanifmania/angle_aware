@@ -19,6 +19,11 @@ class ShowPictogram:
         output_pictogram = rospy.get_param("~output_pictogram", default="grape")
         self._pictogram_param = rospy.get_param("/pictogram")
         self._world_tf = rospy.get_param("~world", default="world")
+
+        self._pictogram_size = self._pictogram_param["size"]
+        self._pictogram_character = self._pictogram_param["character"]
+        self._pictogram_z_offset = self._pictogram_param["z_offset"]
+        self._pictogram_rotate_speed = self._pictogram_param["rotate_speed"]
         ###################
 
         self._posestamped_list = []
@@ -56,8 +61,10 @@ class ShowPictogram:
             self._J_0,
             self._world_tf,
             target_posestamped.pose.position,
-            self._pictogram_param["size"],
-            self._pictogram_param["character"],
+            self._pictogram_size,
+            self._pictogram_character,
+            self._pictogram_z_offset,
+            self._pictogram_rotate_speed,
         )
 
         self._pictogram_array.header.frame_id = self._world_tf
@@ -78,7 +85,9 @@ class ShowPictogram:
         self._list_id += 1
         self._pictogram_array.pictograms.append(Pictogram())
 
-    def generate_pictogram(self, J, J_0, world_tf, position, size, character):
+    def generate_pictogram(
+        self, J, J_0, world_tf, position, size, character, z_offset, rotate_speed
+    ):
         """ピクトグラムを生成
 
         Args:
@@ -88,6 +97,8 @@ class ShowPictogram:
             position (Position): _description_
             size (float): _description_
             character (str): _description_
+            z_offset(float): 高さoffset. 他の描写と被らないようにするため
+            rotate_speed(float): 回転速度
 
         Returns:
             Pictogram: _description_
@@ -102,12 +113,13 @@ class ShowPictogram:
         msg.header.stamp = rospy.Time.now()
 
         msg.pose.position = position
+        msg.pose.position.z += z_offset
         msg.pose.orientation.w = 0.7
         msg.pose.orientation.x = 0
         msg.pose.orientation.y = -0.7
         msg.pose.orientation.z = 0
         msg.mode = Pictogram.PICTOGRAM_MODE
-        msg.speed = 0.1
+        msg.speed = rotate_speed
         msg.ttl = 60 * 10
         msg.size = size
         msg.color.r = color_rgba[0]

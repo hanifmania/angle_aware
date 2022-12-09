@@ -151,7 +151,7 @@ class DetectFilter:
         same = dist < self._same_object_error
         ret = np.sum(same) >= count
         if ret:
-            object_candidates = object_candidates[same]
+            object_candidates = object_candidates[~same]
         else:
             object_candidates = np.vstack([object_candidates, position])
         return ret, object_candidates

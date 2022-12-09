@@ -41,7 +41,10 @@
     </node>
 
     <!-- object detector -->
-    <include file="$(find angle_aware_detector)/launch/central.launch"></include>
+
+    <rosparam file="$(find angle_aware_detector)/config/yolov5.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_switch)/config/object_detector.yaml" command="load" ns="" />
+    <node name="object_collector" pkg="angle_aware_detector" type="object_collector.py" output="log"></node>
 
     <!-- <node pkg="angle_aware_control" type="central.py" name="angle_aware_central" output="screen">
         <param name="npy_data_dir" value="$(arg npy_data_dir)" />

@@ -24,7 +24,7 @@ class PubDiagnostic:
         self._updater.add(output_topic, self.check)
         self._is_angle_aware_mode = False
 
-        rospy.Subscriber(input_topic, Bool, self.callback)
+        rospy.Subscriber(input_topic, Bool, self.callback, queue_size=1)
 
     #############################################################
     # callback
