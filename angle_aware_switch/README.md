@@ -1,29 +1,38 @@
-# angle_aware_aruco
-土方さん農場での実験1. ArUcoマーカーとAngleAwareの実験
+# angle_aware_switch
 
-## Demo
-Please click and check the Youtube.   
-[![](https://img.youtube.com/vi/FaWPN4Oym5M/0.jpg)](https://www.youtube.com/watch?v=FaWPN4Oym5M)
-
+<!-- ## Demo -->
 
 ## Requirements
 - angle_aware_control
-- bebop_aruco
+- angle_aware_avoid_tree
+- angle_aware_detector
+- angle_aware_aruco
 
-
-## Run test
+## Run Test
+### Generate Psi
+```
+roslaunch angle_aware_control patrol_generate_psi.launch
+```
 ### Simulation
 ```
-roslaunch angle_aware_aruco bringup_sim.launch
+roslaunch angle_aware_switch bringup_sim.launch
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push X button -> main control start
 1. Push START button -> take off and field reset
 
-
 ### Experiment
+#### 2 drone version
+Connect 2 PC with LAN cable.
+##### PC 1
+- Set the private IP (192.168.1.1, gateway:192.168.1.2)
 ```
-roslaungh angle_aware_aruco bringup.launch
+roslaunch angle_aware_switch master.launch
+```
+##### PC 2
+- Set the private IP (192.168.1.2, gateway:192.168.1.1)
+```
+roslaunch angle_aware_switch agent.launch number:="2"
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push START button -> takeoff
@@ -31,7 +40,6 @@ roslaungh angle_aware_aruco bringup.launch
 1. Push X button -> main control start
 1. Push A button -> joy_msg control mode (stop)
 1. Push BACK button -> land
-
 
 ## Author
 

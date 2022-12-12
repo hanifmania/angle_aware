@@ -21,7 +21,6 @@ This is the code for https://ieeexplore.ieee.org/document/9650560.
 ## Install
 ```
 git clone https://github.com/htnk-lab/bebop_hatanaka_lab.git
-git clone https://github.com/htnk-lab/persistent_coverage_control.git
 ```
 - Follow the README of https://github.com/htnk-lab/bebop_hatanaka_lab.git
 
@@ -40,16 +39,6 @@ angle_aware_control is the base package.
 
 [Takumi Shimizu](https://github.com/tashiwater)
 
-
-
-### angle_aware_switch
-- [pytorch install](https://pytorch.org/get-started/locally/)
-- YOLO v5
-```
-git clone https://github.com/ultralytics/yolov5  # clone
-cd yolov5
-pip install -r requirements.txt  # install
-```
 
 
 
