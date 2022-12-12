@@ -1,8 +1,0 @@
-detect_filter:
-  decide_count: 3
-  object_span: 0.5
-  same_object_error: 0.2
-dummy_object_detector:
-  positions: [[-0.5, -0.5, 0]]
-  detect_radius: 0.4 ### = height * tan(math.pi/2 - range[3][0])
-  clock : 3
