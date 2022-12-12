@@ -1,5 +1,5 @@
 # angle_aware_avoid_tree
-Add object avoidance to angle_aware_control
+Angle Aware with Camera control. Note that this is the simple version.
 
 ## Requirements
 - angle_aware_control
@@ -7,7 +7,7 @@ Add object avoidance to angle_aware_control
 ## Run test
 ### Simulation
 ```
-roslaunch angle_aware_avoid_tree bringup_sim.launch
+roslaunch angle_aware_camera bringup_sim.launch
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push X button -> main control start
@@ -16,8 +16,8 @@ roslaunch angle_aware_avoid_tree bringup_sim.launch
 
 ### Experiment (Not tested)
 ```
-roslaunch angle_aware_avoid_tree central.launch agentNum:="3"
-roslaunch angle_aware_avoid_tree agent.launch number:=""
+roslaunch angle_aware_camera central.launch agentNum:="3"
+roslaunch angle_aware_camera agent.launch number:=""
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push START button -> takeoff
