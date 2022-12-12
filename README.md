@@ -13,6 +13,7 @@ Please click and check the Youtube.
 - angle_aware_camera : カメラ角度まで考慮するアルゴリズムの簡略版。論文のものとは少し違うので注意
 - **angle_aware_control : AngleAware base code**
 - angle_aware_debug : debug用
+- angle_aware_detector : 物体認識
 - angle_aware_switch : パトロール＋AngleAware
 - angle_aware_unity : Unityとの連携
 - bebop_aruco : ArUcoマーカーを用いた自己位置推定
