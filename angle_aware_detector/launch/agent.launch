@@ -17,7 +17,7 @@
         <param name="posestamped" value="object_detector/target_posestamped" />
         <param name="tfname" value="bebop10$(arg number)/object_detector/target_posestamped" />
     </node>
-    <node name="AI_image_republish" pkg="image_transport" type="republish" args="raw compressed">
+    <node name="AI_image_republish" pkg="image_transport" type="republish" args="raw compressed" unless="$(arg use_dummy)">
         <remap from="in" to="object_detector/image_raw" />
         <remap from="out" to="object_detector/image_raw" />
     </node>

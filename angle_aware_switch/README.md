@@ -25,12 +25,26 @@ roslaunch angle_aware_switch bringup_sim.launch
 #### 2 drone version
 Connect 2 PC with LAN cable.
 ##### PC 1
-- Set the private IP (192.168.1.1, gateway:192.168.1.2)
+- Set the private IP (192.168.1.1, netmask 255.255.255.0, gateway:192.168.1.2)
+- gedit ~/.bashrc
+```
+# export ROS_IP=127.0.0.1
+# export ROS_MASTER_URI=http://localhost:11311
+export ROS_IP=$(hostname -I | cut -d' ' -f1)
+export ROS_MASTER_URI=http://$ROS_IP:11311
+```
+- Open new terminal and launch
 ```
 roslaunch angle_aware_switch master.launch
 ```
 ##### PC 2
-- Set the private IP (192.168.1.2, gateway:192.168.1.1)
+- Set the private IP (192.168.1.2, netmask 255.255.255.0, gateway:192.168.1.1)
+- gedit ~/.bashrc
+```
+export ROS_IP=$(hostname -I | cut -d' ' -f1)
+export ROS_MASTER_URI=http://192.168.1.111311
+```
+- Open new terminal and launch
 ```
 roslaunch angle_aware_switch agent.launch number:="2"
 ```
