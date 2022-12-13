@@ -9,6 +9,7 @@ Panels:
         - /Grid1
         - /TF1
         - /TF1/Frames1
+        - /TF1/Frames1/bebop101/base_link1
         - /RobotModel1
         - /RobotModel2
         - /RobotModel3
@@ -70,6 +71,10 @@ Visualization Manager:
         All Enabled: false
         base_link:
           Value: true
+        bebop101/base_link:
+          Value: true
+        bebop101/camera_optical:
+          Value: true
         camera_base_link:
           Value: true
         camera_optical:
@@ -80,6 +85,8 @@ Visualization Manager:
           Value: true
         odom:
           Value: true
+        world:
+          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -87,7 +94,11 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        world:
+          bebop101/base_link:
+            {}
+          bebop101/camera_optical:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 0.30000001192092896
@@ -348,10 +359,10 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: jsk_rviz_plugin/PieChart
-      Enabled: true
+      Enabled: false
       Name: PieChart
       Topic: /bebop101/real_battery
-      Value: true
+      Value: false
       auto color change: true
       background color: 0; 0; 0
       backround alpha: 0
@@ -371,10 +382,10 @@ Visualization Manager:
       text size: 14
       top: 256
     - Class: jsk_rviz_plugin/PieChart
-      Enabled: true
+      Enabled: false
       Name: PieChart
       Topic: /bebop102/real_battery
-      Value: true
+      Value: false
       auto color change: true
       background color: 0; 0; 0
       backround alpha: 0
@@ -395,7 +406,7 @@ Visualization Manager:
       top: 256
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /bebop101/fromAR/image_raw
+      Image Topic: /bebop101/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0

@@ -18,15 +18,6 @@
             <param name="input_posestamped_topic" value="fromAR/camera_posestamped" />
             <param name="output_topic" value="posestamped" />
         </node>
-        <node pkg="bebop_aruco" type="show_detected_ar.py" name="show_detected_ar" output="screen">
-            <param name="input_img_compressed_topic" value="image_raw/compressed" />
-            <param name="output_topic" value="fromAR/image_raw" />
-        </node>
-
-        <node name="AR_image_republish" pkg="image_transport" type="republish" args="raw compressed">
-            <remap from="in" to="fromAR/image_raw" />
-            <remap from="out" to="fromAR/image_raw" />
-        </node>
 
     </group>
     <node pkg="rostopic" type="rostopic" name="camera_control" args="pub -r 1 camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -82, 0.0]'" />

@@ -2,6 +2,7 @@
 <launch>
     <arg name="number" default="1" />
     <arg name="sim" default="true" />
+    <arg name="show_ar_img" default="false" />
 
     <param name="agentID" value="$(arg number)" />
 
@@ -21,5 +22,18 @@
         <node pkg="bebop_hatanaka_base" name="battery_republisher" type="battery_republisher.py" output="log" />
     </group>
 
+
+    <!-- show_ar_img -->
+    <group if="$(arg show_ar_img)">
+        <node pkg="bebop_aruco" type="show_detected_ar.py" name="show_detected_ar" output="screen">
+            <param name="input_img_compressed_topic" value="image_raw/compressed" />
+            <param name="output_topic" value="fromAR/image_raw" />
+        </node>
+
+        <node name="AR_image_republish" pkg="image_transport" type="republish" args="raw compressed">
+            <remap from="in" to="fromAR/image_raw" />
+            <remap from="out" to="fromAR/image_raw" />
+        </node>
+    </group>
 
 </launch>

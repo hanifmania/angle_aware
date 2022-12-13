@@ -2,6 +2,8 @@
 <launch>
     <include file="$(find angle_aware_switch)/launch/central.launch">
         <arg name="agentNum" value="2" />
+        <arg name="use_aruco" default="true" />
+
     </include>
     <include file="$(find angle_aware_switch)/launch/agent.launch">
         <arg name="number" value="1" />

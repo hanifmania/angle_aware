@@ -8,6 +8,7 @@
     <arg name="npy_data_dir" default="$(find angle_aware_switch)/data/input/" />
     <arg name="rosbag_output" default="$(find angle_aware_switch)/rosbag/rosbag.bag" />
     <arg name="log_path" default="$(find angle_aware_switch)/rosbag/log.csv" />
+    <arg name="use_aruco" default="true" />
 
     <!-- central_base -->
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
@@ -15,7 +16,7 @@
     <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
     <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
         <arg name="agentNum" value="$(arg agentNum)" />
-        <arg name="sim" value="$(arg sim)" />
+        <arg name="sim" value="$(arg use_aruco)" />
         <arg name="rviz_file" value="$(arg rviz_file)" />
         <arg name="use_rosbag" value="$(arg use_rosbag)" />
         <arg name="rosbag_output" value="$(arg rosbag_output)" />

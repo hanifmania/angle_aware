@@ -45,7 +45,7 @@ class CameraFromAR:
         # self._norm_threshold = ar_params["norm_threshold"]
         self._id_offset = ar_params["id_offset"]
         self._outer_velocity = ar_params["outer_velocity"]
-        self._stop_skip_t = ar_params["stop_skip_t"]
+        # self._stop_skip_t = ar_params["stop_skip_t"]
 
         self._map_generator = FieldGenerator(ar_field_param)
         self._grid_x, self._grid_y = self._map_generator.generate_grid(sparse=False)
@@ -74,7 +74,13 @@ class CameraFromAR:
             output_pose_topic, PoseStamped, queue_size=1
         )
         # rospy.Subscriber(camera_info_topic, CameraInfo, self.camera_info_callback)
-        rospy.Subscriber(input_img_compressed_topic, CompressedImage, self.img_callback, queue_size=1, buff_size=2**24)
+        rospy.Subscriber(
+            input_img_compressed_topic,
+            CompressedImage,
+            self.img_callback,
+            queue_size=1,
+            buff_size=2**24,
+        )
         # rospy.Subscriber(input_img_topic, Image, self.img_callback)
         # rospy.Subscriber(pose_stamped_feedback, PoseStamped, self.pose_stamped_feedback)
 
@@ -96,6 +102,7 @@ class CameraFromAR:
         Args:
             img_msg (sensor_msgs.msg.Image): _description_
         """
+        t = rospy.Time.now()
         # if self._has_camera_info_received is False:
         #     ### camera info がなければearly return
         #     return
@@ -115,9 +122,9 @@ class CameraFromAR:
         ### camera位置の推定
 
         filtered_xyzs, filtered_Rs = self.outer_filter(xyzs, Rs)
-        if len(filtered_xyzs) == 0:
-            rospy.loginfo("skip all")
-            return
+        # if len(filtered_xyzs) == 0:
+        # rospy.loginfo("skip all")
+        # return
         xyz, R = self.estimate_pose(filtered_xyzs, filtered_Rs)
         ### cv2の座標系からbebopの座標系に変換
         bebop_R = self.change_axis(R)
@@ -125,6 +132,8 @@ class CameraFromAR:
         ### 結果のpublish
         posestamped = self.np2posestamped(xyz, bebop_R, img_msg)
         self._pub_posestamped.publish(posestamped)
+        dt = rospy.Time.now() - t
+        rospy.loginfo("dt :{}".format(dt.to_sec()))
 
     # def camera_info_callback(self, msg):
     #     """camera行列等の取得. main_function実行前に実施する必要がある
@@ -260,20 +269,22 @@ class CameraFromAR:
             vel = np.linalg.norm(xyz - self._old_xyz) / dt.to_sec()
             if vel < self._outer_velocity:
                 safe_index.append(i)
-            else:
-                rospy.loginfo("outlier : {}".format(vel))
         filtered_xyzs, filtered_Rs = xyzs[safe_index], Rs[safe_index]
 
         if len(filtered_xyzs) == 0:
-            ### dataが全部外れ値だった場合、それが長時間起こると現在地が更新されず危険。
-            skip_t = now - self._last_skip_t
-            if skip_t.to_sec() > self._stop_skip_t:
-                ### 一定時間以上更新しなければ外れ値除去を一度やめる
-                filtered_xyzs, filtered_Rs = xyzs, Rs
-                self._last_skip_t = now
-        else:
-            ### skipしなれけば、last skip timeを更新
-            self._last_skip_t = now
+            ### dataが全部外れ値だった場合は真値として計算
+            filtered_xyzs = xyzs
+            filtered_Rs = Rs
+        # if len(filtered_xyzs) == 0:
+        #     ### dataが全部外れ値だった場合、それが長時間起こると現在地が更新されず危険。
+        #     skip_t = now - self._last_skip_t
+        #     if skip_t.to_sec() > self._stop_skip_t:
+        #         ### 一定時間以上更新しなければ外れ値除去を一度やめる
+        #         filtered_xyzs, filtered_Rs = xyzs, Rs
+        #         self._last_skip_t = now
+        # else:
+        #     ### skipしなれけば、last skip timeを更新
+        #     self._last_skip_t = now
         return filtered_xyzs, filtered_Rs
 
     def change_axis(self, R):
