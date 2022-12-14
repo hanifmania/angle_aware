@@ -10,7 +10,7 @@ angle_aware:
     r: 0.05
   threshold_rate: 0.01
   observe_time: 10
-  u_max: 0.3
+  u_max: 0.1
   ref_z: 1
   slack_cost: 1000000000
 

@@ -72,12 +72,6 @@ Visualization Manager:
           Value: false
         bebop101/object_detector/target_posestamped:
           Value: true
-        bebop102/base_link:
-          Value: true
-        bebop102/camera_optical:
-          Value: true
-        bebop102/object_detector/target_posestamped:
-          Value: true
         world:
           Value: false
       Marker Alpha: 1
@@ -93,12 +87,6 @@ Visualization Manager:
           bebop101/camera_optical:
             {}
           bebop101/object_detector/target_posestamped:
-            {}
-          bebop102/base_link:
-            {}
-          bebop102/camera_optical:
-            {}
-          bebop102/object_detector/target_posestamped:
             {}
       Update Interval: 0
       Value: true
@@ -403,7 +391,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.192311763763428
+      Distance: 4.969693660736084
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -411,17 +399,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.7286218404769897
-        Y: 1.7710624933242798
-        Z: 0.9050125479698181
+        X: 2.7220675945281982
+        Y: 1.885091781616211
+        Z: 1.0160770416259766
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.40979740023612976
+      Pitch: 0.5597975850105286
       Target Frame: <Fixed Frame>
-      Yaw: 4.69353723526001
+      Yaw: 4.6985368728637695
     Saved:
       - Class: rviz/Orbit
         Distance: 4.560669422149658

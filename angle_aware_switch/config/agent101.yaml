@@ -6,4 +6,4 @@ initial_pose:
   P_deg: 0
   Y_deg: 0
   camera_deg: -82
-collision_distance: 1.5
+collision_distance: 2
