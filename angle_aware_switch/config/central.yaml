@@ -1,7 +1,7 @@
 pose_collector:
   clock: 100
 virtual_drone_clock: 100
-field_cbf: [[0, 3.5], [0, 5.25]] # 衝突回避で避けられるよう、psiよりも一回り大きくとる
+field_cbf: [[0, 3.5], [0, 4.5]] # 衝突回避で避けられるよう、psiよりも一回り大きくとる
 central_clock: 20
 agents:
   agent_manager_clock: 20
