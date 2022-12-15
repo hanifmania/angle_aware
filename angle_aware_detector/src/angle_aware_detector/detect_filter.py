@@ -99,16 +99,16 @@ class DetectFilter:
         )
         if already_detected:
             return
-        is_publish, self._object_candidate = self.double_check(
+        result, self._object_candidate = self.double_check(
             position,
             self._object_candidate,
             self._same_object_error,
             self._decide_count,
             self._max_stock
         )
-        if is_publish:
-            self._my_found_object = np.vstack([self._my_found_object, position])
-            self.publish(position)
+        if result is not False:
+            self._my_found_object = np.vstack([self._my_found_object, result])
+            self.publish(result)
 
     #############################################################
     # functions
@@ -143,7 +143,7 @@ class DetectFilter:
             max_stock (int) : candidatesの最大個数
 
         Returns:
-            bool: publish可能ならtrue
+            ndarray: publish可能なら[x,y,z]. 不可能ならFalse
             ndarray: object_candidates
         """
         position = np.array(position)
@@ -154,12 +154,14 @@ class DetectFilter:
         same = dist < self._same_object_error
         ret = np.sum(same) >= count
         if ret:
+            result = np.average(np.vstack([object_candidates, position]), axis=0)
             object_candidates = object_candidates[~same]
         else:
             object_candidates = np.vstack([object_candidates, position])
+            result = False
         if len(object_candidates) >= max_stock:
             object_candidates.pop()
-        return ret, object_candidates
+        return result, object_candidates
 
 
 if __name__ == "__main__":

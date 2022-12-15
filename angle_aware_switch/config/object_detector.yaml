@@ -1,6 +1,6 @@
 detect_filter:
   decide_count: 3
-  object_span: 0.5
+  object_span: 0.75
   same_object_error: 0.2
   max_stock: 5
 dummy_object_detector:

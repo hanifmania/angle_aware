@@ -37,11 +37,12 @@ class ObjectDetectorYOLOv5:
         ###### group yaml
 
         ##### central yaml
-        self._ref_z = rospy.get_param("/agents/ref_z")
+        # self. = rospy.get_param("/agents/ref_z")
         object_detector_params = rospy.get_param("/object_detector")
         confidence_min = object_detector_params["confidence_min"]
         target_class = object_detector_params["target_class"]
         self._model_input_size = object_detector_params["model_input_size"]
+        self._object_z = object_detector_params["object_z"]
         ##################
         K = camera_matrix_param["data"]
 
@@ -256,7 +257,7 @@ class ObjectDetectorYOLOv5:
             screen_point = np.array([center_x, center_y, 1]).reshape(-1, 1)
             # rospy.loginfo("screen_point")
             # rospy.loginfo(screen_point)
-            object_point_from_screen = self._ref_z * self._camera_matrix_inv.dot(
+            object_point_from_screen = (camera_posestamped.pose.position.z - self._object_z) * self._camera_matrix_inv.dot(
                 screen_point
             )
             object_point_from_screen_q = np.vstack([object_point_from_screen, 1])
