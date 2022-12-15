@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <include file="$(find angle_aware_switch)/launch/central.launch">
-        <arg name="agentNum" value="1" />
+        <arg name="agentNum" value="2" />
         <arg name="use_aruco" default="false" />
 
     </include>

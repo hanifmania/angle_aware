@@ -17,8 +17,10 @@ Panels:
         - /PointCloud22
         - /Image1
         - /Image2
+        - /Camera1
+        - /Camera1/Visibility1
       Splitter Ratio: 0.46109509468078613
-    Tree Height: 378
+    Tree Height: 205
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -78,8 +80,6 @@ Visualization Manager:
           Value: true
         bebop102:
           Value: true
-        bebop103:
-          Value: true
         camera_base_link:
           Value: true
         camera_optical:
@@ -91,6 +91,8 @@ Visualization Manager:
         odom:
           Value: true
         pg_camera:
+          Value: true
+        sky_camera:
           Value: true
         world:
           Value: true
@@ -110,10 +112,9 @@ Visualization Manager:
             {}
           bebop102:
             {}
-          bebop103:
-            {}
           pg_camera:
-            {}
+            sky_camera:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 0.30000001192092896
@@ -190,18 +191,23 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: bebop102
       Update Interval: 0
-      Value: false
+      Value: true
       Visual Enabled: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -308,12 +314,12 @@ Visualization Manager:
       Unreliable: false
       Value: true
     - Class: jsk_rviz_plugin/PictogramArray
-      Enabled: false
+      Enabled: true
       Name: PictogramArray
       Queue Size: 10
       Topic: /bebop102/grape
       Unreliable: false
-      Value: false
+      Value: true
     - Class: jsk_rviz_plugin/OverlayDiagnostic
       Enabled: true
       Name: OverlayDiagnostic
@@ -327,10 +333,10 @@ Visualization Manager:
       top: 128
       type: SAC
     - Class: jsk_rviz_plugin/OverlayDiagnostic
-      Enabled: false
+      Enabled: true
       Name: OverlayDiagnostic
       Topic: /diagnostics_agg
-      Value: false
+      Value: true
       alpha: 0.800000011920929
       diagnostics namespace: "/bebop102 mode: mode"
       left: 384
@@ -350,10 +356,10 @@ Visualization Manager:
       line width: 0.029999999329447746
       radius: 0.10000000149011612
     - Class: jsk_rviz_plugin/Diagnostics
-      Enabled: false
+      Enabled: true
       Name: Diagnostics
       Topic: /diagnostics_agg
-      Value: false
+      Value: true
       axis: x
       diagnostics namespace: "/bebop102 mode: mode"
       font size: 0
@@ -428,7 +434,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /bebop102/image_raw
+      Image Topic: /bebop102/object_detector/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -494,6 +500,31 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Camera
+      Enabled: true
+      Image Rendering: background and overlay
+      Image Topic: /usb_cam/image_raw
+      Name: Camera
+      Overlay Alpha: 0.5
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+      Visibility:
+        Diagnostics: true
+        Grid: false
+        Image: true
+        MarkerArray: true
+        OverlayDiagnostic: true
+        PictogramArray: true
+        PieChart: true
+        PointCloud2: true
+        Range: true
+        RobotModel: true
+        TF: false
+        Value: true
+        patrol_J: true
+      Zoom Factor: 1
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
@@ -522,7 +553,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 4.92978572845459
+      Distance: 4.142250061035156
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -530,17 +561,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.05549164488911629
-        Y: 0.3729107677936554
-        Z: 0.5471199750900269
+        X: -0.08784747868776321
+        Y: 0.30925452709198
+        Z: 0.41590210795402527
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5597971677780151
+      Pitch: 0.6297970414161682
       Target Frame: <Fixed Frame>
-      Yaw: 4.723530292510986
+      Yaw: 4.71353006362915
     Saved:
       - Class: rviz/Orbit
         Distance: 4.560669422149658
@@ -563,6 +594,8 @@ Visualization Manager:
         Target Frame: <Fixed Frame>
         Yaw: 4.673530578613281
 Window Geometry:
+  Camera:
+    collapsed: false
   Displays:
     collapsed: false
   Height: 1016
@@ -570,7 +603,7 @@ Window Geometry:
   Hide Right Dock: true
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001a20000035ffc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000001b7000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006501000001fa000000d40000001600fffffffb0000000a0049006d00610067006501000002d4000000c80000001600ffffff000000010000010f0000035afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d0000035a000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073800000039fc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000005900000035f00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000003500000035ffc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afc0000003d0000010a000000c900fffffffa000000010100000002fb0000000a0049006d00610067006503000000560000003d0000019a00000153fb000000100044006900730070006c0061007900730100000000000003500000015600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d00610067006503000001f200000044000001960000014cfb0000000c00430061006d006500720061010000014d0000024f0000001600ffffff000000010000010f0000035afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d0000035a000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073800000039fc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000003e20000035f00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:

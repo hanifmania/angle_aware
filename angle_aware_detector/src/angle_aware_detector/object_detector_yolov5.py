@@ -232,7 +232,6 @@ class ObjectDetectorYOLOv5:
                 1,
                 cv2.LINE_AA,
             )
-            break #最も重要度が高いもののみを利用
         return img
 
     def calc_position(self, df, camera_posestamped):
@@ -274,7 +273,6 @@ class ObjectDetectorYOLOv5:
             object_from_world = screen2world.dot(object_point_from_screen_q)
             position = object_from_world.reshape(-1)
             positions.append(position)
-            break #最も重要度が高いもののみを利用
 
         return positions
 

@@ -12,7 +12,7 @@ angle_aware:
   observe_time: 20
   u_max: 0.3
   ref_z: 1.3
-  slack_cost: 1000000000
+  slack_cost: 1000000
 
   
 #   psi:
