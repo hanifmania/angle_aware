@@ -150,28 +150,30 @@ class ObjectDetectorYOLOv5:
             model_input_size (int): 画像を縦横この数値のpixelにしてAIに入力
 
         Returns:
-            pandas.DataFrame:  [x_min y_min x_max y_max confidence  class    name]
+            pandas.DataFrame:  [xmin ymin xmax ymax confidence  class    name]
         """
         raw_img_shape = cv_img.shape
         resized_img = cv2.resize(cv_img, (model_input_size, model_input_size))
         rgb_img = cv2.cvtColor(resized_img, cv2.COLOR_BGR2RGB)
         results = model([rgb_img], size=model_input_size)
-        # if len(results.xyxy[0]) == 0:
-        #     ### 解が無ければNone
-        #     return None
+        if len(results.xyxy[0]) == 0:
+            ### 解が無ければNone
+            return None
         
         result_df = results.pandas().xyxy[0]
-        
+        # rospy.loginfo(result_df["xmin"])
+        # return None
+
         #### rescale box
         height = raw_img_shape[0]
         width = raw_img_shape[1]
 
         model_size_to_raw_x = width / model_input_size
         model_size_to_raw_y = height / model_input_size
-        result_df["x_min"] *=  model_size_to_raw_x
-        result_df["x_max"] *=  model_size_to_raw_x
-        result_df["y_min"] *=  model_size_to_raw_y
-        result_df["y_max"] *=  model_size_to_raw_y
+        result_df["xmin"] *=  model_size_to_raw_x
+        result_df["xmax"] *=  model_size_to_raw_x
+        result_df["ymin"] *=  model_size_to_raw_y
+        result_df["ymax"] *=  model_size_to_raw_y
         return result_df
         # raw_img_box = np.zeros(4)
         # raw_img_box[0] = box[0] * model_size_to_raw_x
@@ -180,12 +182,12 @@ class ObjectDetectorYOLOv5:
         # raw_img_box[3] = box[3] * model_size_to_raw_y
         # return raw_img_box, confidence, cls
 
-    def draw(self, img, box, df):
+    def draw(self, img, df):
         """検出結果の画像を生成
 
         Args:
             img (cv2): modelに入れた画像のcv2 version
-            df (pandas.DataFrame):  [x_min y_min x_max y_max confidence  class    name]
+            df (pandas.DataFrame):  [xmin ymin xmax ymax confidence  class    name]
 
         Returns:
             cv2: 検出結果を描写した画像
@@ -196,17 +198,17 @@ class ObjectDetectorYOLOv5:
             name = data["name"]
             confidence = data["confidence"]
             s = name + ":" + "{:.3f}".format(float(confidence))
-            x_min = int(data["x_min"])
-            x_max = int(data["x_max"])
-            y_min = int(data["y_min"])
-            y_max = int(data["y_max"])
+            xmin = int(data["xmin"])
+            xmax = int(data["xmax"])
+            ymin = int(data["ymin"])
+            ymax = int(data["ymax"])
             
             # color_rgba = plt.get_cmap("jet")(confidence)
             # color_bgr = [color_rgba[2], color_rgba[1], color_rgba[0]]
             cv2.rectangle(
                 img,
-                (x_min,y_min),
-                (x_max, y_max),
+                (xmin,ymin),
+                (xmax, ymax),
                 color=cc,
                 thickness=2,
             )
@@ -214,28 +216,29 @@ class ObjectDetectorYOLOv5:
             # --- 文字枠と文字列描画
             cv2.rectangle(
                 img,
-                (x_min, y_min - 20),
-                (x_min + len(s) * 10, y_min),
+                (xmin, ymin - 20),
+                (xmin + len(s) * 10, ymin),
                 cc,
                 -1,
             )
             cv2.putText(
                 img,
                 s,
-                (x_min, y_min - 5),
+                (xmin, ymin - 5),
                 cv2.FONT_HERSHEY_PLAIN,
                 1,
                 cc2,
                 1,
                 cv2.LINE_AA,
             )
+            break #最も重要度が高いもののみを利用
         return img
 
     def calc_position(self, df, camera_posestamped):
         """検出結果から位置を推定
 
         Args:
-            df (pandas.DataFrame):  [x_min y_min x_max y_max confidence class name]
+            df (pandas.DataFrame):  [xmin ymin xmax ymax confidence class name]
             camera_posestamped (posestamped): bebop camera posestamped
 
         Returns:
@@ -243,12 +246,12 @@ class ObjectDetectorYOLOv5:
         """
         positions = []
         for index, data in df.iterrows():
-            x_min = data["x_min"]
-            x_max = data["x_max"]
-            y_min = data["y_min"]
-            y_max = data["y_max"]
-            center_x = (x_min + x_max) * 0.5
-            center_y = (y_min + y_max) * 0.5
+            xmin = data["xmin"]
+            xmax = data["xmax"]
+            ymin = data["ymin"]
+            ymax = data["ymax"]
+            center_x = (xmin + xmax) * 0.5
+            center_y = (ymin + ymax) * 0.5
 
             screen_point = np.array([center_x, center_y, 1]).reshape(-1, 1)
             # rospy.loginfo("screen_point")
@@ -270,6 +273,8 @@ class ObjectDetectorYOLOv5:
             object_from_world = screen2world.dot(object_point_from_screen_q)
             position = object_from_world.reshape(-1)
             positions.append(position)
+            break #最も重要度が高いもののみを利用
+
         return positions
 
     def inverse_dic(self, dictionary):

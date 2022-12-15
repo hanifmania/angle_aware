@@ -13,9 +13,8 @@ Object detection with YOLO
 - [pytorch install](https://pytorch.org/get-started/locally/)
 - YOLO v5
 ```
-git submodule update --init --recursive  # clone
-cd yolov5
-pip install -r requirements.txt  # install
+git submodule add https://github.com/ultralytics/yolov5 angle_aware_detector/yolov5
+pip install -r angle_aware_detector/yolov5/requirements.txt  # install
 ```
 
 ## Training

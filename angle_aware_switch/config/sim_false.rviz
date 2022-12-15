@@ -76,6 +76,10 @@ Visualization Manager:
           Value: true
         bebop101/camera_optical:
           Value: true
+        bebop102:
+          Value: true
+        bebop103:
+          Value: true
         camera_base_link:
           Value: true
         camera_optical:
@@ -85,6 +89,8 @@ Visualization Manager:
         camera_tilt_link:
           Value: true
         odom:
+          Value: true
+        pg_camera:
           Value: true
         world:
           Value: true
@@ -101,6 +107,12 @@ Visualization Manager:
           bebop101/base_link:
             {}
           bebop101/camera_optical:
+            {}
+          bebop102:
+            {}
+          bebop103:
+            {}
+          pg_camera:
             {}
       Update Interval: 0
       Value: true
@@ -404,7 +416,7 @@ Visualization Manager:
       top: 256
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /bebop101/image_raw
+      Image Topic: /bebop101/object_detector/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -518,17 +530,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.3561062812805176
-        Y: 1.7415896654129028
-        Z: 1.498128890991211
+        X: 0.05549164488911629
+        Y: 0.3729107677936554
+        Z: 0.5471199750900269
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.774797260761261
+      Pitch: 0.5597971677780151
       Target Frame: <Fixed Frame>
-      Yaw: 4.708531856536865
+      Yaw: 4.723530292510986
     Saved:
       - Class: rviz/Orbit
         Distance: 4.560669422149658

@@ -24,6 +24,7 @@ class DetectFilter:
         self._decide_count = grape_detector["decide_count"]
         self._object_span = grape_detector["object_span"]
         self._same_object_error = grape_detector["same_object_error"]
+        self._max_stock = rospy.get_param("/detect_filter/max_stock", 10)
         self._found_object = []
         self._object_candidate = []
         self._my_found_object = np.empty((1, 3))
@@ -103,6 +104,7 @@ class DetectFilter:
             self._object_candidate,
             self._same_object_error,
             self._decide_count,
+            self._max_stock
         )
         if is_publish:
             self._my_found_object = np.vstack([self._my_found_object, position])
@@ -130,7 +132,7 @@ class DetectFilter:
         min_dist = np.min(dist, axis=0)
         return min_dist < object_span
 
-    def double_check(self, position, object_candidates, same_object_error, count):
+    def double_check(self, position, object_candidates, same_object_error, count, max_stock):
         """外れ値除去。count回同じ場所で検出したら初めて認められる
 
         Args:
@@ -138,6 +140,7 @@ class DetectFilter:
             object_candidates (ndarray): list of postion
             same_object_error (float): 同じ物体とみなすしきい値
             count (int): 何回同じ場所で検出すべきか
+            max_stock (int) : candidatesの最大個数
 
         Returns:
             bool: publish可能ならtrue
@@ -154,6 +157,8 @@ class DetectFilter:
             object_candidates = object_candidates[~same]
         else:
             object_candidates = np.vstack([object_candidates, position])
+        if len(object_candidates) >= max_stock:
+            object_candidates.pop()
         return ret, object_candidates
 
 
