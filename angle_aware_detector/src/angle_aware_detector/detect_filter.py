@@ -21,10 +21,11 @@ class DetectFilter:
         )
         self._world_tf = rospy.get_param("~world", default="world")
         grape_detector = rospy.get_param("/detect_filter")
+        self._max_stock = rospy.get_param("/detect_filter/max_stock", 10)
         self._decide_count = grape_detector["decide_count"]
         self._object_span = grape_detector["object_span"]
         self._same_object_error = grape_detector["same_object_error"]
-        self._max_stock = rospy.get_param("/detect_filter/max_stock", 10)
+        self._range = grape_detector["range"]
         self._found_object = []
         self._object_candidate = []
         self._my_found_object = np.empty((1, 3))
@@ -89,6 +90,8 @@ class DetectFilter:
     #############################################################
 
     def main(self, position):
+        if not self.in_field(position, self._range):
+            return
         already_detected = self.already_detected(
             position, self._found_object, self._object_span
         )
@@ -113,6 +116,19 @@ class DetectFilter:
     #############################################################
     # functions
     #############################################################
+
+    def in_field(self, position, range):
+        """検索範囲内にあるか確認
+
+        Args:
+            position (list): new object position xyz
+            range (list): [[x_min, x_max], ...]
+
+        Returns:
+            bool: in field -> True
+        """
+        x, y, z  = position
+        return (range[0][0] < x < range[0][1] ) and (range[1][0] < y < range[1][1] ) and  (range[2][0] < z < range[2][1] )
 
     def already_detected(self, grape_position, all_grape, object_span):
         """既知のものかチェック
@@ -154,13 +170,17 @@ class DetectFilter:
         same = dist < self._same_object_error
         ret = np.sum(same) >= count
         if ret:
-            result = np.average(np.vstack([object_candidates, position]), axis=0)
+            rospy.loginfo("before")
+            rospy.loginfo(len(object_candidates))
+            result = np.average(np.vstack([object_candidates[same], position]), axis=0)
             object_candidates = object_candidates[~same]
+            rospy.loginfo("after")
+            rospy.loginfo(len(object_candidates))
         else:
             object_candidates = np.vstack([object_candidates, position])
             result = False
         if len(object_candidates) >= max_stock:
-            object_candidates.pop()
+            np.delete(object_candidates, 0,0)
         return result, object_candidates
 
 

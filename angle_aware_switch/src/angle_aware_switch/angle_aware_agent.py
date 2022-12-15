@@ -5,6 +5,7 @@ from angle_aware_control.myqp import MyQP
 from angle_aware_control.psi_generator_no_jax import zeta_func
 from coverage_util.field_generator import FieldGenerator
 from coverage_util.numpy2multiarray import numpy2multiarray
+from coverage_util.voronoi import CoverageUtil
 
 import rospy
 from geometry_msgs.msg import PoseStamped
@@ -56,6 +57,7 @@ class Agent:
         self._phi_0 = 1.0
         self._object_queue = []
         self._dt = 1.0 / self._clock
+        self._coverage_util = CoverageUtil()
 
         self._agent_base = AgentBase(self.agentID)
         self._qp = myqp(
@@ -115,9 +117,26 @@ class Agent:
         ##########################################
         #  generate ux,uy,uz. You can write any code here
         ##########################################
-        ## u_nom = [0,0]
-        world_ux = 0  # uh_x
-        world_uy = 0  # uh_y
+        # world_ux = 0  # uh_x
+        # world_uy = 0  # uh_y
+
+        #### unom = voronoi centeroid
+        voronoi = self._coverage_util.calc_voronoi(
+            my_position[:2], neighbor_positions[:, :2], self._zeta
+        )
+
+        temp = voronoi * self._phi_A
+        mass = np.sum(temp)
+
+        cent_x = 1.0 / mass * np.sum(temp * self._zeta[0])
+        cent_y = 1.0 / mass * np.sum(temp * self._zeta[1])
+
+        world_ux = cent_x - my_position[0]  # uh_x
+        world_uy = cent_y - my_position[1]  # uh_y
+        world_ux, world_uy = self.velocity_limitation(
+            world_ux, world_uy, self._umax
+        )
+
 
         ## 高度を一定に保つ
         world_uz = self._kp_z * (self._ref_z - my_position[2])

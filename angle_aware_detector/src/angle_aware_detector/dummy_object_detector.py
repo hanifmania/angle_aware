@@ -75,7 +75,7 @@ class DummyObjectDetector:
             ### ぶどうが無ければ何もしない
             return None
 
-        ### 見つけたぶどうの位置をpublishし、listから消す
+        ### 見つけたぶどうの位置をpublish
         grape_position = self._object_positions[detected_grape_id]
         return grape_position
 

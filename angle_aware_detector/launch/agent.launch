@@ -6,7 +6,7 @@
     <node pkg="angle_aware_detector" type="object_detector_yolov5.py" name="object_detector_yolov5" output="screen" unless="$(arg use_dummy)">
         <param name="output_pose_topic" value="object_detector/posestamped" />
         <param name="pytorch_hub_path" value="$(find angle_aware_detector)/yolov5" />
-        <param name="model_path" value="$(find angle_aware_detector)/model/test2_yolov5s.pt" />
+        <param name="model_path" value="$(find angle_aware_detector)/model/chair_yolov5s.pt" />
         <param name="output_img_topic" value="object_detector/image_raw" />
         <rosparam file="$(find bebop_driver)/data/bebop2_camera_calib.yaml" command="load" ns="" />
     </node>
