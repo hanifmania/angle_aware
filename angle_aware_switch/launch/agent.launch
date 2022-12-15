@@ -3,6 +3,7 @@
     <arg name="number" default="" />
     <arg name="sim" default="false" />
     <arg name="use_aruco" default="false" />
+    <arg name="use_dummy" default="true"/>
 
     <group ns="bebop10$(arg number)">
         <!-- agent_base -->
@@ -31,7 +32,7 @@
         <!-- object detector -->
         <include file="$(find angle_aware_detector)/launch/agent.launch">
             <arg name="number" value="$(arg number)" />
-            <arg name="use_dummy" value="true" />
+            <arg name="use_dummy" value="$(arg use_dummy)" />
         </include>
         <!-- rviz -->
         <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>

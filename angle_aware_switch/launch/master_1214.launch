@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <launch>
     <include file="$(find angle_aware_switch)/launch/central.launch">
-        <arg name="agentNum" value="1" />
-        <arg name="use_aruco" default="false" />
+        <arg name="agentNum" value="2" />
+        <arg name="use_aruco" default="true" />
 
     </include>
     <include file="$(find angle_aware_switch)/launch/agent.launch">
         <arg name="number" value="1" />
-        <arg name="use_aruco" default="false" />
-        <arg name="use_dummy" default="false"/>
+        <arg name="use_aruco" default="true" />
     </include>
 </launch>

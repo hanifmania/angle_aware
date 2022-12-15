@@ -13,7 +13,6 @@ import cv2
 import torch
 import matplotlib.pyplot as plt
 
-class YoloResult
 
 class ObjectDetectorYOLOv5:
     def __init__(self):
@@ -61,7 +60,7 @@ class ObjectDetectorYOLOv5:
         )
         self._pub_img = rospy.Publisher(output_img_topic, Image, queue_size=1)
 
-        rospy.wait_for_message(input_pose_topic, PoseStamped)
+        # rospy.wait_for_message(input_pose_topic, PoseStamped)
 
         rospy.Subscriber(
             input_img_compressed_topic,

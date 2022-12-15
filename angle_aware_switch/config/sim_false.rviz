@@ -70,6 +70,12 @@ Visualization Manager:
         All Enabled: false
         base_link:
           Value: true
+        bebop101:
+          Value: true
+        bebop101/base_link:
+          Value: true
+        bebop101/camera_optical:
+          Value: true
         camera_base_link:
           Value: true
         camera_optical:
@@ -80,6 +86,8 @@ Visualization Manager:
           Value: true
         odom:
           Value: true
+        world:
+          Value: true
       Marker Alpha: 1
       Marker Scale: 1
       Name: TF
@@ -87,7 +95,13 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        world:
+          bebop101:
+            {}
+          bebop101/base_link:
+            {}
+          bebop101/camera_optical:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 0.30000001192092896
@@ -164,23 +178,18 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: true
+      Enabled: false
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: bebop102
       Update Interval: 0
-      Value: true
+      Value: false
       Visual Enabled: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -287,12 +296,12 @@ Visualization Manager:
       Unreliable: false
       Value: true
     - Class: jsk_rviz_plugin/PictogramArray
-      Enabled: true
+      Enabled: false
       Name: PictogramArray
       Queue Size: 10
       Topic: /bebop102/grape
       Unreliable: false
-      Value: true
+      Value: false
     - Class: jsk_rviz_plugin/OverlayDiagnostic
       Enabled: true
       Name: OverlayDiagnostic
@@ -306,10 +315,10 @@ Visualization Manager:
       top: 128
       type: SAC
     - Class: jsk_rviz_plugin/OverlayDiagnostic
-      Enabled: true
+      Enabled: false
       Name: OverlayDiagnostic
       Topic: /diagnostics_agg
-      Value: true
+      Value: false
       alpha: 0.800000011920929
       diagnostics namespace: "/bebop102 mode: mode"
       left: 384
@@ -329,10 +338,10 @@ Visualization Manager:
       line width: 0.029999999329447746
       radius: 0.10000000149011612
     - Class: jsk_rviz_plugin/Diagnostics
-      Enabled: true
+      Enabled: false
       Name: Diagnostics
       Topic: /diagnostics_agg
-      Value: true
+      Value: false
       axis: x
       diagnostics namespace: "/bebop102 mode: mode"
       font size: 0
