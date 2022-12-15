@@ -1,6 +1,8 @@
 # angle_aware_switch
 
-<!-- ## Demo -->
+## Demo
+Please click and check the Youtube.   
+[![](https://img.youtube.com/vi/LOIGUzbYuJA/0.jpg)](https://www.youtube.com/watch?v=LOIGUzbYuJA)
 
 ## Requirements
 - angle_aware_control
@@ -46,7 +48,7 @@ export ROS_MASTER_URI=http://192.168.1.111311
 ```
 - Open new terminal and launch
 ```
-roslaunch angle_aware_switch agent.launch number:="2"
+roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push START button -> takeoff
