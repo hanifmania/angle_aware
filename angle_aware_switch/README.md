@@ -57,6 +57,13 @@ roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
 1. Push A button -> joy_msg control mode (stop)
 1. Push BACK button -> land
 
+## Rosbag -> csv
+```
+rostopic echo -b rosbag.bag -p /patrol_J > J.csv
+rostopic echo -b rosbag.bag -p /bebop101/angle_aware/J > angle_aware_J1.csv
+rostopic echo -b rosbag.bag -p /bebop102/angle_aware/J > angle_aware_J2.csv
+```
+
 ## Author
 
 [Takumi Shimizu](https://github.com/tashiwater)

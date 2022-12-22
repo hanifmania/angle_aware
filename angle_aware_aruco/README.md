@@ -33,6 +33,12 @@ roslaungh angle_aware_aruco bringup.launch
 1. Push BACK button -> land
 
 
+## Rosbag -> csv
+```
+rostopic echo -b rosbag_5.bag -p /bebop101/cmd_input > u.csv
+rostopic echo -b rosbag_5.bag -p /bebop101/posestamped > pose.csv
+```
+
 ## Author
 
 [Takumi Shimizu](https://github.com/tashiwater)
