@@ -17,6 +17,8 @@
             <arg name="sim" value="$(arg sim)" />
         </include>
 
+        <node pkg="rostopic" type="rostopic" name="camera_control" args="pub camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -82, 0.0]'"/>
+
 
         <!-- patrol -->
         <node pkg="angle_aware_switch" type="patrol_agent.py" name="patrol_agent" output="screen">
