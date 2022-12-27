@@ -3,7 +3,7 @@ detect_filter:
   object_span: 0.75
   same_object_error: 0.2
   max_stock: 10
-  range: [[-1.1, 1.1], [-1.1, 1.1], [0.2, 0.6]]
+  range: [[-0.3, 0.3], [-0.3, 0.3], [0.2, 0.6]]
 dummy_object_detector:
   positions: [[0, 0, 0.4]]
   detect_radius: 0.7 ### = height * tan(math.pi/2 - range[3][0])

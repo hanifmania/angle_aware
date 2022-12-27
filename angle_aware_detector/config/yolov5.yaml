@@ -1,5 +1,5 @@
 object_detector:
-  confidence_min: 0.2
+  confidence_min: 0.4
   target_class: chair
   model_input_size: 640
   object_z: 0.4
