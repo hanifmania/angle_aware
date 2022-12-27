@@ -21,6 +21,14 @@ pip install -r angle_aware_detector/yolov5/requirements.txt  # install
 1. [Data annotation](https://qiita.com/okateru/items/667986bd66f7ed3003c8)
 1. [Training](https://konchangakita.hatenablog.com/entry/2020/08/17/220000)
 
+## Knowledge
+### Pictogram
+Pictogram list is here
+```
+roscd jsk_rviz_plugins/samples/
+gedit pictogram_all.py
+```
+
 ## Author
 
 [Takumi Shimizu](https://github.com/tashiwater)

@@ -3,7 +3,7 @@
     <arg name="number" default="" />
     <arg name="sim" default="false" />
     <arg name="use_aruco" default="false" />
-    <arg name="use_dummy" default="true"/>
+    <arg name="use_dummy" default="false"/>
 
     <group ns="bebop10$(arg number)">
         <!-- agent_base -->

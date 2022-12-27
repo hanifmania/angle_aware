@@ -137,10 +137,6 @@ class Agent:
             vec = vec / vel_norm * umax
         return vec
 
-        world_ux = np.clip(world_ux, -self._umax, self._umax)
-        world_uy = np.clip(world_uy, -self._umax, self._umax)
-        return world_ux, world_uy
-
 
 if __name__ == "__main__":
     rospy.init_node("agent", anonymous=True)

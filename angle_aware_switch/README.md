@@ -24,7 +24,22 @@ roslaunch angle_aware_switch bringup_sim.launch
 1. Push START button -> take off and field reset
 
 ### Experiment
-#### 2 drone version
+#### sky (Note that sky is so small that only 2 drone can work on this version)
+- Set an chair around the center of the sky
+
+##### Desktop PC (maxwell)
+```
+roslaunch angle_aware_switch central.launch agentNum:="2"
+roslaunch angle_aware_switch agent.launch number:="1"
+```
+
+##### Laptop PC
+```
+roslaunch angle_aware_switch agent.launch number:="2"
+```
+
+
+#### Hijikata Agri demo
 Connect 2 PC with LAN cable.
 ##### PC 1
 - Set the private IP (192.168.1.1, netmask 255.255.255.0, gateway:192.168.1.2)

@@ -8,7 +8,7 @@
     <arg name="npy_data_dir" default="$(find angle_aware_switch)/data/input/" />
     <arg name="rosbag_output" default="$(find angle_aware_switch)/rosbag/rosbag.bag" />
     <arg name="log_path" default="$(find angle_aware_switch)/rosbag/log.csv" />
-    <arg name="use_aruco" default="true" />
+    <arg name="use_aruco" default="false" />
 
     <!-- central_base -->
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
