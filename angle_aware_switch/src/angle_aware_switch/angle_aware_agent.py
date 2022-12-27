@@ -42,6 +42,7 @@ class Agent:
         self._kp_z = agents_param["kp_z"]
         self._kp_yaw = agents_param["kp_yaw"]
         self._ref_yaw = agents_param["ref_yaw"]
+        self._unom_max = agents_param["unom_max"]
         self._umax = angle_aware_params["u_max"]
         self._phi_param = angle_aware_params["phi"]
         self._threshold_rate = angle_aware_params["threshold_rate"]
@@ -49,7 +50,6 @@ class Agent:
         self._sigma = angle_aware_params["sigma"]
         self._observe_time = angle_aware_params["observe_time"]
         self._ref_z = angle_aware_params["ref_z"]
-        self._unom_max = agents_param["unom_max"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
@@ -58,7 +58,6 @@ class Agent:
         self._phi_0 = 1.0
         self._object_queue = []
         self._dt = 1.0 / self._clock
-
         self._coverage_util = CoverageUtil()
 
         self._agent_base = AgentBase(self.agentID)
@@ -69,6 +68,7 @@ class Agent:
             angle_aware_params["slack_cost"],
         )
         self._qp.set_obstacle_avoidance_param(self._tree_params)
+        
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
         self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
         self._pub_phi = rospy.Publisher(
@@ -210,13 +210,10 @@ class Agent:
     def spin(self):
         # self._clock=1
         rate = rospy.Rate(self._clock)
-        old_is_angle_aware = False
         while not rospy.is_shutdown():
             if self._agent_base.is_main_ok():
                 is_angle_aware = self.judge_angle_aware()
-                if old_is_angle_aware != is_angle_aware:
-                    self._pub_flag.publish(is_angle_aware)
-                old_is_angle_aware = is_angle_aware
+                self._pub_flag.publish(is_angle_aware)
                 if is_angle_aware:
                     self.main_control()
                     # self.show_pictogram()
