@@ -49,6 +49,7 @@ class Agent:
         self._sigma = angle_aware_params["sigma"]
         self._observe_time = angle_aware_params["observe_time"]
         self._ref_z = angle_aware_params["ref_z"]
+        self._unom_max = agents_param["unom_max"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
@@ -57,6 +58,7 @@ class Agent:
         self._phi_0 = 1.0
         self._object_queue = []
         self._dt = 1.0 / self._clock
+
         self._coverage_util = CoverageUtil()
 
         self._agent_base = AgentBase(self.agentID)
@@ -134,7 +136,7 @@ class Agent:
         world_ux = cent_x - my_position[0]  # uh_x
         world_uy = cent_y - my_position[1]  # uh_y
         world_ux, world_uy = self.velocity_limitation(
-            world_ux, world_uy, self._umax
+            world_ux, world_uy, self._unom_max
         )
 
 
@@ -208,10 +210,13 @@ class Agent:
     def spin(self):
         # self._clock=1
         rate = rospy.Rate(self._clock)
+        old_is_angle_aware = False
         while not rospy.is_shutdown():
             if self._agent_base.is_main_ok():
                 is_angle_aware = self.judge_angle_aware()
-                self._pub_flag.publish(is_angle_aware)
+                if old_is_angle_aware != is_angle_aware:
+                    self._pub_flag.publish(is_angle_aware)
+                old_is_angle_aware = is_angle_aware
                 if is_angle_aware:
                     self.main_control()
                     # self.show_pictogram()
