@@ -28,7 +28,7 @@ class DetectFilter:
         self._range = grape_detector["range"]
         self._found_object = []
         self._object_candidate = []
-        self._my_found_object = np.empty((1, 3))
+        self._my_found_object = np.empty((0, 3))
         self._pub = rospy.Publisher(output_topic, PoseStamped, queue_size=1)
         rospy.Subscriber(
             input_topic, PoseStamped, self.detect_posestamped_callbeck, queue_size=5
