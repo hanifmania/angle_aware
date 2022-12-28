@@ -4,7 +4,7 @@
     <arg name="sim" default="false" />
     <arg name="use_rosbag" default="true" />
 
-    <rosparam file="$(find bebop_hatanaka_lab_example)/config/central.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_debug)/config/central.yaml" command="load" ns="" />
     <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
 
     <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">

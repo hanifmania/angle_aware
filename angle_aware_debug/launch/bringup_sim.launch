@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <include file="$(find bebop_hatanaka_lab_example)/launch/central.launch">
+    <include file="$(find angle_aware_debug)/launch/central.launch">
         <arg name="agentNum" value="2" />
         <arg name="sim" default="true" />
         <arg name="use_rosbag" value="false" />

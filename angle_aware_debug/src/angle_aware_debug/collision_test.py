@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from bebop_hatanaka_base.agent_base import AgentBase
-from bebop_hatanaka_lab_example.myqp import MyQP
+from angle_aware_debug.myqp import MyQP
 
 import rospy
 import numpy as np
@@ -48,9 +48,9 @@ class Agent:
         ##########################################
 
         ### x y z field limitation and collision avoidance with CBF
-        u_nom = np.array([world_ux, world_uy, world_uz])
-        u_opt, w = self._qp.solve(u_nom, my_position, neighbor_positions)
-        world_ux, world_uy, world_uz = u_opt
+        u_nom = np.array([world_ux, world_uy])
+        u_opt, w = self._qp.solve(u_nom, my_position[:2], neighbor_positions[:,:2])
+        world_ux, world_uy = u_opt
         world_ux, world_uy = self.velocity_limitation(world_ux, world_uy)
         self._agent_base.publish_command_from_world_vel(
             world_ux, world_uy, world_uz, omega_z
