@@ -51,14 +51,14 @@ class Agent:
         u_nom = np.array([world_ux, world_uy])
         u_opt, w = self._qp.solve(u_nom, my_position[:2], neighbor_positions[:,:2])
         world_ux, world_uy = u_opt
-        world_ux, world_uy = self.velocity_limitation(world_ux, world_uy)
+        world_ux, world_uy = self.velocity_limitation(world_ux, world_uy, self._umax)
         self._agent_base.publish_command_from_world_vel(
             world_ux, world_uy, world_uz, omega_z
         )
 
 
         dist = np.sqrt((my_position[0] - neighbor_positions[0][0]) ** 2 + (my_position[1] - neighbor_positions[0][1]) ** 2)
-        rospy.loginfo("dist : {:.3f}, ux : {:.3f}".format(dist, world_ux))
+        rospy.loginfo("dist : {:.3f}, u : {:.3f}, {:.3f}".format(dist, world_ux, world_uy))
         # self.camera_control(uh_camera)
 
     ###################################################################
@@ -83,11 +83,12 @@ class Agent:
         self._camera_deg = np.clip(self._camera_deg, -90, 5)
         self._agent_base.publish_camera_control(self._camera_deg)
 
-    def velocity_limitation(self, world_ux, world_uy):
-        world_ux = np.clip(world_ux, -self._umax, self._umax)
-        world_uy = np.clip(world_uy, -self._umax, self._umax)
-        return world_ux, world_uy
-
+    def velocity_limitation(self, world_ux, world_uy, umax):
+        vec = np.array([world_ux, world_uy])
+        vel_norm = np.linalg.norm(vec)
+        if vel_norm > umax:
+            vec = vec / vel_norm * umax
+        return vec
 
 if __name__ == "__main__":
     rospy.init_node("agent", anonymous=True)
