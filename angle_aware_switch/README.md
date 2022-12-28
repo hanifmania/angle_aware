@@ -74,6 +74,7 @@ roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
 
 ## Rosbag -> csv
 ```
+roscd angle_aware_switch/rosbag/
 rostopic echo -b rosbag.bag -p /patrol_J > J.csv
 rostopic echo -b rosbag.bag -p /bebop101/angle_aware/J > angle_aware_J1.csv
 rostopic echo -b rosbag.bag -p /bebop102/angle_aware/J > angle_aware_J2.csv
