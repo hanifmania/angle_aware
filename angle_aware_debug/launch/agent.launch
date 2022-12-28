@@ -2,14 +2,12 @@
 <launch>
     <arg name="number" default="" />
     <arg name="sim" default="false" />
-
     <group ns="bebop10$(arg number)">
         <rosparam file="$(find angle_aware_debug)/config/agent10$(arg number).yaml" command="load" ns="" />
-        <include file="$(find bebop_aruco)/launch/agent_base.launch">
+        <include file="$(find bebop_hatanaka_base)/launch/agent_base.launch">
             <arg name="number" value="$(arg number)" />
             <arg name="sim" value="$(arg sim)" />
         </include>
-        <!-- <node pkg="angle_aware_control" type="agent.py" name="agent" output="screen" /> -->
-        <node pkg="angle_aware_switch" type="agent.py" name="agent" output="screen" />
+        <node pkg="angle_aware_debug" type="collision_test.py" name="agent" output="screen" />
     </group>
 </launch>

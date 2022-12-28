@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="agentNum" default="" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+
+    <rosparam file="$(find bebop_hatanaka_lab_example)/config/central.yaml" command="load" ns="" />
+    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
+
+    <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg sim)" />
+        <arg name="rviz_file" value="$(find bebop_hatanaka_lab_example)/config/sim_$(arg sim).rviz" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rosbag_output" default="$(find bebop_hatanaka_lab_example)/rosbag/rosbag" />
+    </include>
+
+</launch>
