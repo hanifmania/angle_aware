@@ -58,7 +58,10 @@ class Agent:
 
 
         dist = np.sqrt((my_position[0] - neighbor_positions[0][0]) ** 2 + (my_position[1] - neighbor_positions[0][1]) ** 2)
-        rospy.loginfo("dist : {:.3f}, u : {:.3f}, {:.3f}".format(dist, world_ux, world_uy))
+
+        vec = np.array([world_ux, world_uy])
+        vel_norm = np.linalg.norm(vec)
+        rospy.loginfo("dist : {:.3f}, |u| :  {:.3f} ({:.3f}, {:.3f})".format(dist,vel_norm, world_ux, world_uy))
         # self.camera_control(uh_camera)
 
     ###################################################################
