@@ -25,7 +25,7 @@ class MyQP:
         self._u_dim = 2
         self._slack_dim = 1
         costs = [1, 1, slack_cost]  ### [ux, uy, angle_aware_slack]
-        alpha_default = 5
+        alpha_default = 0.5
         self._cbf2qp.set_dim(self._u_dim, self._slack_dim, costs)
         self._field_cbf.set_params(field, alpha_default)
         self._collision_avoidance_cbf.set_params(collision_distance, alpha_default)

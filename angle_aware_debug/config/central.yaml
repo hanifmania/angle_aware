@@ -3,5 +3,5 @@ pose_collector:
 virtual_drone_clock: 100
 agents:
   agent_manager_clock: 20
-  u_max: 0.2
+  u_max: 0.3
 field_cbf: [[-1.25, 1.25], [-1.25, 1.25]]
