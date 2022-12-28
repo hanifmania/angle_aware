@@ -102,9 +102,10 @@ class Agent:
         my_position, my_orientation = self._agent_base.get_my_pose()
         neighbor_positions = self._agent_base.get_neighbor_positions()
         yaw = self._agent_base.get_my_yaw()
+        all_positions = self._agent_base.get_all_positions()
 
         self._phi_A = self.update_phi(
-            my_position,
+            all_positions,
             self._zeta,
             self._sigma,
             self._delta_decrease,
@@ -283,11 +284,11 @@ class Agent:
 
         return np.exp(-dist2 / (2 * sigma**2))
 
-    def update_phi(self, pos, grid, sigma, delta_decrease, dt, phi):
+    def update_phi(self, all_positions, grid, sigma, delta_decrease, dt, phi):
         """重要度更新
 
         Args:
-            pos (ndarray): [x,y]
+            all_positions (ndarray): [[x,y]]
             grid (ndarray): zeta
             sigma (float): _description_
             delta_decrease (float): _description_
@@ -297,8 +298,13 @@ class Agent:
         Returns:
             ndarray: phi
         """
-        h = self.performance_function(pos, grid, sigma)
-        phi -= delta_decrease * h * phi * dt
+        all_positions = self._agent_base.get_all_positions()
+        performance_functions = [
+            self.performance_function(pos, grid, sigma) for pos in all_positions
+        ]
+        dist2 = np.stack(performance_functions)
+        h_max = dist2.max(axis=0)
+        phi -= delta_decrease * h_max * phi * dt
         # print(np.sum(self._delta_decrease * h_max * self._psi * self._dt))
         return (0 < phi) * phi  ## the minimum value is 0
 
