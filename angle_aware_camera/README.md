@@ -1,4 +1,4 @@
-# angle_aware_avoid_tree
+# angle_aware_camera
 Angle Aware with Camera control. Note that this is the simple version.
 
 ## Demo

@@ -68,7 +68,7 @@ class Agent:
             angle_aware_params["slack_cost"],
         )
         self._qp.set_obstacle_avoidance_param(self._tree_params)
-        
+
         self._pub_flag = rospy.Publisher(flag_topic, Bool, queue_size=1)
         self._pub_J = rospy.Publisher(output_J_topic, Float32, queue_size=1)
         self._pub_phi = rospy.Publisher(
@@ -140,7 +140,6 @@ class Agent:
             world_ux, world_uy, self._unom_max
         )
 
-
         ## 高度を一定に保つ
         world_uz = self._kp_z * (self._ref_z - my_position[2])
 
@@ -211,10 +210,15 @@ class Agent:
     def spin(self):
         # self._clock=1
         rate = rospy.Rate(self._clock)
+        old_is_angle_aware = True
         while not rospy.is_shutdown():
             if self._agent_base.is_main_ok():
                 is_angle_aware = self.judge_angle_aware()
-                self._pub_flag.publish(is_angle_aware)
+
+                ### publish mode only when it changes
+                if old_is_angle_aware != is_angle_aware:
+                    self._pub_flag.publish(is_angle_aware)
+                old_is_angle_aware = is_angle_aware
                 if is_angle_aware:
                     self.main_control()
                     # self.show_pictogram()
@@ -223,6 +227,7 @@ class Agent:
     ###################################################################
     ### functions
     ###################################################################
+
     def velocity_limitation(self, world_ux, world_uy, umax):
         """最大速度制限. ベクトルの方向は維持して大きさだけ変える
 

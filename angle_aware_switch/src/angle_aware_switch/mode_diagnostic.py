@@ -32,7 +32,7 @@ class PubDiagnostic:
 
     def callback(self, msg):
         self._is_angle_aware_mode = msg.data
-        self._updater.update()
+        self._updater.force_update()
 
     #############################################################
     # main function
@@ -44,8 +44,17 @@ class PubDiagnostic:
             stat.summary(DiagnosticStatus.OK, "Patrol")
         return stat
 
+    #############################################################
+    # main function
+    #############################################################
+    def spin(self):
+        rate = rospy.Rate(1)
+        while not rospy.is_shutdown():
+            self._updater.update()
+            rate.sleep()
+
 
 if __name__ == "__main__":
     rospy.init_node("template", anonymous=True)
     node = PubDiagnostic()
-    rospy.spin()
+    node.spin()

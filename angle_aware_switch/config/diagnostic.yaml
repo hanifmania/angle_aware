@@ -1,5 +1,6 @@
 # type: GenericAnalyzer
 # path: ""
+pub_rate: 5
 analyzers:
   bebop101:
     type: GenericAnalyzer
