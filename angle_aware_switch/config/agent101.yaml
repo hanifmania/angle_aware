@@ -1,6 +1,6 @@
 initial_pose: 
   x: 1
-  y: 1
+  y: -1
   z: 1
   R_deg: 0
   P_deg: 0

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="agentNum" default="1" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+    <arg name="rviz_file" default="$(find angle_aware_avoid_tree)/config/sim_$(arg sim).rviz" />
+    <arg name="npy_data_dir" default="$(find angle_aware_avoid_tree)/data/input/" />
+    <arg name="rosbag_output" default="$(find angle_aware_avoid_tree)/rosbag/rosbag.bag" />
+    <arg name="log_path" default="$(find angle_aware_avoid_tree)/rosbag/log.csv" />
+    <arg name="use_aruco" default="false" />
+
+    <rosparam file="$(find angle_aware_switch)/config/central.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_switch)/config/AR.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_avoid_tree)/config/angle_aware.yaml" command="load" ns="" />
+
+    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
+
+    <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg sim)" />
+        <arg name="rviz_file" value="$(arg rviz_file)" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rosbag_output" value="$(arg rosbag_output)" />
+    </include>
+
+    <node pkg="angle_aware_avoid_tree" type="central.py" name="central" output="screen">
+        <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+    </node>
+    <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
+        <param name="input_field_topic" value="psi" />
+        <param name="field_param_name" value="angle_aware/psi" />
+        <param name="rviz_z_max" value="0.5" />
+    </node>
+
+    <node pkg="angle_aware_control" type="log.py" name="log" output="log">
+        <param name="log_path" value="$(arg log_path)" />
+    </node>
+
+    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker"
+        output="log">
+        <param name="model_url" value="package://angle_aware_avoid_tree/model/maple.STL" />
+    </node>
+</launch>
