@@ -32,7 +32,7 @@ class PubDiagnostic:
 
     def callback(self, msg):
         self._is_angle_aware_mode = msg.data
-        self._updater.force_update()
+        self._updater.force_update()  # update diagnostic soon
 
     #############################################################
     # main function
@@ -50,7 +50,7 @@ class PubDiagnostic:
     def spin(self):
         rate = rospy.Rate(1)
         while not rospy.is_shutdown():
-            self._updater.update()
+            self._updater.update()  # Tell updater that this node is alive
             rate.sleep()
 
 
