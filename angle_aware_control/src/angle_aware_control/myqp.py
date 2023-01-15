@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from bebop_hatanaka_base.qp import QPUtil, CBF2QP, ULimit
+from bebop_hatanaka_base.qp import QPUtil, CBF2QP
 from bebop_hatanaka_base.cbf import FieldCBF, CollisionAvoidanceCBF
 from angle_aware_control.angle_aware_cbf import AngleAwareCBF
 
@@ -16,7 +16,6 @@ class MyQP:
             collision_distance (float):
         """
         self._qp_solver = QPUtil()
-        # self._ulimit_qp = ULimit()
         self._cbf2qp = CBF2QP()
         self._field_cbf = FieldCBF()
         self._collision_avoidance_cbf = CollisionAvoidanceCBF()

@@ -43,19 +43,22 @@ class Agent:
         self._kp_yaw = agents_param["kp_yaw"]
         self._ref_yaw = agents_param["ref_yaw"]
         self._unom_max = agents_param["unom_max"]
-        self._umax = angle_aware_params["u_max"]
+        self._umax = agents_param["u_max"]
         self._phi_param = angle_aware_params["phi"]
-        self._threshold_rate = angle_aware_params["threshold_rate"]
         self._delta_decrease = angle_aware_params["delta_decrease"]
         self._sigma = angle_aware_params["sigma"]
-        self._observe_time = angle_aware_params["observe_time"]
+        # self._observe_time = angle_aware_params["observe_time"]
         self._ref_z = angle_aware_params["ref_z"]
+        self._tau = angle_aware_params["tau"]
 
         phi_generator = FieldGenerator(self._phi_param)
         self._A = phi_generator.get_point_dense()
 
+        phi_A = phi_generator.generate_phi() * self._A
+        rospy.loginfo("J(0): {}".format(np.sum(phi_A)))
+
         self._phi_A = 0
-        self._phi_0 = 1.0
+        # self._phi_0 = 1.0
         self._object_queue = []
         self._dt = 1.0 / self._clock
         self._coverage_util = CoverageUtil()
@@ -177,7 +180,7 @@ class Agent:
             bool: true if angle_aware
         """
 
-        angle_aware_mode = np.sum(self._phi_A) > self._phi_0 * self._threshold_rate
+        angle_aware_mode = np.sum(self._phi_A) > self._tau
         if angle_aware_mode:
             ### まだangle awareすべき
             return True
@@ -198,10 +201,9 @@ class Agent:
             self._tree_params["no_phi_radius"],
         )
         self._phi_A = self.bound_q_in_field(self._phi_A, self._zeta, self._field_cbf)
-        self._phi_0 = np.sum(self._phi_A)
-        gamma = self._phi_0 / self._observe_time
-        rospy.loginfo("gamma : {}".format(gamma))
-        self._qp._angle_aware_cbf.set_gamma(gamma)
+        # gamma = self._phi_0 / self._observe_time
+        # rospy.loginfo("gamma : {}".format(gamma))
+        # self._qp._angle_aware_cbf.set_gamma(gamma)
         return True
 
     ###################################################################
