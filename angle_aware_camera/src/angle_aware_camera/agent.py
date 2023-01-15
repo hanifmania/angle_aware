@@ -47,7 +47,6 @@ class Agent:
             angle_aware_params,
             self._zeta_grid,
             A,
-            self._camera_deg_range,
         )
 
         rospy.Subscriber(input_phi_topic, Float32MultiArray, self.phi_callback)

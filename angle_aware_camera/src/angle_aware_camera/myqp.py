@@ -8,25 +8,23 @@ import numpy as np
 
 
 class MyQP:
-    def __init__(
-        self, field, collision_distance, angle_aware_params, zeta, A, camera_limit
-    ):
+    def __init__(self, field, collision_distance, angle_aware_params, zeta, A):
         self._qp_solver = QPUtil()
         # self._ulimit_qp = ULimit()
         self._cbf2qp = CBF2QP()
         self._field_cbf = FieldCBF()
         self._collision_avoidance_cbf = CollisionAvoidanceCBF()
         self._angle_aware_cbf = AngleAwareCBF()
-        self._camera_cbf = FieldCBF()
+        # self._camera_cbf = FieldCBF()
 
         self._u_dim = 4
         self._slack_dim = 1
         costs = [1, 1, 1, 1, 1.0e4]  ### [ux, uy, angle_aware_slack]
-        alpha_default = 5
+        alpha_default = 0.5
         self._cbf2qp.set_dim(self._u_dim, self._slack_dim, costs)
         self._field_cbf.set_params(field, alpha_default)
         self._collision_avoidance_cbf.set_params(collision_distance, alpha_default)
-        self._camera_cbf.set_params(camera_limit, alpha_default)
+        # self._camera_cbf.set_params(camera_limit, alpha_default)
         # self._ulimit_qp.set_params(u_max, self._u_dim, self._slack_dim)
 
         ############ angle aware
@@ -47,7 +45,6 @@ class MyQP:
         neighbors_yaw,
         phi,
     ):
-        dhdp_zeros = np.zeros((self._u_dim, 1))
         P_np, Q_np, G_np, h_np = self._cbf2qp.initPQGH(u_nom)
 
         ###### generate G, h from CBF
@@ -60,9 +57,8 @@ class MyQP:
         dhdps, alpha_hs = self._collision_avoidance_cbf.cbf(pos, neighbors)
         if np.sum(np.array(alpha_hs) < 0):
             print("collision")
-            # for pj in neighbor_pos:
-            #     print(np.linalg.norm([pos[0]-pj[0], pos[1]-pj[1]]))
-            print("dhdps", dhdps)
+            for pj in neighbors:
+                print(np.linalg.norm([pos[0] - pj[0], pos[1] - pj[1]]))
             print("alpha_hs", alpha_hs)
         for dhdp, alpha_h in zip(dhdps, alpha_hs):
             G_np, h_np = self._cbf2qp.cbf2Gh(dhdp, alpha_h, G_np, h_np, slack_id=None)
