@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_jax" default="true" />
+    <rosparam file="$(find angle_aware_italy)/config/central.yaml" command="load" ns="" />
+    <arg name="npy_data_dir" default="$(find angle_aware_italy)/data/input/" />
+
+    <group if="$(arg use_jax)">
+        <node pkg="angle_aware_control" type="psi_generator.py" name="psi_generator" output="screen"
+            required="true">
+            <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+        </node>
+    </group>
+    <group unless="$(arg use_jax)">
+        <node pkg="angle_aware_control" type="psi_generator_no_jax.py" name="psi_generator"
+            output="screen" required="true">
+            <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+        </node>
+    </group>
+
+</launch>

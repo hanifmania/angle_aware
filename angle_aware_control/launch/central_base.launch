@@ -8,6 +8,7 @@
     <arg name="npy_data_dir" default="$(find angle_aware_control)/data/input/" />
     <arg name="rosbag_output" default="$(find angle_aware_control)/rosbag/rosbag.bag" />
     <arg name="log_path" default="$(find angle_aware_control)/rosbag/log.csv" />
+    <arg name="rviz_z_max" default="0.5" />
 
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
 
@@ -27,7 +28,7 @@
     <node pkg="coverage_util" type="show_pointcloud2d.py" name="show_pointcloud2d" output="screen">
         <param name="input_field_topic" value="psi" />
         <param name="field_param_name" value="angle_aware/psi" />
-        <param name="rviz_z_max" value="0.5" />
+        <param name="rviz_z_max" value="$(arg rviz_z_max)" />
     </node>
 
     <node pkg="angle_aware_control" type="log.py" name="log" output="log">

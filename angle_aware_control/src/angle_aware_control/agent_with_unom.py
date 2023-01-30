@@ -109,11 +109,11 @@ class Agent:
             world_ux, world_uy, world_uz, omega_z
         )
         vel = np.linalg.norm([world_ux, world_uy])
-        # rospy.loginfo(
-        #     "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
-        #         self.agentID, vel, world_ux, world_uy, w[0]
-        #     )
-        # )
+        rospy.loginfo(
+            "agent {}, |u|: {:.2f} ({:.2f}, {:.2f}), w: {:.3f}".format(
+                self.agentID, vel, world_ux, world_uy, w[0]
+            )
+        )
         self._agent_base.publish_camera_control(self._camera_deg)
 
     ###################################################################
@@ -136,6 +136,9 @@ class Agent:
         if vel_norm > umax:
             vec = vec / vel_norm * umax
         return vec
+        # world_ux = np.clip(world_ux, -umax, umax)
+        # world_uy = np.clip(world_uy, -umax, umax)
+        # return world_ux, world_uy
 
 
 if __name__ == "__main__":

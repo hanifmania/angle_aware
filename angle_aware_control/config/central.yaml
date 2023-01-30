@@ -42,3 +42,4 @@ agents:
   ref_z: 1
   kp_yaw: 1
   ref_yaw: 0
+  unom_max: 0.1

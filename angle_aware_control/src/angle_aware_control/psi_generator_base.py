@@ -11,25 +11,25 @@ from matplotlib import pyplot as plt
 
 
 class PsiGeneratorBase:
-    def compress(self, pick_func, ids):
+    def compress(self, pick_func, ids, phi):
         psi_shape = self._psi_shape
         psi = np.zeros(psi_shape)
         for x_id in range(psi_shape[0]):
             for y_id in range(psi_shape[1]):
-                psi[x_id, y_id] = pick_func(ids, x_id, y_id)
+                psi[x_id, y_id] = pick_func(phi, ids, x_id, y_id)
         return psi * self._A
 
     def main(self, set_device_func, zeta_func, project_func, pick_func):
-        phi_grid, ref_z, psi_grid_span, psi_min = self.load_param()
-        phi_grid, ref_z, psi_grid_span, psi_min = set_device_func(
-            phi_grid, ref_z, psi_grid_span, psi_min
+        phi, phi_grid, ref_z, psi_grid_span, psi_min = self.load_param()
+        phi, phi_grid, ref_z, psi_grid_span, psi_min = set_device_func(
+            phi, phi_grid, ref_z, psi_grid_span, psi_min
         )
 
         zeta = zeta_func(phi_grid, ref_z)
         ids = project_func(zeta, psi_grid_span, psi_min)
         rospy.loginfo("compress start")
         start = rospy.Time.now()
-        psi = self.compress(pick_func, ids)
+        psi = self.compress(pick_func, ids, phi)
 
         dt = rospy.Time.now() - start
         rospy.loginfo("calc time: {}".format(dt.to_sec()))
@@ -56,7 +56,7 @@ class PsiGeneratorBase:
         phi = phi_generator.generate_phi()
         self._A = phi_generator.get_point_dense()
         # psi_linspace = psi_generator.get_linspace()
-        psi_grid_x, psi_grid_y = psi_generator.generate_grid(sparse=False)
+        # psi_grid_x, psi_grid_y = psi_generator.generate_grid(sparse=False)
         psi_shape = psi_generator.get_shape()
         psi_grid_span = psi_generator.get_grid_span()
         psi_limit = psi_generator.get_limit()
@@ -67,4 +67,4 @@ class PsiGeneratorBase:
         rospy.loginfo("phi : {}".format(phi.shape))
         rospy.loginfo("psi : {}".format(psi_shape))
         self._psi_shape = psi_shape
-        return phi_grid, ref_z, psi_grid_span, psi_min
+        return phi, phi_grid, ref_z, psi_grid_span, psi_min

@@ -1,0 +1,29 @@
+pose_collector:
+  clock: 100
+virtual_drone_clock: 100
+field_cbf: [[-35, 35], [-55, 55]] # 衝突回避で避けられるよう、psiよりも一回り大きくとる
+central_clock: 20
+angle_aware:
+  sigma: 0.6
+  delta_decrease: 100
+  gamma: 20000
+  alpha: 1
+  phi:
+    range: [[-30, 30],[-50, 50], [1, 5], [0.78, 1.5707963], [-3.14159265358979,3.14159265358979]] #xyz, v:[pi/4, pi/2], h:[-pi,pi]
+    density: [0.5, 0.5, 0.5, 0.2617993878, 0.2617993878]  #v: pi/12, h: pi/12
+  psi:
+    range: [[-33, 33], [-53, 53]]
+    density: [0.5, 0.5]
+    # npy_name: psi_italy1.npy
+    npy_name: psi_italy_from_map.npy
+  slack_cost: 1000000
+agents:
+  agent_manager_clock: 20
+  u_max: 5
+  unom_max: 0
+  collision_distance: 0.8
+  camera_sensor_rad: 0.7895822394
+  kp_z: 1
+  ref_z: 6
+  kp_yaw: 1
+  ref_yaw: 0

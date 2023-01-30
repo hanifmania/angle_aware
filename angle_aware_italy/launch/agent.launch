@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="number" default="" />
+    <arg name="sim" default="false" />
+
+    <group ns="bebop10$(arg number)">
+        <rosparam file="$(find angle_aware_italy)/config/agent10$(arg number).yaml" command="load"
+            ns="" />
+        <include file="$(find bebop_hatanaka_base)/launch/agent_base.launch">
+            <arg name="number" value="$(arg number)" />
+            <arg name="sim" value="$(arg sim)" />
+        </include>
+        <node pkg="angle_aware_control" type="agent_with_unom.py" name="agent" output="screen" />
+    </group>
+</launch>

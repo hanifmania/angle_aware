@@ -31,12 +31,12 @@ def project(zeta, psi_grid_span, psi_min):
     return x_ids, y_ids
 
 
-def pick(ids, x_id, y_id):
-    return jnp.sum((ids[0] == x_id) * (ids[1] == y_id))  # *phiはphi=1なので省略
+def pick(phi, ids, x_id, y_id):
+    return jnp.sum((ids[0] == x_id) * (ids[1] == y_id) * phi)
 
 
-def set_device_func(phi_grid, ref_z, psi_grid_span, psi_min):
-    return phi_grid, ref_z, psi_grid_span, psi_min
+def set_device_func(phi, phi_grid, ref_z, psi_grid_span, psi_min):
+    return phi, phi_grid, ref_z, psi_grid_span, psi_min
 
 
 if __name__ == "__main__":
