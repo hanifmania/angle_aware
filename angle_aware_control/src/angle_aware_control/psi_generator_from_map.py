@@ -2,7 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from angle_aware_control.psi_generator_base import PsiGeneratorBase
-from angle_aware_control.psi_generator import set_device_func, zeta_func, project, pick
+from angle_aware_control.psi_generator import (
+    set_device_func,
+    zeta_func,
+    project,
+    pick,
+)
 import rospy
 import jax.numpy as jnp
 import numpy as np
@@ -20,15 +25,19 @@ class PsiGeneratorFromMap(PsiGeneratorBase):
         importance_map = self.readFromMatlab(file_path)
         shape = phi.shape
         phi2d = self.resize(importance_map, shape[0], shape[1])
+        ### normalize
+        rospy.loginfo("importance max {}".format(phi2d.max()))
+        phi2d = phi2d / phi2d.max()
+        rospy.loginfo("normalized max {}".format(phi2d.max()))
 
         add_mesh = shape[2:]
         phi5d_hvzyx = self.image2phi(phi2d, add_mesh)
         phi5d = phi5d_hvzyx.T
+
         return phi5d, phi_grid, ref_z, psi_grid_span, psi_min
 
     def readFromMatlab(self, filepath):
         mat = scipy.io.loadmat(filepath)
-        # print(mat)
         importance_map = mat["I"]
         return importance_map
 
