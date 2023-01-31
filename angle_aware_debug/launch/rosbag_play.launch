@@ -3,8 +3,8 @@
 
     <arg name="rate" default="1" />
     <include file="$(find bebop_bag)/launch/rosbag_play.launch">
-        <arg name="rosbag_path" default="$(find angle_aware_switch)/rosbag/rosbag_1214_2.bag" />
-        <arg name="rviz_file" default="$(find angle_aware_switch)/config/sim_false.rviz" />
+        <arg name="rosbag_path" default="$(find angle_aware_italy)/rosbag/rosbag.bag" />
+        <arg name="rviz_file" default="$(find angle_aware_italy)/config/sim_true.rviz" />
         <arg name="rate" value="$(arg rate)" />
     </include>
 

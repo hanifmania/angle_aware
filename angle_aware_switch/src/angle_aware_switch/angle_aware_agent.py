@@ -68,7 +68,6 @@ class Agent:
             self._field_cbf,
             collision_distance,
             angle_aware_params,
-            angle_aware_params["slack_cost"],
         )
         self._qp.set_obstacle_avoidance_param(self._tree_params)
 

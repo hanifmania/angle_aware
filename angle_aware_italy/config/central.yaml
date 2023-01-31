@@ -16,7 +16,7 @@ angle_aware:
     density: [0.5, 0.5]
     # npy_name: psi_italy1.npy
     npy_name: normalized.npy
-  slack_cost: 0.0001
+  slack_cost: 1
 agents:
   agent_manager_clock: 20
   u_max: 5

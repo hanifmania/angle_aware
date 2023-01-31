@@ -36,6 +36,7 @@ class Agent:
         self._psi_grid = psi_generator.generate_grid()
 
         self._agent_base = AgentBase(self.agentID)
+        
         self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
 
         self._unom_max = agents_param["unom_max"]
@@ -84,7 +85,7 @@ class Agent:
         world_ux, world_uy = self.velocity_limitation(
             world_ux, world_uy, self._unom_max
         )
-
+        rospy.loginfo("unom {}, {}".format(world_ux, world_uy))
         ## 高度を一定に保つ
         world_uz = self._kp_z * (self._ref_z - my_position[2])
 
