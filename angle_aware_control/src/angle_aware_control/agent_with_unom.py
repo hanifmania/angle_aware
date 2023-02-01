@@ -85,7 +85,7 @@ class Agent:
         world_ux, world_uy = self.velocity_limitation(
             world_ux, world_uy, self._unom_max
         )
-        rospy.loginfo("unom {}, {}".format(world_ux, world_uy))
+        # rospy.loginfo("unom {}, {}".format(world_ux, world_uy))
         ## 高度を一定に保つ
         world_uz = self._kp_z * (self._ref_z - my_position[2])
 
