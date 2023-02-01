@@ -13,7 +13,7 @@ Please click and check the Youtube.
 ## Run Test
 ### Generate Psi
 ```
-roslaunch angle_aware_control patrol_generate_psi.launch
+roslaunch angle_aware_switch patrol_generate_psi.launch
 ```
 ### Simulation
 ```

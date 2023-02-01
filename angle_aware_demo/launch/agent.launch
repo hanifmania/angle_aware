@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="number" default="" />
+    <arg name="sim" default="false" />
+    <arg name="use_aruco" default="false" />
+    <arg name="use_dummy" default="false"/>
+
+    <group ns="bebop10$(arg number)">
+        <!-- agent_base -->
+        <rosparam file="$(find angle_aware_demo)/config/agent10$(arg number).yaml" command="load" ns="" />
+        <include file="$(find bebop_aruco)/launch/agent_base.launch" if="$(arg use_aruco)">
+            <arg name="number" value="$(arg number)" />
+            <arg name="sim" value="$(arg sim)" />
+        </include>
+        <include file="$(find bebop_hatanaka_base)/launch/agent_base.launch" unless="$(arg use_aruco)">
+            <arg name="number" value="$(arg number)" />
+            <arg name="sim" value="$(arg sim)" />
+        </include>
+
+        <node pkg="rostopic" type="rostopic" name="camera_control" args="pub camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -82, 0.0]'"/>
+
+
+        <!-- patrol -->
+        <node pkg="angle_aware_switch" type="patrol_agent.py" name="patrol_agent" output="screen">
+            <rosparam file="$(find angle_aware_demo)/config/patrol.yaml" command="load" ns="" />
+            <param name="input_psi_topic" value="/patrol_psi" />
+        </node>
+        <!-- angle_aware -->
+        <node pkg="angle_aware_switch" type="angle_aware_agent.py" name="angle_aware_agent" output="screen">
+            <rosparam file="$(find angle_aware_demo)/config/angle_aware.yaml" command="load" ns="" />
+        </node>
+
+
+        <!-- object detector -->
+        <include file="$(find angle_aware_detector)/launch/agent.launch">
+            <arg name="number" value="$(arg number)" />
+            <arg name="use_dummy" value="$(arg use_dummy)" />
+        </include>
+        <!-- rviz -->
+        <node pkg="angle_aware_switch" type="mode_diagnostic.py" name="mode" output="screen"></node>
+        <node pkg="angle_aware_control" type="show_theta_field.py" name="show_theta_field" output="log" respawn="false" respawn_delay="0">
+            <param name="frame_id" value="bebop10$(arg number)/object_detector/target_posestamped" />
+            <param name="input_field_topic" value="angle_aware/phi" />
+            <param name="field_param_name" value="~angle_aware/phi" />
+            <param name="output_topic" value="phi_point_cloud" />
+            <rosparam file="$(find angle_aware_demo)/config/angle_aware.yaml" command="load" ns="" />
+        </node>
+    </group>
+</launch>

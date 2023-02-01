@@ -3,6 +3,9 @@ This is the code for https://www.sciencedirect.com/science/article/pii/S24058963
 
 ## Demo
 
+## Requirements
+- angle_aware_control
+
 
 ## Run Test
 ### Set config file

@@ -1,0 +1,15 @@
+detect_filter:
+  decide_count: 3
+  object_span: 0.75
+  same_object_error: 0.2
+  max_stock: 10
+  range: [[-1, 1], [-1, 1], [0.2, 0.6]]
+dummy_object_detector:
+  positions: [[0.8, 0.8, 0.4], [-0.8, -0.8, 0.4]]
+  detect_radius: 0.7 ### = height * tan(math.pi/2 - range[3][0])
+  clock : 3
+pictogram:
+  size: 0.5
+  character: fa-chair
+  z_offset : 0
+  rotate_speed : 0.1

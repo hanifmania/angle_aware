@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="agentNum" default="1" />
+    <arg name="sim" default="false" />
+    <arg name="use_rosbag" default="true" />
+    <arg name="central_yaml" default="$(find angle_aware_demo)/config/central.yaml" />
+    <arg name="rviz_file" default="$(find angle_aware_demo)/config/sim_$(arg sim).rviz" />
+    <arg name="npy_data_dir" default="$(find angle_aware_demo)/data/input/" />
+    <arg name="rosbag_output" default="$(find angle_aware_demo)/rosbag/rosbag.bag" />
+    <arg name="log_path" default="$(find angle_aware_demo)/rosbag/log.csv" />
+    <arg name="use_aruco" default="false" />
+
+    <!-- central_base -->
+    <rosparam file="$(arg central_yaml)" command="load" ns="" />
+    <node pkg="bebop_hatanaka_base" type="uh_from_joy.py" name="uh_from_joy" output="log" />
+    <include file="$(find bebop_hatanaka_base)/launch/central_base.launch">
+        <arg name="agentNum" value="$(arg agentNum)" />
+        <arg name="sim" value="$(arg use_aruco)" />
+        <arg name="rviz_file" value="$(arg rviz_file)" />
+        <arg name="use_rosbag" value="$(arg use_rosbag)" />
+        <arg name="rosbag_output" value="$(arg rosbag_output)" />
+    </include>
+    <node pkg="angle_aware_avoid_tree" type="generate_tree_marker.py" name="generate_tree_marker" output="log"></node>
+
+
+    <!-- patrol -->
+    <node pkg="angle_aware_avoid_tree" type="central.py" name="patrol_central" output="screen">
+        <param name="npy_data_dir" value="$(arg npy_data_dir)" />
+        <rosparam file="$(find angle_aware_demo)/config/patrol.yaml" command="load" ns="" />
+    </node>
+    <node pkg="coverage_util" type="show_pointcloud2d.py" name="patrol_show_pointcloud2d" output="screen">
+        <param name="input_field_topic" value="patrol_psi" />
+        <rosparam file="$(find angle_aware_demo)/config/patrol.yaml" command="load" ns="" />
+        <param name="field_param_name" value="~angle_aware/psi" />
+        <param name="rviz_z_max" value="0.5" />
+        <param name="output_point_cloud_topic" value="patrol_psi_pointcloud" />
+    </node>
+    <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator">
+        <!-- Load the file you made above -->
+        <rosparam command="load" file="$(find angle_aware_demo)/config/diagnostic.yaml" />
+    </node>
+
+    <!-- object detector -->
+
+    <rosparam file="$(find angle_aware_detector)/config/yolov5.yaml" command="load" ns="" />
+    <rosparam file="$(find angle_aware_demo)/config/object_detector.yaml" command="load" ns="" />
+    <node name="object_collector" pkg="angle_aware_detector" type="object_collector.py" output="log"></node>
+
+
+    <!-- sky camera -->
+    <include file="$(find sky_camera)/launch/usb_cam.launch" unless="$(arg sim)"/>
+
+</launch>

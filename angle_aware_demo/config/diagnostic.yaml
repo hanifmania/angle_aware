@@ -1,0 +1,12 @@
+# type: GenericAnalyzer
+# path: ""
+pub_rate: 5
+analyzers:
+  bebop101:
+    type: GenericAnalyzer
+    path: ""
+    startswith: bebop101/mode
+  bebop102:
+    type: GenericAnalyzer
+    path: ""
+    startswith: bebop102/mode
