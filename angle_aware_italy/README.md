@@ -5,6 +5,18 @@ This is the code for https://www.sciencedirect.com/science/article/pii/S24058963
 
 
 ## Run Test
+### Set config file
+Without map
+``` 
+roscd angle_aware_italy/config
+cp central_without_map.yaml central.yaml
+```
+
+from map
+``` 
+roscd angle_aware_italy/config
+cp central_from_map.yaml central.yaml
+```
 ### Simulation
 ```
 roslaunch angle_aware_italy bringup_sim.launch
@@ -13,21 +25,19 @@ roslaunch angle_aware_italy bringup_sim.launch
 1. Push X button -> main control start
 1. Push START button -> take off and field reset
 
-### Generate Psi
-If you can use JAX, then launch the following file. This is twice faster than generate_psi_no_jax.launch.
+### Generate Psi (If you change phi, psi or z param, you should do this once)
+Without map
 ```
-roslaunch angle_aware_control generate_psi.launch
+roslaunch angle_aware_control generate_psi_without_map.launch
 ```
-
+from map
+```
+roslaunch angle_aware_control generate_psi_from_map.launch
+```
 
 ## Contents
-- angle_aware_control :
-    - agent.py :  圧縮した重要度psiを受け取ってangle aware CBFに従いドローンを操作する
-    - angle_aware_cbf.py : Angle Aware CBFのアルゴリズム
-    - myqp.py : collision avoidance 等も踏まえた最終的なQP
-    - central.py : 圧縮した重要度psiを更新し、publish
-    - psi_generator.py : phi -> psiの圧縮. JAXを利用
-
+- data
+    - mat : Importance map from Italy CNR
 
 
 ## Author

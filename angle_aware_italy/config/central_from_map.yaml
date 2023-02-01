@@ -14,7 +14,7 @@ angle_aware:
   psi:
     range: [[-33, 33], [-53, 53]]
     density: [0.5, 0.5]
-    npy_name: psi_italy1.npy ### without importance map
+    npy_name: psi_italy_from_map.npy ### without importance map
     # npy_name: psi_italy_from_map.npy
   slack_cost: 1
 agents:
