@@ -65,4 +65,8 @@
     </node>
  -->
 
+
+    <!-- sky camera -->
+    <include file="$(find sky_camera)/launch/usb_cam.launch" unless="$(arg sim)"/>
+
 </launch>
