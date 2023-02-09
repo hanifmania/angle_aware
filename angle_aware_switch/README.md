@@ -11,10 +11,14 @@ Please click and check the Youtube.
 - angle_aware_aruco
 
 ## Run Test
-### Generate Psi
+### Set config file
+Change the value of xxx_sky.yaml
+
+``` 
+roscd angle_aware_switch
+bash script/set_config.sh sky
 ```
-roslaunch angle_aware_switch patrol_generate_psi.launch
-```
+
 ### Simulation
 ```
 roslaunch angle_aware_switch bringup_sim.launch
@@ -24,20 +28,14 @@ roslaunch angle_aware_switch bringup_sim.launch
 1. Push START button -> take off and field reset
 
 ### Experiment
-#### sky (Note that sky is so small that only 2 drone can work on this version)
+#### sky 
+- Note that sky is so small that only 2 drone can work on this version
 - Set an chair around the center of the sky
-
-##### Desktop PC (maxwell)
 ```
 roslaunch angle_aware_switch central.launch agentNum:="2"
 roslaunch angle_aware_switch agent.launch number:="1"
+roslaunch angle_aware_switch agent.launch number:="2" ### on laptop computer
 ```
-
-##### Laptop PC
-```
-roslaunch angle_aware_switch agent.launch number:="2"
-```
-
 
 #### Hijikata Agri demo
 Connect 2 PC with LAN cable.
@@ -71,6 +69,11 @@ roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
 1. Push X button -> main control start
 1. Push A button -> joy_msg control mode (stop)
 1. Push BACK button -> land
+
+### Generate Psi
+```
+roslaunch angle_aware_switch patrol_generate_psi.launch
+```
 
 ## Rosbag -> csv
 ```
