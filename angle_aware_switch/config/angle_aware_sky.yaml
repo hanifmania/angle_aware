@@ -2,22 +2,12 @@
 angle_aware:
   sigma: 0.1
   delta_decrease: 5
-  gamma: 0.002 ### 互換性のために必要. 一切参照しない
+  gamma: 0.2
   alpha: 1
   phi:
     range: [[-0.25, 0.25], [-0.25, 0.25], [-0.4,0.4], [1.1780972450961724, 1.5707963], [-3.14159265358979,3.14159265358979]] #xyzvh, v:[pi *3/8, pi/2]
     density: [0.25, 0.25, 0.4, 0.09817477042468103, 0.2617993878]  #v: pi/32, h: pi/12
     r: 0.25
-  threshold_rate: 0.05
-  observe_time: 20
-  u_max: 0.3
-  ref_z: 1.8
-  slack_cost: 1000000
-
-  
-#   psi:
-#     range: [[0.1, 1.9], [0.1, 2.9]]
-#     density: [0.05, 0.05]
-#     npy_name: angle_aware_psi.npy
-# output_psi_topic: angle_aware_psi
-# output_J_topic: angle_aware_J
+  tau: 0.2
+  ref_z: 1.5
+  slack_cost: 1000
