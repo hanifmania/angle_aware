@@ -12,12 +12,17 @@ Please click and check the Youtube.
 
 ## Run Test
 ### Set config file
-Change the value of xxx_sky.yaml
-
+Set parameters from ..._xxx.yaml files (e.g., angle_aware_sky.yaml)
 ``` 
 roscd angle_aware_switch
-bash script/set_config.sh sky
+bash script/set_config.sh xxx
 ```
+
+### Generate Psi
+```
+roslaunch angle_aware_switch patrol_generate_psi.launch
+```
+
 
 ### Simulation
 ```
@@ -70,10 +75,7 @@ roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
 1. Push A button -> joy_msg control mode (stop)
 1. Push BACK button -> land
 
-### Generate Psi
-```
-roslaunch angle_aware_switch patrol_generate_psi.launch
-```
+
 
 ## Rosbag -> csv
 ```

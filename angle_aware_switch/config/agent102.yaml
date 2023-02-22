@@ -1,9 +1,9 @@
 initial_pose: 
-  x: 1
+  x: 3
   y: 0.5
   z: 1
   R_deg: 0
   P_deg: 0
   Y_deg: 0
-  camera_deg: -82
+  camera_deg: -90
 collision_distance: 0.87
