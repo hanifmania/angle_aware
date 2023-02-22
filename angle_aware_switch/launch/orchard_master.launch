@@ -3,7 +3,8 @@
     <include file="$(find angle_aware_switch)/launch/central.launch">
         <arg name="agentNum" value="2" />
         <arg name="use_aruco" default="true" />
-
+        <arg name="use_sky_camera" default="false" />
+        <arg name="rviz_file" default="$(find angle_aware_switch)/config/sim_orchard.rviz" />
     </include>
     <include file="$(find angle_aware_switch)/launch/agent.launch">
         <arg name="number" value="1" />

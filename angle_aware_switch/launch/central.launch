@@ -9,6 +9,7 @@
     <arg name="rosbag_output" default="$(find angle_aware_switch)/rosbag/rosbag.bag" />
     <arg name="log_path" default="$(find angle_aware_switch)/rosbag/log.csv" />
     <arg name="use_aruco" default="false" />
+    <arg name="use_sky_camera" default="true"/>
 
     <!-- central_base -->
     <rosparam file="$(arg central_yaml)" command="load" ns="" />
@@ -67,6 +68,6 @@
 
 
     <!-- sky camera -->
-    <include file="$(find sky_camera)/launch/usb_cam.launch" unless="$(arg sim)"/>
+    <include file="$(find sky_camera)/launch/usb_cam.launch" if="$(arg use_sky_camera)"/>
 
 </launch>

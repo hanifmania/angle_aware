@@ -102,7 +102,7 @@ class CameraFromAR:
         Args:
             img_msg (sensor_msgs.msg.Image): _description_
         """
-        t = rospy.Time.now()
+        # t = rospy.Time.now()
         # if self._has_camera_info_received is False:
         #     ### camera info がなければearly return
         #     return
@@ -132,8 +132,8 @@ class CameraFromAR:
         ### 結果のpublish
         posestamped = self.np2posestamped(xyz, bebop_R, img_msg)
         self._pub_posestamped.publish(posestamped)
-        dt = rospy.Time.now() - t
-        rospy.loginfo("dt :{}".format(dt.to_sec()))
+        # dt = rospy.Time.now() - t
+        # rospy.loginfo("dt :{}".format(dt.to_sec()))
 
     # def camera_info_callback(self, msg):
     #     """camera行列等の取得. main_function実行前に実施する必要がある

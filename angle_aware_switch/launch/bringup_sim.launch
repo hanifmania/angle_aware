@@ -5,6 +5,7 @@
         <arg name="agentNum" value="2" />
         <arg name="use_aruco" default="false" />
         <arg name="use_rosbag" default="false" />
+        <arg name="use_sky_camera" default="false" />
     </include>
     <include file="$(find angle_aware_switch)/launch/agent.launch">
         <arg name="sim" value="true" />

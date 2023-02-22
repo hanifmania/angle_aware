@@ -15,5 +15,5 @@ agents:
 trees:
   xy: [[1.75, 2.5]]
   avoid_radius: [0.5]
-  no_phi_radius: [0.6]
+  no_phi_radius: [0.5]
   show_radius: [0.2]

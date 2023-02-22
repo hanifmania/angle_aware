@@ -20,7 +20,6 @@
         </node>
 
     </group>
-    <node pkg="rostopic" type="rostopic" name="camera_control" args="pub -r 1 camera_control geometry_msgs/Twist -- '[0.0, 0.0, 0.0]' '[0.0, -82, 0.0]'" />
     <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="posestamped2tf" output="log" respawn="false" respawn_delay="0">
         <param name="posestamped" value="posestamped" />
         <param name="tfname" value="/bebop10$(arg number)/base_link" />
