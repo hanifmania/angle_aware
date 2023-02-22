@@ -8,5 +8,6 @@
     <include file="$(find angle_aware_switch)/launch/agent.launch">
         <arg name="number" value="1" />
         <arg name="use_aruco" default="true" />
+        <arg name="use_dummy" default="true"/>
     </include>
 </launch>

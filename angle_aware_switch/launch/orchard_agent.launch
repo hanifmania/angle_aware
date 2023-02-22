@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find angle_aware_switch)/launch/agent.launch">
+        <arg name="number" value="2" />
+        <arg name="use_aruco" default="true" />
+        <arg name="use_dummy" default="true"/>
+    </include>
+</launch>

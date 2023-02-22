@@ -45,28 +45,21 @@ roslaunch angle_aware_switch agent.launch number:="2" ### on laptop computer
 #### Hijikata Agri demo
 Connect 2 PC with LAN cable.
 ##### PC 1
-- Set the private IP (192.168.1.1, netmask 255.255.255.0, gateway:192.168.1.2)
+- Set the IP  by PC settings as Address 192.168.208.12, netmask 255.255.255.0, gateway:192.168.208.32
 - gedit ~/.bashrc
 ```
 # export ROS_IP=127.0.0.1
 # export ROS_MASTER_URI=http://localhost:11311
-export ROS_IP=$(hostname -I | cut -d' ' -f1)
+export ROS_IP=192.168.208.12
 export ROS_MASTER_URI=http://$ROS_IP:11311
 ```
 - Open new terminal and launch
 ```
-roslaunch angle_aware_switch master.launch
+roslaunch angle_aware_switch orchard_master.launch
 ```
 ##### PC 2
-- Set the private IP (192.168.1.2, netmask 255.255.255.0, gateway:192.168.1.1)
-- gedit ~/.bashrc
 ```
-export ROS_IP=$(hostname -I | cut -d' ' -f1)
-export ROS_MASTER_URI=http://192.168.1.111311
-```
-- Open new terminal and launch
-```
-roslaunch angle_aware_switch agent.launch number:="2" use_aruco:="true"
+roslaunch angle_aware_switch orchard_agent.launch
 ```
 1. Set Logicool joy stick with Xbox mode and mode light off.
 1. Push START button -> takeoff
