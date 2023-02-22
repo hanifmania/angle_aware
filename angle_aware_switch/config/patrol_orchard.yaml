@@ -7,6 +7,6 @@ angle_aware:
     range: [[0.3, 3.2], [0.3, 5]]
     density: [0.01, 0.01]
     npy_name: patrol_psi_orchard.npy
-  slack_cost: 1000000
+  slack_cost: 1000
 output_psi_topic: patrol_psi
 output_J_topic: patrol_J

@@ -48,9 +48,11 @@ Connect 2 PC with LAN cable.
 - Set the IP  by PC settings as Address 192.168.208.12, netmask 255.255.255.0, gateway:192.168.208.32
 - gedit ~/.bashrc
 ```
-# export ROS_IP=127.0.0.1
-# export ROS_MASTER_URI=http://localhost:11311
-export ROS_IP=192.168.208.12
+### Stand alone
+export ROS_IP=127.0.0.1
+### In a real orchard
+# export ROS_IP=192.168.208.12
+
 export ROS_MASTER_URI=http://$ROS_IP:11311
 ```
 - Open new terminal and launch
@@ -58,6 +60,16 @@ export ROS_MASTER_URI=http://$ROS_IP:11311
 roslaunch angle_aware_switch orchard_master.launch
 ```
 ##### PC 2
+- gedit ~/.bashrc
+```
+### Stand alone
+export ROS_IP=127.0.0.1
+### In a real orchard
+# export ROS_IP=192.168.208.xxx
+
+export ROS_MASTER_URI=http://192.168.208.12:11311
+```
+- Open new terminal and launch
 ```
 roslaunch angle_aware_switch orchard_agent.launch
 ```
