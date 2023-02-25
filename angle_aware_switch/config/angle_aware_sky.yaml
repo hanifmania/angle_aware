@@ -11,3 +11,4 @@ angle_aware:
   tau: 0.2
   ref_z: 1.5
   slack_cost: 1000
+  unom_max: 0.1

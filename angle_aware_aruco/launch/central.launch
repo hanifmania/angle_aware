@@ -5,6 +5,7 @@
     <arg name="use_rosbag" default="true" />
     <arg name="central_yaml" default="$(find angle_aware_aruco)/config/central.yaml" />
     <arg name="npy_data_dir" default="$(find angle_aware_aruco)/data/input/" />
+    <rosparam file="$(find angle_aware_aruco)/config/angle_aware.yaml" command="load" ns="" />
     <include file="$(find angle_aware_avoid_tree)/launch/central.launch">
         <arg name="agentNum" value="$(arg agentNum)" />
         <arg name="sim" value="true" /> <!-- VRPNを起動しないようsim trueにしておく-->

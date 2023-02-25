@@ -5,15 +5,14 @@ field_cbf: [[0, 3.5], [0, 5.25]] # 衝突回避で避けられるよう、psiよ
 central_clock: 20
 agents:
   agent_manager_clock: 20
-  u_max: 0.2
+  u_max: 0.25
   camera_sensor_rad: 1.3316862192716734 #画角 insta360 プロ動画リニア:短辺76.3deg
   kp_z: 0.05
   ref_z: 1
   kp_yaw: 1
   ref_yaw: 0
-  unom_max: 0.0
 trees:
   xy: [[1.75, 2.5]]
-  avoid_radius: [0.5]
-  no_phi_radius: [0.5]
+  avoid_radius: [0.75]
+  no_phi_radius: [0.75]
   show_radius: [0.2]

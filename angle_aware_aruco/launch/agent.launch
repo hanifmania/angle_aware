@@ -10,15 +10,5 @@
             <arg name="sim" value="$(arg sim)" />
         </include>
         <node pkg="angle_aware_avoid_tree" type="agent.py" name="agent" output="screen" />
-
-        <!-- <node pkg="bebop_hatanaka_base" type="posestamped2tf.py" name="vrpn_posestamped2tf" output="log" respawn="false" respawn_delay="0">
-            <param name="posestamped" value="/vrpn_client_node/bebop10$(arg number)/pose"/> 
-            <param name="tfname" value="bebop10$(arg number)/vrpn/base_link"/>
-        </node>
-        
-        <node pkg="bebop_aruco" type="log_error.py" name="log_error" output="screen">
-            <param name="input_vrpn_topic" value="/vrpn_client_node/bebop10$(arg number)/pose"/> 
-            <param name="log_path" value="$(find bebop_aruco)/data/log"/> 
-        </node> -->
     </group>
 </launch>

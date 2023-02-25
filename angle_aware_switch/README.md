@@ -18,12 +18,6 @@ roscd angle_aware_switch
 bash script/set_config.sh xxx
 ```
 
-### Generate Psi
-```
-roslaunch angle_aware_switch patrol_generate_psi.launch
-```
-
-
 ### Simulation
 ```
 roslaunch angle_aware_switch bringup_sim.launch
@@ -89,6 +83,20 @@ rostopic echo -b rosbag.bag -p /patrol_J > J.csv
 rostopic echo -b rosbag.bag -p /bebop101/angle_aware/J > angle_aware_J1.csv
 rostopic echo -b rosbag.bag -p /bebop102/angle_aware/J > angle_aware_J2.csv
 ```
+
+
+
+## Generate Psi
+```
+roslaunch angle_aware_switch patrol_generate_psi.launch
+```
+
+## Parameter tuning
+1. $\sigma$ : Determined by FOV. Check it in the simulation with small $\gamma$ and $u_{nom} =0$. Big is good for time.
+1. $\delta$, $\gamma$ : Determined by the speed for stable sampling. Check it in the simulation with high slack variable.
+1. $u_{nom}$ : Set the half of normal speed. 
+1. slack variable : The small it is, the more stable drones are and the more impact u_nom has. However, it might stop near the importance area if it is too small.
+
 
 ## Author
 

@@ -5,7 +5,7 @@ detect_filter:
   max_stock: 10
   range: [[-10, 10], [-10, 10], [0, 6]]
 dummy_object_detector:
-  positions: [[-1.5, 3.5, 1.5], [-2.5, 1.5, 1.5]]
+  positions: [[1.5, 3.5, 1.5], [2.5, 1.5, 1.5]]
   detect_radius: 0.7 ### = height * tan(math.pi/2 - range[3][0])
   clock : 3
 pictogram:

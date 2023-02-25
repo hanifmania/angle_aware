@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <include file="$(find angle_aware_aruco)/launch/central.launch"/>
-    <include file="$(find angle_aware_aruco)/launch/agent.launch">
-    <arg name="number" value="1"/>
-    </include>
-</launch>

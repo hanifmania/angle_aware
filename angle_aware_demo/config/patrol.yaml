@@ -8,6 +8,8 @@ angle_aware:
     density: [0.01, 0.01]
     npy_name: patrol_psi_sky.npy
   slack_cost: 1000
+  unom_max: 0.1
+
 
 output_psi_topic: patrol_psi
 output_J_topic: patrol_J

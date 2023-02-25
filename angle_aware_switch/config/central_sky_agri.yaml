@@ -11,7 +11,6 @@ agents:
   ref_z: 1
   kp_yaw: 1
   ref_yaw: 0
-  unom_max: 0
 trees:
   xy: [[0, 0]]
   avoid_radius: [0.5]

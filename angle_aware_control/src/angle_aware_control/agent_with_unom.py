@@ -39,7 +39,7 @@ class Agent:
         
         self._qp = myqp(field_cbf, collision_distance, angle_aware_params)
 
-        self._unom_max = agents_param["unom_max"]
+        self._unom_max = angle_aware_params["unom_max"]
         self._coverage_util = CoverageUtil()
 
         rospy.Subscriber(input_psi_topic, Float32MultiArray, self.psi_callback)
